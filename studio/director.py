@@ -12,7 +12,7 @@ import copy
 import hashlib
 import re
 
-SHOTS = {"clip", "photo", "number", "compare", "text"}
+SHOTS = {"clip", "photo", "number", "compare", "text", "card"}
 CAMERAS = ["push_in", "pan_left", "pull_out", "pan_right", "tilt_up", "drift", "tilt_down"]
 SCENE_TRANSITIONS = ["whip_left", "slide_up", "zoom", "whip_right", "cut", "slide_up", "whip_left", "zoom"]
 TRANSITION_SFX = {"whip_left": "swish", "whip_right": "swish", "slide_up": "whoosh",

@@ -18,7 +18,7 @@ from pathlib import Path
 import requests
 from PIL import Image
 
-from . import visuals
+from . import framing, visuals
 from .common import log
 
 MODEL, PRETRAINED = "ViT-B-32", "laion2b_s34b_b79k"
@@ -26,6 +26,9 @@ GOOD_SCORE = 0.215           # above this the picture clearly shows the thing
 MIN_SCORE = 0.17             # below this it almost surely doesn't
 PHOTO_PENALTY = 0.04         # a moving clip beats a still of the same quality
 REUSE_PENALTY = 0.06
+WHOLE_WEIGHT = 0.06           # whole subject in the picture beats a cut-off one (framing.wholeness)
+NO_SUBJECT_PENALTY = 0.03     # the detector can't find the subject at all
+FLAT_STD = 9                  # a frame this flat (one colour) is not a picture
 UNSAFE = ["a photo of a nude person", "a naked statue", "a photo of underwear", "a bloody wound"]
 
 _clip = None                 # (model, preprocess, tokenizer) or False when unavailable
@@ -187,6 +190,37 @@ def _frames(path: Path, dur: float, step: float) -> list[tuple[float, Image.Imag
     return out
 
 
+def _frame_at(path: Path, t: float, width: int = 720) -> Image.Image | None:
+    import subprocess
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{max(t, 0):.2f}", "-i", str(path), "-frames:v", "1",
+                        "-vf", f"scale={width}:-2", f"{td}/f.jpg"], check=False)
+        f = Path(td) / "f.jpg"
+        if not f.exists():
+            return None
+        im = Image.open(f)
+        im.load()
+        return im
+
+
+def _flat(im: Image.Image) -> bool:
+    import numpy as np
+    return float(np.asarray(im.convert("L").resize((64, 64)), dtype="float32").std()) < FLAT_STD
+
+
+def _framing(imgs: list, subject: str | None) -> dict:
+    """Content area (no black bars) and the keep-box of the subject over these frames."""
+    content = framing.content_box(imgs)
+    info = {"content": content, "box": None, "whole": None}
+    if subject and framing.available():
+        boxes = [framing.to_content(framing.keep_box(framing.find_boxes(im, subject)), content) for im in imgs]
+        found = [b for b in boxes if b]
+        info["box"] = framing.union(found)
+        info["whole"] = round(min(framing.wholeness(b) for b in found), 3) if found else 0.0
+    return info
+
+
 def _luma(im: Image.Image) -> float:
     return sum(im.convert("L").resize((32, 32)).getdata()) / 1024
 
@@ -204,24 +238,21 @@ def _fetch(c: dict, out_stem: Path, prompts: list[str], weights: list[float], su
         img = Image.open(io.BytesIO(data.content)).convert("RGB")
         if _luma(img) < 22:
             return None
-        if img.width / img.height > 0.75:           # wide photo: keep the part that shows the subject
-            cw = min(int(img.height * 9 / 16 * 1.25), img.width)   # room for the camera move
-            crops = [img.crop((x, 0, x + cw, img.height))
-                     for x in sorted({0, (img.width - cw) // 2, img.width - cw})]
-            sc = score(crops, prompts, weights, subject)
-            k = max(range(len(crops)), key=lambda i: sc[i][0])
-            img, rel = crops[k], sc[k][0]
-        else:
-            rel = score([img], prompts, weights, subject)[0][0]
+        rel = score([img], prompts, weights, subject)[0][0]
+        if max(img.size) > 2600:                    # plenty for 1080x1920, lighter to render
+            k = 2600 / max(img.size)
+            img = img.resize((int(img.width * k), int(img.height * k)), Image.LANCZOS)
         img.save(src, quality=93)
-        return src, 0.0, None, rel
+        small = img.copy()
+        small.thumbnail((960, 960))
+        return src, 0.0, None, rel, _framing([small], subject)
     src = out_stem.with_suffix(".mp4")
     src.write_bytes(data.content)
     from .common import media_duration
     dur = media_duration(src) or c.get("dur") or 0.0
     step = 1.0 if dur <= 30 else dur / 30
     frames = [(t, im) for t, im in _frames(src, dur, step) if t <= max(dur - 2.5, 0)]
-    bright = [(t, im) for t, im in frames if _luma(im) >= 28]
+    bright = [(t, im) for t, im in frames if _luma(im) >= 28 and not _flat(im)]
     if not bright:
         log(f"Shot picker: {c['id']} is too dark, trying the next one")
         src.unlink(missing_ok=True)
@@ -240,11 +271,34 @@ def _fetch(c: dict, out_stem: Path, prompts: list[str], weights: list[float], su
         later = [(r, tt) for r, tt in good if abs(tt - t) >= 4 and r >= MIN_SCORE]
         if later:
             best_rel, t = max(later)
-    return src, round(max(0.0, t - 0.4), 2), dur, best_rel
+    start = round(max(0.0, t - 0.4), 2)
+    shots = [im for im in (_frame_at(src, start + k) for k in (0.3, 1.8, 3.3)) if im is not None]
+    return src, start, dur, best_rel, _framing(shots, subject)
+
+
+def _rank_whole(ranked: list, thumbs: dict, subject: str | None, top: int = 5) -> list:
+    """Look at the best few previews with the subject detector: a picture where the whole
+    subject is inside the frame (head and feet, room around it) moves up; a cut-off or
+    extreme close-up one moves down (mindblip-studio: never crop heads or feet)."""
+    if not subject or not framing.available() or not ranked:
+        return ranked
+    out = []
+    for i, (s, rel, c) in enumerate(ranked):
+        if i < top and rel >= MIN_SCORE and thumbs.get(c["id"]) is not None:
+            im = thumbs[c["id"]]
+            content = framing.content_box([im])
+            kb = framing.to_content(framing.keep_box(framing.find_boxes(im, subject)), content)
+            if kb:
+                s += WHOLE_WEIGHT * (framing.wholeness(kb) - 0.6)
+            else:
+                s -= NO_SUBJECT_PENALTY
+        out.append((s, rel, c))
+    out.sort(key=lambda r: -r[0])
+    return out
 
 
 # ------------------------------------------------------------------ public
-def pick(query: str, subject: str | None, out_stem: Path) -> dict | None:
+def pick(query: str, subject: str | None, out_stem: Path, photos_only: bool = False) -> dict | None:
     """Choose and download the best picture for a beat.
 
     Returns {"kind": "vid"|"img", "src": Path, "start": s, "dur": s} or None."""
@@ -257,7 +311,8 @@ def pick(query: str, subject: str | None, out_stem: Path) -> dict | None:
         src = Path(m["src"])
         if src.exists():
             _USED.add(m["id"])
-            return {"kind": m["kind"], "src": src, "start": m.get("start", 0.0), "dur": m.get("dur")}
+            return {"kind": m["kind"], "src": src, "start": m.get("start", 0.0), "dur": m.get("dur"),
+                    "content": m.get("content"), "box": m.get("box")}
     if not available():
         return None
     pb, px = os.environ.get("PIXABAY_API_KEY", "").strip(), os.environ.get("PEXELS_API_KEY", "").strip()
@@ -270,10 +325,11 @@ def pick(query: str, subject: str | None, out_stem: Path) -> dict | None:
         jobs = []
         with ThreadPoolExecutor(6) as ex:
             for q in searches:
-                if px:
+                if px and not photos_only:
                     jobs.append(ex.submit(_pexels_videos, px, q))
                 if pb:
-                    jobs.append(ex.submit(_pixabay_videos, pb, q))
+                    if not photos_only:
+                        jobs.append(ex.submit(_pixabay_videos, pb, q))
                     jobs.append(ex.submit(_pixabay_photos, pb, q))
             for j in jobs:
                 try:
@@ -293,35 +349,48 @@ def pick(query: str, subject: str | None, out_stem: Path) -> dict | None:
         for (c, _), (rel, bad) in zip(pool, scores):
             if bad:
                 continue
-            s = rel - (PHOTO_PENALTY if c["kind"] == "img" else 0) - (REUSE_PENALTY if c["id"] in _USED else 0)
+            s = rel - (PHOTO_PENALTY if c["kind"] == "img" and not photos_only else 0) \
+                - (REUSE_PENALTY if c["id"] in _USED else 0)
             if c["kind"] == "vid" and c.get("h") and c.get("w") and c["h"] > c["w"]:
                 s += 0.01                          # already vertical: less cropping
             ranked.append((s, rel, c))
         if not ranked:
             return None
         ranked.sort(key=lambda r: -r[0])
+        ranked = _rank_whole(ranked, dict((c["id"], t) for c, t in pool), subject)
         if ranked[0][1] < MIN_SCORE:
             log(f"Shot picker: no real match for '{query}' (best {ranked[0][1]:.3f})")
             return None
-        tries = 0
+        tries, got_best = 0, None
         for s, rel, c in ranked:
             if rel < MIN_SCORE or tries >= 4:
                 break
             tries += 1
-            got = _fetch(c, out_stem, prompts, weights, subject)
+            got = _fetch(c, out_stem.with_name(f"{out_stem.name}_{tries}"), prompts, weights, subject)
             if got is None:
                 continue
-            src, start, dur, frame_rel = got
+            whole = got[4]["whole"] if got[4]["box"] else (None if not subject or not framing.available() else 0.0)
+            if got_best is None or (whole or 0) > (got_best[2] or 0):
+                got_best = (c, got, whole, rel)
+            # cut off at the edges (or not found): look at one or two more before settling
+            if whole is not None and whole < 0.55 and tries < 3:
+                log(f"Shot picker: {c['id']} shows the {subject} cut off (whole {whole}), looking further")
+                continue
+            break
+        if got_best:
+            c, got, whole, rel = got_best
+            src, start, dur, frame_rel, fr = got
             reused = c["id"] in _USED
             _USED.add(c["id"])
             meta.write_text(json.dumps({"id": c["id"], "kind": c["kind"], "src": str(src), "start": start,
-                                        "dur": dur, "score": round(rel, 4)}))
+                                        "dur": dur, "score": round(rel, 4), **fr}))
             if rel < GOOD_SCORE:
                 log(f"Shot picker: weak match for '{query}' (best {rel:.3f}), using it")
             log(f"Shot picker: {c['site']} {'clip' if c['kind'] == 'vid' else 'photo'} {c['id']} for '{query}' "
                 f"(match {rel:.3f}, frame {frame_rel:.3f} at {start:.1f}s, {len(pool)} looked at"
-                f"{', reused' if reused else ''})")
-            return {"kind": c["kind"], "src": src, "start": start, "dur": dur}
+                f"{', reused' if reused else ''}, subject {'whole ' + str(fr['whole']) if fr['box'] else 'not found'})")
+            return {"kind": c["kind"], "src": src, "start": start, "dur": dur, "content": fr["content"],
+                    "box": fr["box"]}
         log(f"Shot picker: no usable clip for '{query}' after {tries} downloads")
         return None
     except Exception as e:

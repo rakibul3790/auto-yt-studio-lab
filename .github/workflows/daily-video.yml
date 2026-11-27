@@ -78,12 +78,30 @@ jobs:
         run: |
           pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install open_clip_torch faster-whisper
+          # lab: subject detector for whole-subject framing (studio/framing.py)
+          pip install "transformers>=4.45"
 
       - name: Keep the shot picker model between runs
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface/hub/models--laion--CLIP-ViT-B-32-laion2B-s34B-b79K
           key: clip-models-v1
+
+      - name: Keep the subject detector between runs (lab, OWLv2)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--google--owlv2-base-patch16-ensemble
+          key: owlv2-base-ensemble-v1
+
+      - name: Load the subject detector once (lab)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          from transformers import Owlv2ForObjectDetection, Owlv2Processor
+          Owlv2Processor.from_pretrained("google/owlv2-base-patch16-ensemble")
+          Owlv2ForObjectDetection.from_pretrained("google/owlv2-base-patch16-ensemble")
+          print("Subject detector ready")
+          PY
 
       - name: Keep the word timing model between runs (free whisper, for the v3 voice)
         uses: actions/cache@v4
@@ -135,10 +153,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           shopt -s nullglob
-          files=(output/*.mp4 output/*.qc.json)
+          files=(output/*.mp4 output/*.qc.json output/*.framecheck.jpg)
           [ ${#files[@]} -eq 0 ] && { echo "Nothing rendered"; exit 0; }
           mkdir -p /tmp/prev && cp "${files[@]}" /tmp/prev/
           for d in work/*/; do [ -f "$d/plan.json" ] && cp "$d/plan.json" "/tmp/prev/$(basename "$d").plan.json"; done
+          # the paid voice read, so a re-render of the same script costs no new ElevenLabs credits
+          for d in work/*/; do
+            v=("$d"pro_*_whole.mp3)
+            if [ -f "${v[0]}" ]; then
+              mkdir -p "/tmp/prev/voice/$(basename "$d")"
+              cp "$d"pro_*_whole.mp3 "$d"pro_*_whole.json "/tmp/prev/voice/$(basename "$d")/" 2>/dev/null || true
+            fi
+          done
           cd /tmp/prev
           git init -q -b previews
           git config user.name  "github-actions[bot]"

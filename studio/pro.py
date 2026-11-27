@@ -37,7 +37,7 @@ import numpy as np
 import requests
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from . import director, qc, shotpick, tts, visuals
+from . import cards, director, framing, qc, shotpick, tts, visuals
 from .common import MUSIC_DIR, ROOT, log, media_duration, run
 
 FONT_DIR = ROOT / "assets" / "fonts"
@@ -81,6 +81,7 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     data = _with_follow(data, cfg)
     data = director.plan(data)
     data = _feelings(data)
+    data["_keep"] = str(vcfg.get("pro_framing", "")).lower() == "keep"
     (work / "plan.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     visuals.reset_clips()
     _USED.clear()
@@ -199,6 +200,7 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     # ---- picture: one clip per shot, joined with transitions
     tag = f"{w}x{h}"
     seg_files, first_img = [], None
+    data.pop("_prev_src", None)
     for n, sh in enumerate(shots):
         d_out = shots[n + 1]["d"] if n + 1 < len(shots) else 0.0
         seg = work / f"pro_seg{n:02d}_{tag}.mp4"
@@ -245,6 +247,16 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
             log(f"Source export failed: {type(e).__name__}: {e}")
 
     report = qc.check(out_file, size, fps, boxes, qc.safe_area(size))
+    if data.get("_keep"):
+        _framecheck_sheet(shots, work, out_file.with_suffix(".framecheck.jpg"))
+        checked = [s for s in shots if (s.get("framecheck") or {}).get("checked")]
+        report["info"]["framecheck"] = {"checked": len(checked),
+                                        "refit": sum(1 for s in shots if (s.get("framecheck") or {}).get("refit")),
+                                        "modes": [(s.get("plan") or {}).get("mode") for s in shots]}
+        for s in checked:
+            if s["framecheck"]["cut"]:
+                report["warnings"].append(f"framecheck: subject still cut at {s['start']:.1f}s "
+                                          f"({s['framecheck']['where']})")
     out_file.with_suffix(".qc.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     qc.log_report(report)
     strict = str(os.environ.get("STUDIO_QC_STRICT", vcfg.get("qc_strict", True))).lower() not in ("0", "false", "no")
@@ -288,7 +300,7 @@ def _with_follow(data: dict, cfg: dict) -> dict:
     """Every Short ends on a clear follow line, unless the script already asks for it."""
     line = str(cfg["video"].get("follow_line", "") or "").strip()
     scenes = data.get("scenes") or []
-    if not line or not scenes:
+    if not line or not scenes or data.get("follow") is False:     # "follow": false = loop ending
         return data
     if any("follow" in str(sc.get("text", "")).lower() for sc in scenes[-2:]):
         return data
@@ -492,7 +504,7 @@ def pexels_video(query: str, subject: str | None, pick: int, out: Path) -> tuple
         return None
 
 
-def footage(beat: dict, n: int, title: str, size: tuple[int, int], work: Path) -> dict:
+def footage(beat: dict, n: int, title: str, size: tuple[int, int], work: Path, keep: bool = False) -> dict:
     """Best available picture for a shot: Pexels clip, Pixabay clip, stock photo, drawn slide."""
     query = str(beat.get("query") or "").strip()
     subject = beat.get("subject")
@@ -500,7 +512,10 @@ def footage(beat: dict, n: int, title: str, size: tuple[int, int], work: Path) -
     chosen = shotpick.pick(query, subject, work / f"pro_ai{n:02d}")
     if chosen and chosen["kind"] == "vid":
         return {"kind": "vid", "src": chosen["src"], "start": chosen["start"],
-                "dur": chosen.get("dur") or media_duration(chosen["src"])}
+                "dur": chosen.get("dur") or media_duration(chosen["src"]),
+                "content": chosen.get("content"), "box": chosen.get("box")}
+    if chosen and keep:
+        return {"kind": "img", "src": chosen["src"], "content": chosen.get("content"), "box": chosen.get("box")}
     if chosen:
         img = work / f"pro_img{n:02d}.jpg"
         w, h = size
@@ -594,6 +609,8 @@ def _fx(tr_in: str, tr_out: str, length: float) -> list[str]:
 
 def _render_shot(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, length: float,
                  tr_out: str, out: Path, work: Path, bright: bool = False) -> None:
+    if data.get("_keep"):
+        return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright)
     w, h = size
     beat = sh["beat"]
     kind = beat.get("shot", "clip")
@@ -642,6 +659,306 @@ def _render_shot(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
             log(f"Shot {n} is too dark (brightness {y:.0f}), brightening it")
             _render_shot(sh, n, data, size, fps, length, tr_out, out, work, bright=True)
 
+
+
+# ============================================================ whole-subject framing (lab)
+# mindblip-studio core/motion.md: never crop off heads or feet. Every source is shown so the
+# whole subject stays on screen: a 9:16 window that holds it ("fill"), or the picture whole
+# and smaller over a blurred copy of itself ("fit"). Camera moves stay gentle (5-8 %) and
+# never push the subject out. A card shot floats a framed picture over a dimmed background.
+def _probe_wh(path: Path) -> tuple[int, int]:
+    out = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                          "stream=width,height", "-of", "csv=p=0:s=x", str(path)],
+                         capture_output=True, text=True).stdout.strip().splitlines()
+    try:
+        a, b = out[0].split("x")[:2]
+        return int(a), int(b)
+    except Exception:
+        im = Image.open(path)
+        return im.size
+
+
+def _ensure_framing(src: dict, subject: str | None) -> dict:
+    """Content area and keep-box for a source that came without them (older fallbacks)."""
+    if src.get("content"):
+        return src
+    path = Path(src["src"])
+    imgs = []
+    if src["kind"] == "vid":
+        for k in (0.3, 1.8, 3.3):
+            im = shotpick._frame_at(path, float(src.get("start", 0.0)) + k)
+            if im is not None:
+                imgs.append(im)
+    else:
+        im = Image.open(path).convert("RGB")
+        im.thumbnail((960, 960))
+        imgs = [im]
+    if not imgs:
+        return {**src, "content": (0.0, 0.0, 1.0, 1.0), "box": None}
+    fr = shotpick._framing(imgs, subject)
+    return {**src, "content": fr["content"], "box": fr["box"]}
+
+
+def _even(v: float) -> int:
+    return max(int(v) // 2 * 2, 2)
+
+
+def _safe_camera(move: str, frames: int, fps: int, p: dict, shake: bool) -> tuple[str, str, str]:
+    """Gentle zoompan expressions that keep the whole (padded) subject in view."""
+    n = max(frames - 1, 1)
+    e = f"(min(on/{n},1)*min(on/{n},1)*(3-2*min(on/{n},1)))"
+    zm = max(1.0, min(float(p.get("zmax", 1.0)), 1.08))
+    fx, fy = p.get("focus", (0.5, 0.5))
+    wb = p.get("wbox") or (0.0, 0.0, 1.0, 1.0)
+    if zm < 1.01:
+        move = "hold"
+    if move == "push_in":
+        z = f"1+{zm - 1:.4f}*{e}"
+    elif move == "pull_out":
+        z = f"{zm:.4f}-{zm - 1:.4f}*{e}"
+    elif move in ("punch", "settle"):          # settle & hold: arrives bigger, settles in ~8 frames
+        k = max(int(fps * 0.28), 2)
+        z = f"if(lt(on,{k}),{zm:.4f}-{zm - 1:.4f}*(1-pow(1-on/{k},3)),1+0.01*min((on-{k})/{max(n - k, 1)},1))"
+    elif move in ("pan_left", "pan_right", "tilt_up", "tilt_down"):
+        z = f"{zm:.4f}"
+    elif move == "drift":
+        z = f"1+{min(zm - 1, 0.04):.4f}*{e}"
+    else:                                      # static / hold
+        z = f"1+{min(zm - 1, 0.01):.4f}*{e}"
+    # the view may slide only as far as the subject stays inside it
+    lx = f"max(0,{wb[2]:.4f}*iw-iw/zoom)"
+    ux = f"min({wb[0]:.4f}*iw,iw-iw/zoom)"
+    ly = f"max(0,{wb[3]:.4f}*ih-ih/zoom)"
+    uy = f"min({wb[1]:.4f}*ih,ih-ih/zoom)"
+    cx = f"max({lx},min({ux},{fx:.4f}*iw-iw/zoom/2))"
+    cy = f"max({ly},min({uy},{fy:.4f}*ih-ih/zoom/2))"
+    x, y = cx, cy
+    if move == "pan_left":
+        x = f"max({lx},min({ux},{ux}-({ux}-({lx}))*{e}))"
+    elif move == "pan_right":
+        x = f"max({lx},min({ux},{lx}+({ux}-({lx}))*{e}))"
+    elif move == "tilt_up":
+        y = f"max({ly},min({uy},{uy}-({uy}-({ly}))*{e}))"
+    elif move == "tilt_down":
+        y = f"max({ly},min({uy},{ly}+({uy}-({ly}))*{e}))"
+    if shake:
+        x = f"max(0,min(iw-iw/zoom,({x})+8*sin(on*2.7)*exp(-on/7)))"
+        y = f"max(0,min(ih-ih/zoom,({y})+6*cos(on*3.1)*exp(-on/7)))"
+    return z, x, y
+
+
+def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, camera: str, shake: bool,
+            inputs: list[str], work: Path, tag: str) -> str:
+    """Filter graph from [0:v] (already timed) to [base]: the source framed by plan p."""
+    W, H = size
+    x, y, cw, ch = p["crop"]
+    x, y, cw, ch = int(x), int(y), _even(cw), _even(ch)
+    up = 1.5
+    z, xe, ye = _safe_camera(camera, frames, fps, p, shake)
+    if p["mode"] == "fill":
+        return (f"[0:v]crop={cw}:{ch}:{x}:{y},scale={_even(W * up)}:{_even(H * up)},setsar=1,"
+                f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={W}x{H}:fps={fps}[base]")
+    # fit: the window whole and smaller, on a blurred, dimmed copy of the picture
+    sw, shh = p["show"]
+    top = framing.fit_top(p, size)
+    left = (W - sw) // 2
+    r = int(min(sw, shh) * 0.035)
+    mask = work / f"pro_fitmask_{tag}.png"
+    m = Image.new("L", (sw, shh), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, sw - 1, shh - 1), r, fill=255)
+    m.save(mask)
+    shadow = work / f"pro_fitshadow_{tag}.png"
+    sd = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(sd).rounded_rectangle((left, top + 14, left + sw, top + shh + 14), r, fill=(0, 0, 0, 170))
+    sd.filter(ImageFilter.GaussianBlur(22)).save(shadow)
+    k = len([a for a in inputs if a == "-i"])
+    inputs += ["-loop", "1", "-i", str(mask), "-loop", "1", "-i", str(shadow)]
+    cx0, cy0, cx1, cy1 = src.get("content") or (0, 0, 1, 1)
+    sw0, sh0 = src["_wh"]
+    bx, by, bw, bh = int(cx0 * sw0), int(cy0 * sh0), _even((cx1 - cx0) * sw0), _even((cy1 - cy0) * sh0)
+    bgw, bgh = _even(W * 1.08), _even(H * 1.08)
+    fz = f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={sw}x{shh}:fps={fps}"
+    return (f"[0:v]split=2[sa][sb];"
+            f"[sa]crop={bw}:{bh}:{bx}:{by},scale={W // 4}:{H // 4}:force_original_aspect_ratio=increase,"
+            f"crop={W // 4}:{H // 4},gblur=sigma=7,scale={bgw}:{bgh},"
+            f"crop={W}:{H}:x='(iw-ow)*min(t/{max(frames / fps, 0.5):.2f},1)':y='(ih-oh)/2',"
+            f"eq=brightness=-0.13:saturation=0.8,setsar=1[bgv];"
+            f"[sb]crop={cw}:{ch}:{x}:{y},scale={_even(sw * up)}:{_even(shh * up)},setsar=1,{fz},format=rgba[fg0];"
+            f"[{k}:v]format=gray,scale={sw}:{shh}[mk];[fg0][mk]alphamerge[fg];"
+            f"[bgv][{k + 1}:v]overlay=0:0[bs];[bs][fg]overlay={left}:{top}:shortest=0[base]")
+
+
+def _card_overlay(beat: dict, n: int, size: tuple[int, int], fps: int, work: Path, used: set,
+                  bg_box: tuple | None) -> tuple[Path, int, int] | None:
+    """Settle-and-hold frames of the floating card, and where they go on the screen."""
+    W, H = size
+    spec = beat.get("card") or {}
+    q = str(spec.get("query") or "").strip()
+    if not q:
+        return None
+    subj = spec.get("subject") or beat.get("subject")
+    got = shotpick.pick(q, subj, work / f"pro_card{n:02d}", photos_only=True) or \
+        shotpick.pick(q, subj, work / f"pro_cardv{n:02d}")
+    if not got:
+        log(f"Card {n}: no picture for '{q}', showing the background only")
+        return None
+    if got["kind"] == "vid":
+        img = shotpick._frame_at(Path(got["src"]), float(got.get("start", 0.0)) + 0.6, 1600)
+    else:
+        img = Image.open(got["src"]).convert("RGB")
+    if img is None:
+        return None
+    content = got.get("content") or (0.0, 0.0, 1.0, 1.0)
+    cx0, cy0, cx1, cy1 = content
+    img = img.crop((int(cx0 * img.width), int(cy0 * img.height), int(cx1 * img.width), int(cy1 * img.height)))
+    style = str(spec.get("style") or "rounded")
+    pic = cards.crop_for(img, got.get("box"), style)
+    max_w, max_h = int(W * float(spec.get("width", 0.72))), int(H * 0.40)
+    head = None
+    if bg_box:                                   # where the background subject's head is
+        head = ((bg_box[0] + bg_box[2]) / 2, bg_box[1])
+    tail = None
+    cy = int(H * float(spec.get("y", 0.33)))
+    if style == "bubble" and head:
+        tail = (head[0] - W / 2, head[1] - cy)
+    card = cards.style_card(pic, style, max_w, max_h, str(spec.get("caption") or ""), seed=n, tail_to=tail)
+    d, mx, my = cards.settle_frames(card, fps, work / f"pro_cardfx{n:02d}")
+    fw, fh = card.width + 2 * mx, card.height + 2 * my
+    return d, int(W / 2 - fw / 2), int(cy - fh / 2)
+
+
+def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, length: float,
+                 tr_out: str, out: Path, work: Path, bright: bool = False, force_fit: bool = False) -> None:
+    w, h = size
+    beat = sh["beat"]
+    kind = beat.get("shot", "clip")
+    frames = max(int(round(length * fps)), 2)
+    prev = data.get("_prev_src")
+    if kind == "card" and beat.get("bg", "prev") == "prev" and prev:
+        src = dict(prev)
+        if src["kind"] == "vid":                 # the background carries on from the shot before
+            src["start"] = float(src.get("start", 0.0)) + float(data.get("_prev_len", 0.0))
+    else:
+        src = footage(beat, n, data["title"], size, work, keep=True)
+    src = _ensure_framing(src, beat.get("subject"))
+    src["_wh"] = _probe_wh(Path(src["src"]))
+    sh["src"] = src
+    camera = beat.get("camera") or ("drift" if kind in ("number", "compare", "text", "card") else "push_in")
+    shake = bool(beat.get("shake")) and camera == "punch"
+    p = framing.plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size, 1.06, force_fit)
+    sh["plan"] = {k: v for k, v in p.items() if k in ("mode", "zmax")}
+    inputs: list[str] = []
+    if src["kind"] == "vid":
+        st = min(float(src.get("start", 0.0)), max(float(src["dur"]) - length - 0.1, 0.0))
+        avail = max(float(src["dur"]) - st, 0.5)
+        slow = min(max(length / avail, 1.0), 1.6) if avail < length else 1.0
+        loop = avail * slow < length
+        inputs += [*(["-stream_loop", "-1"] if loop else []), "-ss", f"{st:.2f}", "-i", str(src["src"])]
+        pre = f"setpts={slow:.3f}*(PTS-STARTPTS),fps={fps}"
+    else:
+        inputs += ["-loop", "1", "-framerate", str(fps), "-i", str(src["src"])]
+        pre = "null"
+    graph = _framed(src, p, size, fps, frames, camera, shake, inputs, work, f"{n:02d}")
+    graph = graph.replace("[0:v]", f"[0:v]{pre},", 1)
+    chain = f"{graph};[base]{GRADE}{LOOKS.get(beat.get('look'), '')}{BRIGHTEN if bright else ''}"
+    if kind in ("number", "compare", "text"):
+        chain += ",gblur=sigma=5,eq=brightness=-0.12:saturation=0.85"
+    if kind == "card":
+        chain += ",gblur=sigma=6,eq=brightness=-0.17:saturation=0.75"
+    fx = _fx(sh["tr"], tr_out, length)
+    if fx:
+        chain += "," + ",".join(fx)
+    chain += "[bg0]"
+    last = "bg0"
+    overlays = []
+    if kind in ("number", "compare", "text"):
+        ov_dir, oy = _graphic_frames(beat, kind, size, fps, length, work / f"pro_gfx{n:02d}")
+        sh["gfx"] = (ov_dir, oy)
+        overlays.append((ov_dir, 0, oy))
+    if kind == "card":
+        bg_box = framing.on_screen(p, src.get("box"), *src["_wh"], src.get("content") or (0, 0, 1, 1), size)
+        got = _card_overlay(beat, n, size, fps, work, set(), bg_box)
+        if got:
+            overlays.append(got)
+    tag = beat.get("tag") or {}
+    if tag.get("title"):
+        overlays.append(cards.tag_frames(str(tag["title"]), str(tag.get("sub") or ""), size, fps,
+                                         work / f"pro_tag{n:02d}"))
+    for d, ox, oy in overlays:
+        k = len([a for a in inputs if a == "-i"])
+        inputs += ["-framerate", str(fps), "-i", str(d / "%04d.png")]
+        chain += f";[{last}][{k}:v]overlay={ox}:{oy}:eof_action=repeat[o{k}]"
+        last = f"o{k}"
+    chain += f";[{last}]format=yuv420p[v]"
+    script = work / f"pro_shot{n:02d}.txt"
+    script.write_text(chain, encoding="utf-8")
+    run(["ffmpeg", "-y", "-loglevel", "error", *inputs, "-filter_complex_script", str(script),
+         "-map", "[v]", "-an", "-frames:v", str(frames), "-r", str(fps), *ENC, str(out)])
+    if not bright and kind == "clip":
+        yv = _mean_luma(out)
+        if yv is not None and yv < DARK_YAVG:
+            log(f"Shot {n} is too dark (brightness {yv:.0f}), brightening it")
+            return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, True, force_fit)
+    # framecheck: is the whole subject on screen on the first and last frame?
+    fc = _framecheck(out, beat, length, size, work, n) if kind in ("clip", "photo") else None
+    if fc is not None:
+        sh["framecheck"] = {**fc, "mode": p["mode"], "refit": force_fit}
+        if fc["cut"] and not force_fit and src.get("box"):
+            log(f"Framecheck: shot {n} cuts the {beat.get('subject')} ({fc['where']}), showing it whole instead")
+            return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, True)
+    data["_prev_src"] = {k: v for k, v in src.items() if k != "_wh"}
+    data["_prev_len"] = length
+
+
+def _framecheck(seg: Path, beat: dict, length: float, size: tuple[int, int], work: Path, n: int) -> dict | None:
+    """First and last frame of a shot: the subject must not touch the top or bottom edge
+    (head or feet cut) or both sides. Frames are kept for the framecheck sheet."""
+    subj = beat.get("subject")
+    a, b = work / f"pro_fc{n:02d}a.jpg", work / f"pro_fc{n:02d}b.jpg"
+    for t, f in ((0.04, a), (max(length - 0.12, 0.05), b)):
+        run(["ffmpeg", "-y", "-loglevel", "error", "-ss", f"{t:.2f}", "-i", str(seg), "-frames:v", "1",
+             "-vf", "scale=540:-2", str(f)])
+    if not subj or not framing.available():
+        return {"cut": False, "where": "", "checked": False}
+    where = []
+    for f, name in ((a, "first"), (b, "last")):
+        if not f.exists():
+            continue
+        im = Image.open(f).convert("RGB")
+        kb = framing.keep_box(framing.find_boxes(im, str(subj)))
+        t = framing.touching(kb, 0.01)
+        if kb and (t["top"] or t["bottom"] or (t["left"] and t["right"])):
+            where.append(f"{name}: " + "+".join(k for k, v in t.items() if v))
+    return {"cut": bool(where), "where": "; ".join(where), "checked": True}
+
+
+def _framecheck_sheet(shots: list[dict], work: Path, out: Path) -> None:
+    """One picture: first and last frame of every shot, marked OK or CUT."""
+    rows = []
+    for n, sh in enumerate(shots):
+        a, b = work / f"pro_fc{n:02d}a.jpg", work / f"pro_fc{n:02d}b.jpg"
+        if not a.exists() or not b.exists():
+            continue
+        rows.append((n, sh, Image.open(a).convert("RGB"), Image.open(b).convert("RGB")))
+    if not rows:
+        return
+    tw, th = 270, 480
+    per = 4                                   # shots per sheet row (two frames each)
+    cols = per * 2
+    lines = math.ceil(len(rows) / per)
+    sheet = Image.new("RGB", (cols * tw, lines * (th + 40)), (18, 18, 18))
+    d = ImageDraw.Draw(sheet)
+    f = _font(22)
+    for i, (n, sh, fa, fb) in enumerate(rows):
+        x0, y0 = (i % per) * 2 * tw, (i // per) * (th + 40)
+        sheet.paste(fa.resize((tw, th)), (x0, y0 + 40))
+        sheet.paste(fb.resize((tw, th)), (x0 + tw, y0 + 40))
+        fc = sh.get("framecheck") or {}
+        ok = not fc.get("cut")
+        mode = (sh.get("plan") or {}).get("mode", "")
+        label = f"#{n} {sh['start']:.1f}s {mode}{' refit' if fc.get('refit') else ''} {'OK' if ok else 'CUT'}"
+        d.text((x0 + 8, y0 + 8), label, font=f, fill=(120, 230, 120) if ok else (255, 90, 90))
+    sheet.save(out, quality=86)
 
 def _mean_luma(path: Path) -> float | None:
     res = subprocess.run(["ffmpeg", "-hide_banner", "-i", str(path), "-vf",
@@ -1043,6 +1360,8 @@ def _sfx_events(shots: list[dict], pills: list[float]) -> list[tuple[str, float,
                 ev.append((kind, max(at - 0.2, 0), 1.0))
             else:
                 ev.append((kind, at, 1.0))
+        if b.get("shot") == "card" and not b.get("sfx"):
+            ev.append(("tick", at + 0.05, 0.8))
         if b.get("shot") in ("number", "compare", "text") and "pop" not in (b.get("sfx") or []):
             ev.append(("pop", at + 0.1, 0.7))
     for p in pills:
@@ -1179,7 +1498,8 @@ def _mix_audio(voice: Path, sfx: Path, track: Path | None, total: float, vol: fl
               f"linear=true")
     else:
         ln = "loudnorm=I=-14:TP=-1.5:LRA=11"
-    run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw.name, "-af", f"{ln},{afade}", "-ar", str(SR),
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw.name, "-af",
+         f"{ln},aresample={SR},alimiter=limit=0.75:attack=2:release=60:level=false,{afade}", "-ar", str(SR),
          "-c:a", "pcm_s16le", out.name], cwd=work)
     return out
 
