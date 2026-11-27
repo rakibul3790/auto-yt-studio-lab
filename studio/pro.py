@@ -136,6 +136,8 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
             if f.name.startswith(f"pro_{voice_tag}_") and not (work / f.name).exists():
                 shutil.copy(f, work / f.name)
         log(f"Voice lines reused from {cache_dir}")
+    if eleven and data.get("voice_patch"):
+        _voice_patch(data, cfg, work, voice_tag, base_rate, base_pitch)
     if eleven:
         _eleven_whole(data, cfg, work, voice_tag, base_rate, base_pitch)
     n_sc = len(data["scenes"])
@@ -388,6 +390,66 @@ def _eleven_whole(data: dict, cfg: dict, work: Path, voice_tag: str, base_rate: 
     log(f"ElevenLabs: whole script in one read ({dur:.1f}s), cut into {len(scenes)} lines")
 
 
+def _voice_patch(data: dict, cfg: dict, work: Path, voice_tag: str, base_rate: int, base_pitch: str) -> None:
+    """Lab: keep the paid whole read up to a scene and read only the new ending again
+    (one short ElevenLabs v3 call), joined in the pause before that scene. The word times
+    of the joined read are taken again, so captions and graphics follow the new ending."""
+    p = data.get("voice_patch") or {}
+    i0 = int(p.get("from_scene", len(data["scenes"]) - 1))
+    rtag = f"r{base_rate:+d}{re.sub(r'[^0-9+-]', '', base_pitch)}"
+    whole = work / f"pro_{voice_tag}_{rtag}_whole.mp3"
+    meta = whole.with_suffix(".json")
+    flag = work / "voice_patch.done"
+    if flag.exists() or not (whole.exists() and meta.exists()):
+        return
+    scenes = data["scenes"]
+    texts = [str(sc.get("text", "")).strip() for sc in scenes]
+    old_dur, old_wl = json.loads(meta.read_text(encoding="utf-8"))
+    words = " ".join(texts).split()
+    if len(old_wl) == len(words) and old_wl and old_wl[-1][2] == words[-1]:
+        log("Voice: the cached read already has this ending, nothing to read again")
+        return
+    k0 = sum(len(t.split()) for t in texts[:i0])
+    prev_end, start = float(old_wl[k0 - 1][1]), float(old_wl[k0][0])
+    cut = prev_end + max(start - prev_end, 0.0) * 0.5
+    say = " ".join(str(sc.get("say") or sc.get("text", "")).strip() for sc in scenes[i0:])
+    ch = cfg["channel"]
+    take = work / "pro_patch_take.mp3"
+    if not take.exists():
+        tts.eleven_v3(say, str(ch["voice"]).split(":", 1)[1], ch, take)
+    log(f"ElevenLabs v3: new ending read from scene {i0} ({len(say)} characters billed): {say}")
+    # the new take without its own silence at the start and end
+    clean = work / "pro_patch_clean.wav"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(take), "-af",
+         "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.03,"
+         "areverse,silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.12,areverse",
+         "-ar", "44100", "-ac", "1", str(clean)])
+
+    def _mean_db(args: list[str]) -> float | None:
+        r = subprocess.run(["ffmpeg", "-hide_banner", *args, "-af", "volumedetect", "-f", "null", "-"],
+                           capture_output=True, text=True)
+        m = re.search(r"mean_volume:\s*(-?[\d.]+) dB", r.stderr)
+        return float(m.group(1)) if m else None
+    ref = _mean_db(["-ss", f"{max(start - 0.05, 0):.3f}", "-i", str(whole)])
+    new = _mean_db(["-i", str(clean)])
+    gain = max(-6.0, min(6.0, (ref - new))) if ref is not None and new is not None else 0.0
+    gap = max(start - 0.04 - cut, 0.05)
+    joined = work / "pro_patch_joined.mp3"
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(whole), "-i", str(clean), "-filter_complex",
+         f"[0:a]atrim=0:{cut:.3f},aresample=44100,aformat=channel_layouts=mono,"
+         f"afade=t=out:st={max(cut - 0.08, 0):.3f}:d=0.08,apad=pad_dur={gap:.3f}[a];"
+         f"[1:a]aresample=44100,aformat=channel_layouts=mono,volume={gain:.2f}dB,afade=t=in:d=0.01[b];"
+         f"[a][b]concat=n=2:v=0:a=1[o]", "-map", "[o]", "-c:a", "libmp3lame", "-q:a", "2", str(joined)])
+    shutil.move(str(joined), str(whole))
+    dur = tts.media_duration(whole)
+    wl = tts.align_words(" ".join(texts), tts.heard_words(whole), dur)
+    meta.write_text(json.dumps([dur, wl], ensure_ascii=False), encoding="utf-8")
+    for f in work.glob(f"pro_{voice_tag}_{rtag}_[0-9]*.*"):     # the per-line cuts are made again
+        f.unlink()
+    flag.write_text(say, encoding="utf-8")
+    log(f"Voice: old read kept to {cut:.2f}s, new ending joined ({gain:+.1f} dB), now {dur:.2f}s")
+
+
 def _pct(v) -> int:
     m = re.match(r"\s*([+-]?\d+)", str(v or "0"))
     return int(m.group(1)) if m else 0
@@ -407,7 +469,7 @@ def _shots(scenes: list[dict], scene_t: list[tuple[float, float]], words: list[d
             tr = b.get("transition", "cut") if raw else "cut"
             tr = tr if tr in TRANSITION_LEN else "cut"
             raw.append({"start": max(start, 0.0), "beat": b, "scene": i, "tr": tr,
-                        "wts": [x["t0"] for x in sw]})
+                        "wts": [x["t0"] for x in sw], "wte": [x["t1"] for x in sw]})
     raw[0]["start"] = 0.0
     # drop shots that would be too short to read
     shots = [raw[0]]
@@ -993,8 +1055,12 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     last = "bg0"
     overlays = []
     if kind in ("number", "compare", "text"):
-        ov_dir, oy = _graphic_frames(beat, kind, size, fps, length, work / f"pro_gfx{n:02d}", _marks(sh))
+        mk = _marks(sh)
+        ov_dir, oy = _graphic_frames(beat, kind, size, fps, length, work / f"pro_gfx{n:02d}", mk)
         sh["gfx"] = (ov_dir, oy)
+        if mk.get("keys") or mk.get("left1") is not None:
+            sh["sfx_times"] = [(k, sh.get("b", sh["start"]) + t, g) for k, t, g in
+                               _gfx_sounds(beat, kind, mk, fps, length)]
         overlays.append((ov_dir, 0, oy))
     if kind == "card":
         bg_box = framing.on_screen(p, src.get("box"), *src["_wh"], src.get("content") or (0, 0, 1, 1), size)
@@ -1044,8 +1110,60 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
             shotpick.BANNED.add(src["id"])
             sh["beat"] = {**beat, "_repick": 1}
             return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
+    if beat.get("hook"):
+        _hook_twist(out, size, fps, frames, work, n, beat.get("hook"))
     data["_prev_src"] = {k: v for k, v in src.items() if k != "_wh"}
     data["_prev_len"] = length
+
+
+def _hook_twist(seg: Path, size: tuple[int, int], fps: int, frames: int, work: Path, n: int, spec) -> None:
+    """The opening snaps in like an owl's head: the picture starts turned and zoomed in,
+    whips round to straight with one small overshoot, motion-blurred, through a short white
+    flash. Only the first ~0.6 s are touched; the subject stays whole once it settles."""
+    w, h = size
+    spec = spec if isinstance(spec, dict) else {}
+    a0 = float(spec.get("angle", -0.38))                  # radians at the first frame
+    k = min(int(float(spec.get("seconds", 0.6)) * fps), frames - 1)
+    d = work / f"pro_hook{n:02d}"
+    d.mkdir(parents=True, exist_ok=True)
+    for old in d.glob("*.png"):
+        old.unlink()
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(seg), "-frames:v", str(k), str(d / "src%04d.png")])
+
+    T = k / fps
+
+    def ang(t: float) -> float:                           # fades to exactly straight by T
+        return a0 * math.exp(-t * 6.0) * math.cos(t * 10.0) * max(1 - t / T, 0.0)
+
+    def zoom(t: float, a: float) -> float:                # and exactly to the shot's own zoom
+        need = math.cos(abs(a)) + (h / w) * math.sin(abs(a)) + 0.02
+        return max(1.0 + 0.55 * math.exp(-t * 5.0) * max(1 - t / T, 0.0) ** 2, need)
+
+    for i in range(k):
+        img = Image.open(d / f"src{i + 1:04d}.png").convert("RGB")
+        acc = None
+        subs = 4
+        for j in range(subs):                             # motion blur: the turn within one frame
+            t = (i + j / subs) / fps
+            a = ang(t)
+            z = zoom(t, a)
+            big = img.resize((int(w * z) // 2 * 2, int(h * z) // 2 * 2), Image.BICUBIC)
+            rot = big.rotate(math.degrees(a), resample=Image.BICUBIC)
+            x0, y0 = (rot.width - w) // 2, (rot.height - h) // 2
+            fr = np.asarray(rot.crop((x0, y0, x0 + w, y0 + h)), np.float32)
+            acc = fr if acc is None else acc + fr
+        fr = acc / subs
+        flash = max(0.0, 0.6 - i * 0.2)                 # white flash on the first frames
+        if flash > 0:
+            fr = fr * (1 - flash) + 255 * flash
+        Image.fromarray(np.clip(fr, 0, 255).astype(np.uint8)).save(d / f"{i:04d}.png", compress_level=1)
+    tmp = seg.with_name(seg.stem + "_hook.mp4")
+    run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(fps), "-i", str(d / "%04d.png"), "-i", str(seg),
+         "-filter_complex", f"[0:v]format=yuv420p,setsar=1[a];[1:v]trim=start_frame={k},setpts=PTS-STARTPTS,"
+         f"format=yuv420p,setsar=1[b];[a][b]concat=n=2:v=1:a=0[v]", "-map", "[v]", "-an",
+         "-frames:v", str(frames), "-r", str(fps), *ENC, str(tmp)])
+    shutil.move(str(tmp), str(seg))
+    log(f"Shot {n}: hook twist on the first {k} frames")
 
 
 def _gen_image(beat: dict, data: dict) -> str | None:
@@ -1095,6 +1213,12 @@ def _marks(sh: dict) -> dict:
     if not wts:
         return {}
     at = lambda k: max(wts[min(int(k), len(wts) - 1)] - sh.get("b", sh["start"]), 0.0)
+    wte = sh.get("wte") or wts
+    b0 = sh.get("b", sh["start"])
+
+    def ref(k, edge="start") -> float:
+        lst = wte if edge == "end" else wts
+        return max(lst[min(int(k), len(lst) - 1)] - b0, 0.0)
     m = {}
     rk = ((beat.get("compare") or {}).get("right") or {}).get("at_word")
     if rk is not None:
@@ -1102,6 +1226,15 @@ def _marks(sh: dict) -> dict:
     ek = (beat.get("number") or {}).get("end_word")
     if ek is not None:
         m["end"] = at(ek)
+    keys = (beat.get("number") or {}).get("keys")
+    if keys:      # [[word, value, "start"|"end"], ...]: the count is at that value on that word
+        m["keys"] = sorted((ref(k[0], k[2] if len(k) > 2 else "start"), float(k[1])) for k in keys)
+        m["end"] = m["keys"][-1][0]
+    for side in ("left", "right"):
+        sp = (beat.get("compare") or {}).get(side) or {}
+        if sp.get("land_word") is not None:
+            m[side + "0"] = ref(sp.get("from_word", 0))
+            m[side + "1"] = ref(sp["land_word"], sp.get("land_edge", "end"))
     return m
 
 
@@ -1206,7 +1339,7 @@ def _graphic_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, leng
     rw, rh, oy = w, int(h * 0.38), int(h * 0.19)          # region 1080x730 at y=365
     if kind == "compare":
         rw, rh, oy = w, int(h * 0.42), int(h * 0.13)      # taller: the bone stacks
-    last = max([v for v in marks.values() if v is not None] or [0.0])
+    last = max([v for v in marks.values() if isinstance(v, (int, float))] or [0.0])
     anim = min(length, max(1.6, last + 1.3))
     n = max(int(anim * fps), 2)
     for old in out_dir.glob("*.png"):
@@ -1254,13 +1387,10 @@ def _draw_number(img: Image.Image, spec: dict, t: float, marks: dict | None = No
     to = float(spec.get("to", 0) or 0)
     frm = float(spec.get("from", 0) or 0)
     dec = int(spec.get("decimals", 0) or (0 if float(to).is_integer() else 1))
-    te = float((marks or {}).get("end") or 1.17)         # the count lands on this spoken word
-    te = min(max(te, 0.6), 3.2)
-    u = min(max((t - 0.12) / (te - 0.12), 0.0), 1.0)
-    k = 1 - (1 - u) ** 2.2                               # steady, then settles on the word
+    val, land = _num_value(spec, t, marks)
+    k = (val - frm) / (to - frm) if to != frm else 1.0
     if spec.get("dial"):
-        _draw_dial(img, spec, k, t)
-    val = frm + (to - frm) * k
+        _draw_dial(img, spec, k, t, land)
     num = f"{spec.get('prefix', '')}{_fmt(val, dec)}"
     final = f"{spec.get('prefix', '')}{_fmt(to, dec)}"
     suffix = str(spec.get("suffix", "")).upper()
@@ -1291,10 +1421,44 @@ def _draw_number(img: Image.Image, spec: dict, t: float, marks: dict | None = No
     by = cy + big.size * 0.48
     if bw > 4:
         d.rounded_rectangle(((rw - bw) / 2, by, (rw + bw) / 2, by + 14), radius=7, fill=YELLOW + (255,))
-    _scaled(img, layer, _scale_curve(t), min(1.0, t / 0.12))
+    pulse = 0.0
+    if land is not None and t >= land:                   # a small beat when the count lands
+        q = (t - land) / 0.32
+        pulse = 0.10 * math.sin(math.pi * q) if q < 1 else 0.0
+    _scaled(img, layer, _scale_curve(t) + pulse, min(1.0, t / 0.12))
 
 
-def _draw_dial(img: Image.Image, spec: dict, k: float, t: float) -> None:
+def _num_value(spec: dict, t: float, marks: dict | None = None) -> tuple[float, float | None]:
+    """The count shown at time t, and when it lands. With word keys the count follows the
+    voice: eased in on the first word, steady between the words, eased out on the last."""
+    to = float(spec.get("to", 0) or 0)
+    frm = float(spec.get("from", 0) or 0)
+    keys = (marks or {}).get("keys")
+    if keys:
+        pts = [(float(a), float(v)) for a, v in keys]
+        if t <= pts[0][0]:
+            return pts[0][1], pts[-1][0]
+        if t >= pts[-1][0]:
+            return pts[-1][1], pts[-1][0]
+        for j in range(len(pts) - 1):
+            (a, va), (b, vb) = pts[j], pts[j + 1]
+            if a <= t <= b:
+                u = (t - a) / max(b - a, 1e-3)
+                if len(pts) == 2:
+                    u = u * u * (3 - 2 * u)
+                elif j == 0:
+                    u = u ** 1.7                          # eases in
+                elif j == len(pts) - 2:
+                    u = 1 - (1 - u) ** 1.7                # settles on the word
+                return va + (vb - va) * u, pts[-1][0]
+    te = float((marks or {}).get("end") or 1.17)         # the count lands on this spoken word
+    te = min(max(te, 0.6), 3.2)
+    u = min(max((t - 0.12) / (te - 0.12), 0.0), 1.0)
+    k = 1 - (1 - u) ** 2.2                               # steady, then settles on the word
+    return frm + (to - frm) * k, te
+
+
+def _draw_dial(img: Image.Image, spec: dict, k: float, t: float, land: float | None = None) -> None:
     """A ring that sweeps round with the count (degrees), with a glowing head."""
     rw, rh = img.size
     to = float(spec.get("to", 0) or 0)
@@ -1315,6 +1479,11 @@ def _draw_dial(img: Image.Image, spec: dict, k: float, t: float) -> None:
         ang = math.radians(-90 + sweep)
         hx, hy = cx + r * math.cos(ang), cy + r * math.sin(ang)
         d.ellipse((hx - 19, hy - 19, hx + 19, hy + 19), fill=(255, 255, 255, int(255 * a)))
+        if land is not None and 0 <= t - land < 0.45:   # the ring rings out when the count lands
+            q = (t - land) / 0.45
+            rr = r * (1 + 0.22 * q)
+            d.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), outline=YELLOW + (int(200 * (1 - q)),),
+                      width=max(int(14 * (1 - q)), 2))
         # tick marks every 90 degrees
     for q in range(4):
         ang = math.radians(-90 + 90 * q)
@@ -1351,12 +1520,11 @@ def _draw_stack(img: Image.Image, spec: dict, t: float, marks: dict | None = Non
     base, roof = rh * 0.84, rh * 0.22
     pitch = (base - roof) / top_v
     bh, bw = pitch * 0.74, rw * 0.21
-    step = min(0.075, 1.0 / max(top_v, 1))
-    tr = float(marks.get("right") if marks.get("right") is not None else 0.95) - 0.08
+    (lt0, lstep), (rt0, rstep), badge_t = _stack_times(spec, marks)
     vf = _font(86)
-    cols = ((left, lv, rw * 0.28, YELLOW, 0.10), (right, rv, rw * 0.72, (240, 240, 240), max(tr, 0.4)))
+    cols = ((left, lv, rw * 0.28, YELLOW, lt0, lstep), (right, rv, rw * 0.72, (240, 240, 240), rt0, rstep))
     done_at = 0.0
-    for item, v, cx, col, t0 in cols:
+    for item, v, cx, col, t0, step in cols:
         shown = 0
         for i in range(v):
             ti = t0 + i * step
@@ -1371,8 +1539,16 @@ def _draw_stack(img: Image.Image, spec: dict, t: float, marks: dict | None = Non
         if shown:
             ytop = base - pitch * shown
             txt = str(shown)
-            d.text((cx + 4, ytop - 52 + 5), txt, font=vf, fill=(0, 0, 0, 120), anchor="mm")
-            d.text((cx, ytop - 52), txt, font=vf, fill=col + (255,), anchor="mm")
+            land = t0 + (v - 1) * step + 0.14             # the last bone has dropped in
+            q = (t - land) / 0.3
+            f = _font(86 * (1 + 0.28 * math.sin(math.pi * q))) if 0 <= q < 1 else vf
+            if shown == v and 0 <= q < 1:                 # the full count glows for a moment
+                gl = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+                ImageDraw.Draw(gl).rounded_rectangle((cx - bw * 0.62, ytop - 10, cx + bw * 0.62, base + 6),
+                                                     radius=30, fill=col + (int(110 * (1 - q)),))
+                layer.alpha_composite(gl.filter(ImageFilter.GaussianBlur(22)))
+            d.text((cx + 4, ytop - 52 + 5), txt, font=f, fill=(0, 0, 0, 120), anchor="mm")
+            d.text((cx, ytop - 52), txt, font=f, fill=col + (255,), anchor="mm")
         lab = str(item.get("label", "")).upper()
         if lab and t >= t0 - 0.05:
             f = _fit(lab, bw * 1.6, 58)
@@ -1382,8 +1558,10 @@ def _draw_stack(img: Image.Image, spec: dict, t: float, marks: dict | None = Non
     if unit:
         _spaced(d, (rw / 2, rh * 0.07), unit, _font(54), (255, 255, 255, 230), 0.12)
     badge = str(spec.get("badge", "")).upper()
-    if badge and t > done_at + 0.12:
-        s = _scale_curve(t, done_at + 0.12, 0.3)
+    if badge_t is None:
+        badge_t = done_at + 0.12
+    if badge and t > badge_t:
+        s = _scale_curve(t, badge_t, 0.3)
         bf = _font(92)
         tw = bf.getlength(badge)
         bl = Image.new("RGBA", (int(tw + 90), 150), (0, 0, 0, 0))
@@ -1396,6 +1574,61 @@ def _draw_stack(img: Image.Image, spec: dict, t: float, marks: dict | None = Non
         ymid = base - pitch * (lv + rv) / 2
         layer.alpha_composite(bl, (int(rw * 0.5 - bl.width / 2), int(ymid - bl.height / 2)))
     _scaled(img, layer, 1.0, min(1.0, t / 0.15))
+
+
+def _stack_times(spec: dict, marks: dict | None) -> tuple[tuple[float, float], tuple[float, float], float | None]:
+    """When each column of bones starts and how fast it stacks, and when the badge pops.
+    With word marks the last bone of a column drops in exactly on its spoken word."""
+    marks = marks or {}
+    lv = int((spec.get("left") or {}).get("value", 1) or 1)
+    rv = int((spec.get("right") or {}).get("value", 1) or 1)
+    out, badge = [], None
+    for side, v in (("left", lv), ("right", rv)):
+        a, b = marks.get(side + "0"), marks.get(side + "1")
+        if a is not None and b is not None:
+            step = max((b - 0.14 - a) / max(v - 1, 1), 0.03)
+            out.append((a, step))
+            badge = b + 0.04
+        else:
+            out.append(None)
+    step0 = min(0.075, 1.0 / max(lv, rv, 1))
+    if out[0] is None:
+        out[0] = (0.10, step0)
+    if out[1] is None:
+        tr = float(marks.get("right") if marks.get("right") is not None else 0.95) - 0.08
+        out[1] = (max(tr, 0.4), step0)
+    return out[0], out[1], badge
+
+
+def _gfx_sounds(beat: dict, kind: str, marks: dict, fps: int, length: float) -> list[tuple[str, float, float]]:
+    """Sounds that follow the graphic itself (times from the start of the shot): a tick each
+    time the count passes a step or a bone drops in, a ding when it lands, a thud on the badge."""
+    ev: list[tuple[str, float, float]] = []
+    if kind == "number":
+        spec = beat.get("number") or {}
+        frm, to = float(spec.get("from", 0) or 0), float(spec.get("to", 0) or 0)
+        steps = 9
+        last, land = 0, None
+        for i in range(int(length * fps)):
+            v, land = _num_value(spec, i / fps, marks)
+            q = int((v - frm) / (to - frm) * steps + 1e-6) if to != frm else steps
+            if q > last and q < steps:
+                ev.append(("tick", i / fps, 0.6))
+            last = max(last, q)
+        if land is not None:
+            ev.append(("ding", land, 0.6))
+    elif kind == "compare" and str((beat.get("compare") or {}).get("style", "")) == "stack":
+        spec = beat.get("compare") or {}
+        (lt0, ls), (rt0, rs), badge = _stack_times(spec, marks)
+        lv = int((spec.get("left") or {}).get("value", 1) or 1)
+        rv = int((spec.get("right") or {}).get("value", 1) or 1)
+        for t0, st, v in ((lt0, ls, lv), (rt0, rs, rv)):
+            for i in range(v):
+                ev.append(("tick", t0 + i * st + 0.07, 0.55))
+        ev.append(("ding", lt0 + (lv - 1) * ls + 0.14, 0.5))
+        if spec.get("badge"):
+            ev.append(("thud", badge if badge is not None else rt0 + rv * rs + 0.12, 0.9))
+    return ev
 
 
 def _spaced(d: ImageDraw.ImageDraw, center: tuple[float, float], text: str, font, fill, track: float = 0.08) -> None:
@@ -1673,6 +1906,8 @@ def _sfx_events(shots: list[dict], pills: list[float]) -> list[tuple[str, float,
         for kind in b.get("sfx") or []:
             if kind == "riser":
                 ev.append(("riser", max(at - 1.3, 0.0), 0.9))
+            elif kind == "tick" and b.get("shot") in ("number", "compare") and s.get("sfx_times"):
+                ev.extend(s["sfx_times"])
             elif kind == "tick" and b.get("shot") in ("number", "compare"):
                 for m in range(14):
                     ev.append(("tick", at + 0.15 + m * 0.07, 0.7))

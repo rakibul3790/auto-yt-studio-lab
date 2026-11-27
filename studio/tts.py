@@ -415,7 +415,16 @@ def heard_words(path: Path) -> list[Word]:
             log(f"Word timing model failed to load ({type(e).__name__}: {e}): word times are estimated")
             return []
     try:
-        segs, _ = _WHISPER.transcribe(str(path), word_timestamps=True, beam_size=5, language="en")
+        # scripts write numbers as words ("two hundred and seventy"); without digits the model
+        # writes them the same way, so every spoken word gets its own time
+        sup = [-1]
+        try:
+            tok = _WHISPER.hf_tokenizer
+            sup += [i for i in range(tok.get_vocab_size()) if any(c.isdigit() for c in tok.decode([i]))]
+        except Exception:
+            pass
+        segs, _ = _WHISPER.transcribe(str(path), word_timestamps=True, beam_size=5, language="en",
+                                      suppress_tokens=sup)
         return [(float(w.start), float(w.end), w.word.strip()) for sg in segs for w in sg.words]
     except Exception as e:          # never pay for the voice twice over a timing problem
         log(f"Word timing failed ({type(e).__name__}: {e}): word times are estimated")
