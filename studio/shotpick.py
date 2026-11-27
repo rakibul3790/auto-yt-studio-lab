@@ -224,7 +224,7 @@ def _framing(imgs: list, subject: str | None) -> dict:
         if info["box"] and imgs:
             iw, ih = imgs[0].size
             c = content
-            info["fits"] = framing.fits_fill(info["box"], (c[2] - c[0]) * iw, (c[3] - c[1]) * ih)
+            info["fits"] = bool(framing.fits_fill(info["box"], (c[2] - c[0]) * iw, (c[3] - c[1]) * ih))
     return info
 
 

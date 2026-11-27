@@ -50,19 +50,16 @@
     },
     {
      "at_word": 6,
-     "shot": "clip",
+     "shot": "photo",
      "query": "owl perched branch",
      "subject": "owl",
-     "alt_query": [
-      "owl sitting on branch",
-      "owl perched tree"
-     ],
      "camera": "push_in",
      "transition": "cut",
      "tag": {
       "title": "Owl",
       "sub": "Every continent except Antarctica"
-     }
+     },
+     "src": "assets/gen/owl-head/owl-night.jpg"
     }
    ]
   },
@@ -213,25 +210,15 @@
    "beats": [
     {
      "at_word": 0,
-     "shot": "photo",
+     "shot": "compare",
+     "bg": "new",
      "src": "assets/gen/owl-head/neck-skeleton.jpg",
      "query": "owl skeleton",
-     "subject": "owl",
-     "camera": "tilt_up",
-     "transition": "cut",
-     "sfx": [
-      "thud"
-     ]
-    },
-    {
-     "at_word": 7,
-     "shot": "compare",
-     "bg": "prev",
      "subject": "owl",
      "camera": "drift",
      "transition": "cut",
      "sfx": [
-      "tick"
+      "thud"
      ],
      "compare": {
       "style": "stack",
@@ -355,8 +342,7 @@
    "assets/gen/owl-head/owl-look-back.jpg",
    "assets/gen/owl-head/barn-owl-post.jpg",
    "assets/gen/owl-head/snowy-owl.jpg",
-   "assets/gen/owl-head/burrowing-owl.jpg",
-   "assets/gen/owl-head/owl-night.jpg"
+   "assets/gen/owl-head/burrowing-owl.jpg"
   ]
  }
 }

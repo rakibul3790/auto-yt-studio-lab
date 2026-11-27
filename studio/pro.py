@@ -49,7 +49,7 @@ ENC = ["-c:v", "libx264", "-preset", "veryfast", "-crf", "17", "-pix_fmt", "yuv4
 
 TRANSITION_LEN = {"cut": 0.0, "whip_left": 0.22, "whip_right": 0.22, "zoom": 0.30, "slide_up": 0.26,
                   "flash": 0.30, "glitch": 0.20, "fade": 0.45}
-XFADE = {"whip_left": "slideleft", "whip_right": "slideright", "zoom": "zoomin", "slide_up": "slideup",
+XFADE = {"whip_left": "slideleft", "whip_right": "slideright", "zoom": "circleopen", "slide_up": "slideup",
          "flash": "fadewhite", "glitch": "pixelize", "fade": "fade"}
 MOOD_TRACKS = {
     "mysterious": ["investigations.mp3", "sneaky-snitch.mp3", "hitman.mp3", "spy-glass.mp3", "sneaky-adventure.mp3"],
