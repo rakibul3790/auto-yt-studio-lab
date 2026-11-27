@@ -82,7 +82,7 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     data = director.plan(data)
     data = _feelings(data)
     data["_keep"] = str(vcfg.get("pro_framing", "")).lower() == "keep"
-    data["_fit_style"] = str(vcfg.get("pro_fit_style", "blend")).lower()
+    data["_fit_style"] = str(vcfg.get("pro_fit_style", "box")).lower()
     (work / "plan.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     visuals.reset_clips()
     _USED.clear()
@@ -798,7 +798,7 @@ def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, ca
     sw, shh = p["show"]
     top = framing.fit_top(p, size)
     left = (W - sw) // 2
-    if p.get("style", "blend") == "blend":
+    if p.get("style", "box") == "blend":
         return _framed_blend(src, p, size, fps, frames, z, xe, ye, inputs, work, tag, sw, shh, top, left)
     r = int(min(sw, shh) * 0.035)
     mask = work / f"pro_fitmask_{tag}.png"
@@ -936,10 +936,10 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     sh["src"] = src
     camera = beat.get("camera") or ("drift" if kind in ("number", "compare", "text", "card") else "push_in")
     shake = bool(beat.get("shake")) and camera == "punch"
-    blend = data.get("_fit_style", "blend") == "blend"
+    blend = data.get("_fit_style", "box") == "blend"
     p = framing.plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size, 1.06, force_fit,
                      1.22 if blend else 1.0)
-    p["style"] = data.get("_fit_style", "blend")
+    p["style"] = data.get("_fit_style", "box")
     sh["plan"] = {k: v for k, v in p.items() if k in ("mode", "zmax")}
     inputs: list[str] = []
     if src["kind"] == "vid":

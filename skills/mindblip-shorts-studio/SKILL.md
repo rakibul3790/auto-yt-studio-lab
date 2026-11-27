@@ -69,7 +69,8 @@ Add to the script:
 | `compare` | `{"left": {"label": "1 SPIN", "value": 243}, "right": {"label": "1 YEAR", "value": 225}, "unit": "days"}` | for `shot: compare`: two bars that grow |
 | `text` | 1-4 words, caps | for `shot: text`: a kinetic title card ("IT GETS WEIRDER") |
 | `card` | `{"style": "polaroid", "query": "dolphin swimming underwater", "subject": "dolphin", "caption": "Dolphin"}` | for `shot: card`: the picture on the card is a Pixabay photo of `query`. Styles: `polaroid`, `print`, `rounded`, `torn`, `letterbox`, `bubble`. `caption` only on `polaroid` (1-2 words, handwritten). |
-| `bg` | `prev` or `new` | for `shot: card`: `prev` keeps the previous shot's footage running (dimmed, blurred) behind the card; `new` uses footage of the beat's own `query`. |
+| `alt_query` | list of 2-4 word queries | other wordings to try when the footage for `query` shows no subject (section 6b). |
+| `bg` | `prev` or `new` | for `shot: card` (and `number`/`compare`/`text`): `prev` keeps the previous shot's footage running (dimmed, blurred) behind the card; `new` uses footage of the beat's own `query`. |
 | `tag` | `{"title": "Sloth", "sub": "Rainforests of Central and South America"}` | a lower-third name tag (yellow bar, name, where it lives). Once per Short, on the 2nd-4th beat, on a clip that shows the subject whole. |
 
 Keep the scene's `visual`, `subject`, `on_screen` and `highlight` fields too: they are the
@@ -219,9 +220,21 @@ Rakib's rule: **never crop the subject's head, feet, tail or claws.** The lab re
   margin, and the camera move is clamped so the subject never leaves the frame (zoom at most
   about 1.08x).
 - **fit:** when it does not fit (a wide photo of a long animal), the whole picture is shown
-  smaller, never cropped, over a blurred, dimmed copy of itself.
-- **Framecheck:** the first and last frame of every clip shot are checked again; a shot whose
-  subject touches the top, the bottom or both sides is re-rendered in fit. The run writes a
+  smaller, never cropped, as a rounded-corner panel with a soft shadow over a blurred,
+  dimmed copy of itself (`config.yaml` → `video.pro_fit_style: box`). This is the format
+  Rakib chose (27 Nov 2026, after sloth v3): always use it.
+- **Never the "blend" fit** (`pro_fit_style: blend`: the picture full width with soft edges
+  fading into a smeared blur of its own colours, no panel). Rakib saw it in sloth v3 and said
+  it looks bad and the earlier box format was better.
+- **Framecheck:** the first and last frame of every clip shot are checked again, with a wide
+  net (every box close to the best one, so a second animal or a partly found body counts). A
+  shot whose subject touches an edge is re-rendered in fit; if it is still cut there, the
+  source itself cuts the subject, so that clip is dropped and other footage is chosen.
+- **No subject, other wording:** when a beat's footage has no subject in it, the renderer
+  tries the beat's `alt_query` list, then the subject alone, before settling for scenery.
+  Give rare actions an `alt_query` (e.g. `["sloth in water", "sloth swimming river"]`).
+- **Graphics over the subject:** a `number`, `compare` or `text` beat with `bg: prev` keeps
+  the previous shot (the whole subject) running behind the graphic. The run writes a
   `*.framecheck.jpg` sheet next to the video. Look at it, and at one frame per second of the
   video, before showing Rakib anything.
 

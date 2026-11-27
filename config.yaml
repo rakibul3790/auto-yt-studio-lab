@@ -84,6 +84,7 @@ video:
   pro_banned_sfx: [pop, glitch, whoosh, swish]   # এই সাউন্ড বাজবে না (গ্রাফিক আর ক্যাপশনের অটো পপও না)
   pro_banned_transitions: [glitch]               # এই ট্রানজিশন হলে সাধারণ কাট হবে
   pro_framing: keep            # ল্যাব: বিষয়ের পুরো শরীর পর্দায় (studio/framing.py), ভাসমান কার্ড, ফ্রেমচেক। আগের ক্রপে ফিরতে: cover
+  pro_fit_style: box             # ল্যাব: পুরো প্রাণী না আঁটলে গোল কোণার বক্স (v2 স্টাইল); blend = নরম কিনারা (v3, বাতিল)
   clips: true                # Pixabay থেকে ছবির বদলে ছোট ভিডিও ক্লিপ (না পেলে ছবি)
   cut_after_seconds: 5.5     # এর চেয়ে লম্বা দৃশ্যে মাঝখানে নতুন ক্লিপে কাট
   transitions: true          # দৃশ্য বদলের সময় স্লাইড/জুম ট্রানজিশন আর হুশ শব্দ
