@@ -962,8 +962,14 @@ def _card_overlay(beat: dict, n: int, size: tuple[int, int], fps: int, work: Pat
     if not q:
         return None
     subj = spec.get("subject") or beat.get("subject")
-    got = shotpick.pick(q, subj, work / f"pro_card{n:02d}", photos_only=True) or \
-        shotpick.pick(q, subj, work / f"pro_cardv{n:02d}")
+    ready = str(spec.get("src") or "").strip()
+    if ready and Path(ready).is_file():          # a picture made for this card (assets/gen/...)
+        log(f"Card {n}: using the prepared picture {ready}")
+        box = spec.get("box")
+        got = {"kind": "img", "src": Path(ready), "box": tuple(box) if box else None}
+    else:
+        got = shotpick.pick(q, subj, work / f"pro_card{n:02d}", photos_only=True) or \
+            shotpick.pick(q, subj, work / f"pro_cardv{n:02d}")
     if not got:
         log(f"Card {n}: no picture for '{q}', showing the background only")
         return None

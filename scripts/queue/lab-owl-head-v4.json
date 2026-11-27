@@ -225,14 +225,11 @@
    "beats": [
     {
      "at_word": 0,
-     "shot": "clip",
-     "query": "owl turning head around",
+     "shot": "photo",
+     "src": "assets/gen/owl-head/barn-owl-post.jpg",
+     "query": "owl perched post",
      "subject": "owl",
-     "alt_query": [
-      "owl head turn",
-      "owl looking around"
-     ],
-     "camera": "drift",
+     "camera": "pan_left",
      "transition": "slide_up"
     }
    ]
@@ -370,9 +367,16 @@
      "transition": "whip_right",
      "card": {
       "style": "polaroid",
-      "query": "person looking over shoulder",
+      "query": "man looking over shoulder",
       "subject": "person",
-      "caption": "You"
+      "caption": "You",
+      "src": "assets/gen/owl-head/man-look-back.jpg",
+      "box": [
+       0.3,
+       0.25,
+       0.7,
+       0.89
+      ]
      }
     },
     {
@@ -388,15 +392,12 @@
    "pause": 1.2
   }
  ],
- "voice_cache": "scripts/voice/lab-owl-head",
+ "voice_cache": "scripts/voice/lab-owl-head-v4",
  "gen_pool": {
   "owl": [
    "assets/gen/owl-head/barn-owl-post.jpg",
    "assets/gen/owl-head/snowy-owl.jpg",
    "assets/gen/owl-head/burrowing-owl.jpg"
   ]
- },
- "voice_patch": {
-  "from_scene": 9
  }
 }
