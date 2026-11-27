@@ -83,11 +83,15 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     data = _feelings(data)
     data["_keep"] = str(vcfg.get("pro_framing", "")).lower() == "keep"
     data["_fit_style"] = str(vcfg.get("pro_fit_style", "box")).lower()
+    data["_gen_used"] = []
     (work / "plan.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     visuals.reset_clips()
     _USED.clear()
     shotpick._USED.clear()
     shotpick.BANNED.clear()
+    shotpick.STRICT_FILL = data["_fit_style"] == "refill"
+    data.pop("_gen_used", None)
+    data["_gen_used"] = []
 
     # ---- voice, scene by scene, with the time of every word
     whole_cfg = data.get("eleven_whole", vcfg.get("eleven_whole", False))
@@ -255,6 +259,12 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
         report["info"]["framecheck"] = {"checked": len(checked),
                                         "refit": sum(1 for s in shots if (s.get("framecheck") or {}).get("refit")),
                                         "modes": [(s.get("plan") or {}).get("mode") for s in shots]}
+        report["info"]["framecheck"]["replaced"] = [f"{s['start']:.1f}s {s.get('replaced')}" for s in shots
+                                                    if s.get("replaced")]
+        for s in shots:
+            if s.get("covered"):
+                report["warnings"].append(f"refill: no footage filled the screen at {s['start']:.1f}s, "
+                                          f"shown full screen centred on the subject")
         for s in checked:
             if s["framecheck"]["cut"]:
                 report["warnings"].append(f"framecheck: subject still cut at {s['start']:.1f}s "
@@ -396,7 +406,8 @@ def _shots(scenes: list[dict], scene_t: list[tuple[float, float]], words: list[d
                 start = sw[min(k, len(sw) - 1)]["t0"] - 0.05
             tr = b.get("transition", "cut") if raw else "cut"
             tr = tr if tr in TRANSITION_LEN else "cut"
-            raw.append({"start": max(start, 0.0), "beat": b, "scene": i, "tr": tr})
+            raw.append({"start": max(start, 0.0), "beat": b, "scene": i, "tr": tr,
+                        "wts": [x["t0"] for x in sw]})
     raw[0]["start"] = 0.0
     # drop shots that would be too short to read
     shots = [raw[0]]
@@ -508,6 +519,10 @@ def pexels_video(query: str, subject: str | None, pick: int, out: Path) -> tuple
 
 def footage(beat: dict, n: int, title: str, size: tuple[int, int], work: Path, keep: bool = False) -> dict:
     """Best available picture for a shot: Pexels clip, Pixabay clip, stock photo, drawn slide."""
+    ready = str(beat.get("src") or "").strip()
+    if ready and Path(ready).is_file():          # a picture made for this beat (assets/gen/...)
+        log(f"Shot {n}: using the prepared picture {ready}")
+        return {"kind": "img", "src": Path(ready), "id": f"gen:{Path(ready).name}", "_gen": True}
     query = str(beat.get("query") or "").strip()
     subject = beat.get("subject")
     pick = _seed(title, n, query) % 3 + int(beat.get("alt", 0))
@@ -940,6 +955,18 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     p = framing.plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size, 1.06, force_fit,
                      1.22 if blend else 1.0)
     p["style"] = data.get("_fit_style", "box")
+    refill = p["style"] == "refill"
+    if refill and p["mode"] == "fit":
+        # Rakib: never the shrunk picture on a blurred box. A shot of its own gets other
+        # footage (or a prepared picture); a blurred background behind a graphic or card
+        # is simply shown full screen around the subject.
+        if kind in ("clip", "photo") and not beat.get("_cover"):
+            return _refill(sh, n, data, size, fps, length, tr_out, out, work, bright, src,
+                           "would only fit shrunk")
+        p = {**framing.cover_plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size),
+             "style": "refill"}
+    if refill and beat.get("_cover") and kind in ("clip", "photo"):
+        sh["covered"] = True
     sh["plan"] = {k: v for k, v in p.items() if k in ("mode", "zmax")}
     inputs: list[str] = []
     if src["kind"] == "vid":
@@ -966,7 +993,7 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     last = "bg0"
     overlays = []
     if kind in ("number", "compare", "text"):
-        ov_dir, oy = _graphic_frames(beat, kind, size, fps, length, work / f"pro_gfx{n:02d}")
+        ov_dir, oy = _graphic_frames(beat, kind, size, fps, length, work / f"pro_gfx{n:02d}", _marks(sh))
         sh["gfx"] = (ov_dir, oy)
         overlays.append((ov_dir, 0, oy))
     if kind == "card":
@@ -1002,10 +1029,15 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     fc = _framecheck(out, beat, length, size, work, n, region) if kind in ("clip", "photo") else None
     if fc is not None:
         sh["framecheck"] = {**fc, "mode": p["mode"], "refit": force_fit or bool(beat.get("_repick"))}
-        if fc["cut"] and not force_fit and src.get("box"):
+        if refill and fc["cut"] and not beat.get("_cover"):
+            return _refill(sh, n, data, size, fps, length, tr_out, out, work, bright, src,
+                           f"cut at the {fc['where']}")
+        if refill:
+            pass
+        elif fc["cut"] and not force_fit and src.get("box"):
             log(f"Framecheck: shot {n} cuts the {beat.get('subject')} ({fc['where']}), showing it whole instead")
             return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, True)
-        if fc["cut"] and not beat.get("_repick") and src.get("id"):
+        if not refill and fc["cut"] and not beat.get("_repick") and src.get("id"):
             # still cut with the whole picture shown: the source itself cuts the subject
             log(f"Framecheck: shot {n} footage cuts the {beat.get('subject')} itself ({fc['where']}), "
                 f"choosing other footage")
@@ -1014,6 +1046,63 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
             return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
     data["_prev_src"] = {k: v for k, v in src.items() if k != "_wh"}
     data["_prev_len"] = length
+
+
+def _gen_image(beat: dict, data: dict) -> str | None:
+    """The prepared picture for a beat: its own "gen", else an unused one of the script's
+    gen_pool for the same subject (pictures made in advance, kept in the repo)."""
+    used = data.setdefault("_gen_used", [])
+    own = str(beat.get("gen") or "").strip()
+    if own and Path(own).is_file() and own not in used:
+        used.append(own)
+        return own
+    pool = (data.get("gen_pool") or {}).get(str(beat.get("subject") or ""), [])
+    for g in pool:
+        if Path(str(g)).is_file() and str(g) not in used:
+            used.append(str(g))
+            return str(g)
+    return None
+
+
+def _refill(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, length: float, tr_out: str,
+            out: Path, work: Path, bright: bool, src: dict, why: str) -> None:
+    """The footage doesn't show the whole subject full screen: other footage (twice), then a
+    prepared picture, and only then the screen centred on the subject (flagged in the QC)."""
+    beat = sh["beat"]
+    rp = int(beat.get("_repick", 0))
+    subj = beat.get("subject")
+    if src.get("id") and not src.get("_gen") and rp < 2:
+        log(f"Refill: shot {n} footage {src['id']} {why} ({subj}), choosing other footage")
+        shotpick.BANNED.add(src["id"])
+        sh["beat"] = {**beat, "_repick": rp + 1}
+        sh["replaced"] = f"other footage ({why})"
+        return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
+    if not src.get("_gen"):
+        g = _gen_image(beat, data)
+        if g:
+            log(f"Refill: shot {n} {why}, using the prepared picture {g}")
+            sh["beat"] = {**beat, "src": g, "_repick": 3}
+            sh["replaced"] = f"prepared picture {Path(g).name} ({why})"
+            return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
+    log(f"Refill: shot {n} {why} and nothing else fits, showing it full screen around the {subj}")
+    sh["beat"] = {**beat, "_cover": True}
+    return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
+
+
+def _marks(sh: dict) -> dict:
+    """Times (seconds from the start of this shot's clip) of the words a graphic waits for."""
+    wts, beat = sh.get("wts") or [], sh["beat"]
+    if not wts:
+        return {}
+    at = lambda k: max(wts[min(int(k), len(wts) - 1)] - sh.get("b", sh["start"]), 0.0)
+    m = {}
+    rk = ((beat.get("compare") or {}).get("right") or {}).get("at_word")
+    if rk is not None:
+        m["right"] = at(rk)
+    ek = (beat.get("number") or {}).get("end_word")
+    if ek is not None:
+        m["end"] = at(ek)
+    return m
 
 
 def _framecheck(seg: Path, beat: dict, length: float, size: tuple[int, int], work: Path, n: int,
@@ -1108,12 +1197,17 @@ def _fmt(v: float, dec: int) -> str:
 
 
 def _graphic_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, length: float,
-                    out_dir: Path) -> tuple[Path, int]:
-    """PNG frames (transparent) of the animated graphic; the last frame holds."""
+                    out_dir: Path, marks: dict | None = None) -> tuple[Path, int]:
+    """PNG frames (transparent) of the animated graphic; the last frame holds.
+    marks: times of the words the graphic waits for ("end" of a count, "right" of a compare)."""
     w, h = size
+    marks = marks or {}
     out_dir.mkdir(parents=True, exist_ok=True)
     rw, rh, oy = w, int(h * 0.38), int(h * 0.19)          # region 1080x730 at y=365
-    anim = min(length, 1.6)
+    if kind == "compare":
+        rw, rh, oy = w, int(h * 0.42), int(h * 0.13)      # taller: the bone stacks
+    last = max([v for v in marks.values() if v is not None] or [0.0])
+    anim = min(length, max(1.6, last + 1.3))
     n = max(int(anim * fps), 2)
     for old in out_dir.glob("*.png"):
         old.unlink()
@@ -1121,9 +1215,13 @@ def _graphic_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, leng
         t = i / fps
         img = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
         if kind == "number":
-            _draw_number(img, beat.get("number") or {}, t)
+            _draw_number(img, beat.get("number") or {}, t, marks)
         elif kind == "compare":
-            _draw_compare(img, beat.get("compare") or {}, t)
+            spec = beat.get("compare") or {}
+            if str(spec.get("style", "")) == "stack":
+                _draw_stack(img, spec, t, marks)
+            else:
+                _draw_compare(img, spec, t)
         else:
             _draw_title(img, str(beat.get("text") or beat.get("query") or ""), t)
         img.save(out_dir / f"{i:04d}.png", compress_level=1)
@@ -1151,12 +1249,17 @@ def _scale_curve(t: float, start: float = 0.0, dur: float = 0.34) -> float:
     return 0.55 + 0.45 * _ease_out(u) + 0.10 * math.sin(math.pi * u)
 
 
-def _draw_number(img: Image.Image, spec: dict, t: float) -> None:
+def _draw_number(img: Image.Image, spec: dict, t: float, marks: dict | None = None) -> None:
     rw, rh = img.size
     to = float(spec.get("to", 0) or 0)
     frm = float(spec.get("from", 0) or 0)
     dec = int(spec.get("decimals", 0) or (0 if float(to).is_integer() else 1))
-    k = _ease_out((t - 0.12) / 1.05)
+    te = float((marks or {}).get("end") or 1.17)         # the count lands on this spoken word
+    te = min(max(te, 0.6), 3.2)
+    u = min(max((t - 0.12) / (te - 0.12), 0.0), 1.0)
+    k = 1 - (1 - u) ** 2.2                               # steady, then settles on the word
+    if spec.get("dial"):
+        _draw_dial(img, spec, k, t)
     val = frm + (to - frm) * k
     num = f"{spec.get('prefix', '')}{_fmt(val, dec)}"
     final = f"{spec.get('prefix', '')}{_fmt(to, dec)}"
@@ -1164,25 +1267,135 @@ def _draw_number(img: Image.Image, spec: dict, t: float) -> None:
     label = str(spec.get("label", "")).upper()
     layer = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-    big = _fit(final + suffix, rw * 0.78, 260)
+    big = _fit(final + suffix, rw * (0.50 if spec.get("dial") else 0.78), 260 if not spec.get("dial") else 190)
     suf_font = _font(big.size * 0.42)
     nw = big.getlength(final)
     sw = suf_font.getlength(suffix) if suffix else 0
     x0 = (rw - nw - sw - (16 if suffix else 0)) / 2
     cy = rh * 0.52
     _glow_text(layer, (x0 + nw / 2, cy), num, big, (255, 255, 255, 255))
+    if suffix == "°":                                    # a degree sign sits high, like in print
+        df = _font(big.size * 0.55)
+        d.text((x0 + nw + 10 + 4, cy - big.size * 0.42 + 5), "°", font=df, fill=(0, 0, 0, 120), anchor="lm")
+        d.text((x0 + nw + 10, cy - big.size * 0.42), "°", font=df, fill=YELLOW + (255,), anchor="lm")
+        suffix = ""
     if suffix:
         d.text((x0 + nw + 16 + 4, cy + big.size * 0.28 + 5), suffix, font=suf_font, fill=(0, 0, 0, 120), anchor="ls")
         d.text((x0 + nw + 16, cy + big.size * 0.28), suffix, font=suf_font, fill=YELLOW + (255,), anchor="ls")
     if label:
-        lf = _fit(label, rw * 0.8, 70)
-        _spaced(d, (rw / 2, cy - big.size * 0.62), label, lf, (255, 255, 255, 235))
+        lf = _fit(label, rw * (0.8 if not spec.get("dial") else 0.36), 70 if not spec.get("dial") else 42)
+        ly = cy - big.size * 0.62 if not spec.get("dial") else cy + big.size * 0.78
+        _spaced(d, (rw / 2, ly), label, lf, (255, 255, 255, 235))
     # accent bar under the number
-    bw = (nw + sw + 16) * _ease_out((t - 0.25) / 0.6)
+    bw = (nw + sw + 16) * _ease_out((t - 0.25) / 0.6) * (0 if spec.get("dial") else 1)
     by = cy + big.size * 0.48
     if bw > 4:
         d.rounded_rectangle(((rw - bw) / 2, by, (rw + bw) / 2, by + 14), radius=7, fill=YELLOW + (255,))
     _scaled(img, layer, _scale_curve(t), min(1.0, t / 0.12))
+
+
+def _draw_dial(img: Image.Image, spec: dict, k: float, t: float) -> None:
+    """A ring that sweeps round with the count (degrees), with a glowing head."""
+    rw, rh = img.size
+    to = float(spec.get("to", 0) or 0)
+    full = float(spec.get("dial_full", 360) or 360)
+    cx, cy = rw / 2, rh * 0.52
+    r = min(rw, rh) * 0.40
+    a = min(1.0, t / 0.2)
+    lay = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    box = (cx - r, cy - r, cx + r, cy + r)
+    d.ellipse(box, outline=(255, 255, 255, int(70 * a)), width=16)
+    sweep = 360 * (to / full) * k
+    if sweep > 0.5:
+        glow = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+        ImageDraw.Draw(glow).arc(box, -90, -90 + sweep, fill=YELLOW + (int(150 * a),), width=34)
+        lay.alpha_composite(glow.filter(ImageFilter.GaussianBlur(14)))
+        d.arc(box, -90, -90 + sweep, fill=YELLOW + (int(255 * a),), width=20)
+        ang = math.radians(-90 + sweep)
+        hx, hy = cx + r * math.cos(ang), cy + r * math.sin(ang)
+        d.ellipse((hx - 19, hy - 19, hx + 19, hy + 19), fill=(255, 255, 255, int(255 * a)))
+        # tick marks every 90 degrees
+    for q in range(4):
+        ang = math.radians(-90 + 90 * q)
+        x0, y0 = cx + (r - 34) * math.cos(ang), cy + (r - 34) * math.sin(ang)
+        x1, y1 = cx + (r - 50) * math.cos(ang), cy + (r - 50) * math.sin(ang)
+        d.line((x0, y0, x1, y1), fill=(255, 255, 255, int(150 * a)), width=5)
+    img.alpha_composite(lay)
+
+
+def _bone(d: ImageDraw.ImageDraw, cx: float, cy: float, w: float, h: float, col: tuple, a: float) -> None:
+    """One vertebra: a rounded body with a thinner bar either side."""
+    al = int(255 * a)
+    d.rounded_rectangle((cx - w / 2 + 5, cy - h * 0.18 + 6, cx + w / 2 + 5, cy + h * 0.18 + 6), radius=h * 0.18,
+                        fill=(0, 0, 0, int(90 * a)))
+    d.rounded_rectangle((cx - w * 0.31 + 5, cy - h / 2 + 6, cx + w * 0.31 + 5, cy + h / 2 + 6), radius=h * 0.42,
+                        fill=(0, 0, 0, int(110 * a)))
+    d.rounded_rectangle((cx - w / 2, cy - h * 0.18, cx + w / 2, cy + h * 0.18), radius=h * 0.18, fill=col + (al,))
+    d.rounded_rectangle((cx - w * 0.31, cy - h / 2, cx + w * 0.31, cy + h / 2), radius=h * 0.42, fill=col + (al,))
+    d.rounded_rectangle((cx - w * 0.22, cy - h * 0.30, cx + w * 0.22, cy - h * 0.12), radius=h * 0.1,
+                        fill=(255, 255, 255, int(90 * a)))
+
+
+def _draw_stack(img: Image.Image, spec: dict, t: float, marks: dict | None = None) -> None:
+    """Two columns of vertebrae that stack up one by one with the count, the second
+    column arriving on its spoken word, then a "2x" badge between them."""
+    rw, rh = img.size
+    marks = marks or {}
+    left, right = spec.get("left") or {}, spec.get("right") or {}
+    lv, rv = int(left.get("value", 1) or 1), int(right.get("value", 1) or 1)
+    top_v = max(lv, rv, 1)
+    unit = str(spec.get("unit", "")).upper()
+    layer = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    base, roof = rh * 0.84, rh * 0.22
+    pitch = (base - roof) / top_v
+    bh, bw = pitch * 0.74, rw * 0.21
+    step = min(0.075, 1.0 / max(top_v, 1))
+    tr = float(marks.get("right") if marks.get("right") is not None else 0.95) - 0.08
+    vf = _font(86)
+    cols = ((left, lv, rw * 0.28, YELLOW, 0.10), (right, rv, rw * 0.72, (240, 240, 240), max(tr, 0.4)))
+    done_at = 0.0
+    for item, v, cx, col, t0 in cols:
+        shown = 0
+        for i in range(v):
+            ti = t0 + i * step
+            u = (t - ti) / 0.14
+            if u <= 0:
+                break
+            shown = i + 1
+            e = _ease_out(min(u, 1.0))
+            yc = base - pitch * (i + 0.5) - (1 - e) * pitch * 0.9
+            _bone(d, cx, yc, bw * (0.7 + 0.3 * e), bh, col, min(1.0, u * 1.6))
+        done_at = max(done_at, t0 + v * step)
+        if shown:
+            ytop = base - pitch * shown
+            txt = str(shown)
+            d.text((cx + 4, ytop - 52 + 5), txt, font=vf, fill=(0, 0, 0, 120), anchor="mm")
+            d.text((cx, ytop - 52), txt, font=vf, fill=col + (255,), anchor="mm")
+        lab = str(item.get("label", "")).upper()
+        if lab and t >= t0 - 0.05:
+            f = _fit(lab, bw * 1.6, 58)
+            la = min(1.0, (t - t0 + 0.05) / 0.15)
+            d.text((cx + 3, base + 52 + 4), lab, font=f, fill=(0, 0, 0, int(120 * la)), anchor="mm")
+            d.text((cx, base + 52), lab, font=f, fill=col + (int(255 * la),), anchor="mm")
+    if unit:
+        _spaced(d, (rw / 2, rh * 0.07), unit, _font(54), (255, 255, 255, 230), 0.12)
+    badge = str(spec.get("badge", "")).upper()
+    if badge and t > done_at + 0.12:
+        s = _scale_curve(t, done_at + 0.12, 0.3)
+        bf = _font(92)
+        tw = bf.getlength(badge)
+        bl = Image.new("RGBA", (int(tw + 90), 150), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(bl)
+        bd.rounded_rectangle((8, 22, bl.width - 8, 128), radius=40, fill=YELLOW + (255,))
+        bd.text((bl.width / 2, 76), badge, font=bf, fill=(18, 18, 18, 255), anchor="mm")
+        bl = bl.rotate(-6, resample=Image.BICUBIC, expand=True)
+        if abs(s - 1) > 0.01:
+            bl = bl.resize((max(int(bl.width * s), 1), max(int(bl.height * s), 1)), Image.BICUBIC)
+        ymid = base - pitch * (lv + rv) / 2
+        layer.alpha_composite(bl, (int(rw * 0.5 - bl.width / 2), int(ymid - bl.height / 2)))
+    _scaled(img, layer, 1.0, min(1.0, t / 0.15))
 
 
 def _spaced(d: ImageDraw.ImageDraw, center: tuple[float, float], text: str, font, fill, track: float = 0.08) -> None:
@@ -1420,8 +1633,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         if q == k:
                             first_frac = frac
                         else:
-                            dt = int((max(ch[ln[q]]["t0"] - 0.07, ps) - ps) * 1000)
-                            grow += f"\\t({dt},{dt + 120},0.6,\\fscx{frac:.1f})"
+                            dt = int((max(ch[ln[q]]["t0"] - 0.17, ps) - ps) * 1000)
+                            grow += f"\\t({dt},{dt + 100},0.6,\\fscx{frac:.1f})"
                     events.append(
                         f"Dialogue: 1,{_t(ps)},{_t(end)},Pill,,0,0,0,,"
                         f"{{\\an4\\pos({px0 - pad_x:.1f},{pcy:.1f})\\frz-1.5\\fscx{first_frac * 0.6:.1f}\\fscy20"

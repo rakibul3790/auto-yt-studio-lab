@@ -9,6 +9,7 @@ import json
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import requests
@@ -30,7 +31,12 @@ def main() -> int:
                 continue
             out.parent.mkdir(parents=True, exist_ok=True)
             try:
-                r = requests.get(URL.format(id=it["id"]), timeout=60)
+                r = None
+                for wait in (0, 5, 10, 20, 40):          # the library allows only a few downloads at once
+                    time.sleep(wait or 2)
+                    r = requests.get(URL.format(id=it["id"]), timeout=60)
+                    if r.status_code != 429:
+                        break
                 r.raise_for_status()
                 with tempfile.NamedTemporaryFile(suffix=".audio", delete=False) as tmp:
                     tmp.write(r.content)

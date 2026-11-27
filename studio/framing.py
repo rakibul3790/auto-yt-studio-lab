@@ -232,6 +232,34 @@ def _pad(box: tuple, aspect_px: float, pad: float = PAD) -> tuple:
     return (max(box[0] - px, 0.0), max(box[1] - py, 0.0), min(box[2] + px, 1.0), min(box[3] + py, 1.0))
 
 
+def fits_fill(box: tuple | None, content_w: float, content_h: float, size: tuple[int, int] = (1080, 1920)) -> bool:
+    """True when the whole subject (with a small margin) fits a full-screen 9:16 window of
+    the picture, so it can fill the screen without being cut or shrunk."""
+    if not box:
+        return False
+    target = size[0] / size[1]
+    ww, wh = (content_h * target, content_h) if content_w / content_h > target else (content_w, content_w / target)
+    pb = _pad(box, content_w / content_h, 0.015)
+    return (pb[2] - pb[0]) * content_w <= ww + 0.5 and (pb[3] - pb[1]) * content_h <= wh + 0.5
+
+
+def cover_plan(src_w: int, src_h: int, content: tuple, box: tuple | None, size: tuple[int, int],
+               zoom: float = 1.04) -> dict:
+    """A full-screen 9:16 window centred on the subject, even if part of it falls outside.
+    Only for blurred backgrounds behind a graphic or card, never for a shot of its own."""
+    W, H = size
+    cx0, cy0, cx1, cy1 = content
+    cw, ch = (cx1 - cx0) * src_w, (cy1 - cy0) * src_h
+    ox, oy = cx0 * src_w, cy0 * src_h
+    target = W / H
+    ww, wh = (ch * target, ch) if cw / ch > target else (cw, cw / target)
+    bcx, bcy = (((box[0] + box[2]) / 2) * cw, ((box[1] + box[3]) / 2) * ch) if box else (cw / 2, ch / 2)
+    x = min(max(bcx - ww / 2, 0.0), cw - ww)
+    y = min(max(bcy - wh / 2, 0.0), ch - wh)
+    return {"mode": "fill", "crop": (ox + x, oy + y, ww, wh), "zmax": zoom, "focus": (0.5, 0.5),
+            "box": None, "wbox": None}
+
+
 def plan(src_w: int, src_h: int, content: tuple, box: tuple | None, size: tuple[int, int],
          zoom: float = 1.06, force_fit: bool = False, grow: float = 1.0) -> dict:
     """How to show a source on the screen.

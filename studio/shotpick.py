@@ -28,6 +28,8 @@ PHOTO_PENALTY = 0.04         # a moving clip beats a still of the same quality
 REUSE_PENALTY = 0.06
 WHOLE_WEIGHT = 0.06           # whole subject in the picture beats a cut-off one (framing.wholeness)
 NO_SUBJECT_PENALTY = 0.03     # the detector can't find the subject at all
+STRICT_FILL = False           # lab "refill": only footage where the whole subject fills a 9:16 screen
+NO_FILL_PENALTY = 0.05        # the subject is whole but would only fit shrunk onto a box
 BANNED: set = set()           # clips the framecheck threw out in this render (subject cut in the source)
 FLAT_STD = 9                  # a frame this flat (one colour) is not a picture
 UNSAFE = ["a photo of a nude person", "a naked statue", "a photo of underwear", "a bloody wound"]
@@ -219,6 +221,10 @@ def _framing(imgs: list, subject: str | None) -> dict:
         found = [b for b in boxes if b]
         info["box"] = framing.union(found)
         info["whole"] = round(min(framing.wholeness(b) for b in found), 3) if found else 0.0
+        if info["box"] and imgs:
+            iw, ih = imgs[0].size
+            c = content
+            info["fits"] = framing.fits_fill(info["box"], (c[2] - c[0]) * iw, (c[3] - c[1]) * ih)
     return info
 
 
@@ -291,6 +297,10 @@ def _rank_whole(ranked: list, thumbs: dict, subject: str | None, top: int = 5) -
             kb = framing.to_content(framing.keep_box(framing.find_boxes(im, subject)), content)
             if kb:
                 s += WHOLE_WEIGHT * (framing.wholeness(kb) - 0.6)
+                if STRICT_FILL:                    # Rakib: the subject must fill the screen whole
+                    iw, ih = im.size
+                    if not framing.fits_fill(kb, (content[2] - content[0]) * iw, (content[3] - content[1]) * ih):
+                        s -= NO_FILL_PENALTY
             else:
                 s -= NO_SUBJECT_PENALTY
         out.append((s, rel, c))
@@ -371,15 +381,20 @@ def pick(query: str, subject: str | None, out_stem: Path, photos_only: bool = Fa
             if got is None:
                 continue
             whole = got[4]["whole"] if got[4]["box"] else (None if not subject or not framing.available() else 0.0)
-            if got_best is None or (whole or 0) > (got_best[2] or 0):
-                got_best = (c, got, whole, rel)
+            fits = bool(got[4].get("fits")) if STRICT_FILL and whole is not None else True
+            key = (fits, whole or 0)
+            if got_best is None or key > got_best[4]:
+                got_best = (c, got, whole, rel, key)
+            if not fits and tries < 4:
+                log(f"Shot picker: {c['id']} would not fill the screen with the whole {subject}, looking further")
+                continue
             # cut off at the edges (or not found): look at one or two more before settling
             if whole is not None and whole < 0.55 and tries < 3:
                 log(f"Shot picker: {c['id']} shows the {subject} cut off (whole {whole}), looking further")
                 continue
             break
         if got_best:
-            c, got, whole, rel = got_best
+            c, got, whole, rel, _k = got_best
             src, start, dur, frame_rel, fr = got
             reused = c["id"] in _USED
             _USED.add(c["id"])
