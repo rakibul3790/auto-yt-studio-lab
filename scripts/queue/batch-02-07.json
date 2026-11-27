@@ -1,0 +1,76 @@
+{
+  "title": "Sea Otters Hold Hands While They Sleep",
+  "format": "short",
+  "description": "Sea otters sleep floating on their backs, and they often hold on to each other so they don't drift apart.",
+  "tags": [
+    "sea otter",
+    "otters",
+    "animal facts",
+    "ocean animals",
+    "cute animals",
+    "weird facts",
+    "nature facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "animals",
+    "facts"
+  ],
+  "thumbnail_text": "Holding hands",
+  "scenes": [
+    {
+      "on_screen": "Sleeping together",
+      "visual": "sea otter floating",
+      "text": "Sea otters often hold hands while they sleep.",
+      "highlight": [
+        "hold hands"
+      ],
+      "subject": "otter",
+      "say": "[warmly] Sea otters often hold hands... [chuckles] while they sleep.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Sleeping on water",
+      "visual": "otters in water",
+      "text": "They sleep floating on their backs in the ocean, which means the waves could easily carry them away.",
+      "highlight": [
+        "carry them away"
+      ],
+      "subject": "otter",
+      "say": "They sleep floating on their backs in the ocean, [worried] which means the waves could easily carry them away.",
+      "look": "sad"
+    },
+    {
+      "on_screen": "Don't drift apart",
+      "visual": "two otters",
+      "text": "So they grab on to each other's paws, forming little groups that stay together through the night.",
+      "highlight": [
+        "each other's paws"
+      ],
+      "subject": "otter",
+      "say": "[softly] So they grab on to each other's paws, forming little groups that stay together through the night.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Seaweed anchors",
+      "visual": "sea otter kelp",
+      "text": "Some also wrap themselves in long strands of seaweed, like a blanket that keeps them in place.",
+      "highlight": [
+        "like a blanket"
+      ],
+      "subject": "otter",
+      "say": "Some also wrap themselves in long strands of seaweed, like a blanket that keeps them in place."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "sea otter close up",
+      "text": "The ocean's cutest sleepover. Follow for more weird facts.",
+      "highlight": [
+        "cutest sleepover"
+      ],
+      "subject": "otter",
+      "say": "[laughs] The ocean's cutest sleepover. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "calm"
+}

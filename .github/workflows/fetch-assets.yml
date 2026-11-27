@@ -1,0 +1,24 @@
+# Downloads the free world map and music into assets/ and saves them in the repo.
+name: Fetch assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - run: bash tools/fetch_assets.sh
+      - name: Save assets to the repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets
+          git diff --cached --quiet && exit 0
+          git commit -m "Add free map and music assets"
+          for i in 1 2 3 4; do git pull --rebase && git push && break; sleep 5; done

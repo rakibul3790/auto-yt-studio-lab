@@ -1,0 +1,267 @@
+{
+ "duration": 44,
+ "voices": {
+  "narrator": {
+   "voice": "af_heart",
+   "speed": 0.9,
+   "semitones": 0,
+   "fx": "clean",
+   "space": "studio",
+   "gain": 0.9
+  }
+ },
+ "lines": [
+  [
+   "narrator",
+   1.0,
+   null,
+   "He folded his first paper plane on a Monday."
+  ],
+  [
+   "narrator",
+   4.6,
+   null,
+   "It flew for exactly one second."
+  ],
+  [
+   "narrator",
+   8.4,
+   null,
+   "So he folded another. And another."
+  ],
+  [
+   "narrator",
+   12.6,
+   null,
+   "By Friday, the floor was covered in tiny crashes."
+  ],
+  [
+   "narrator",
+   17.4,
+   null,
+   "That night, he almost stopped."
+  ],
+  [
+   "narrator",
+   21.6,
+   null,
+   "Then he noticed something."
+  ],
+  [
+   "narrator",
+   24.4,
+   null,
+   "Every crash had flown a little farther than the one before."
+  ],
+  [
+   "narrator",
+   29.6,
+   null,
+   "So in the morning... he tried one more time."
+  ],
+  [
+   "narrator",
+   37.2,
+   null,
+   "Falling isn't failing. It's how you learn the wind."
+  ]
+ ],
+ "sfx": [
+  [
+   "paper_fold",
+   0.9,
+   0.32,
+   {
+    "pan": 0.15
+   }
+  ],
+  [
+   "paper_fold",
+   2.0,
+   0.28,
+   {
+    "pan": 0.15
+   }
+  ],
+  [
+   "paper_fold",
+   2.9,
+   0.3,
+   {
+    "pan": 0.15
+   }
+  ],
+  [
+   "rustle",
+   13.2,
+   0.12,
+   {
+    "d": 0.6,
+    "pan": -0.2
+   }
+  ],
+  [
+   "flap",
+   34.1,
+   0.14,
+   {
+    "pan": 0.3
+   }
+  ],
+  [
+   "flutter",
+   34.6,
+   0.12,
+   {
+    "d": 0.8,
+    "pan": 0.4
+   }
+  ]
+ ],
+ "beds": [
+  [
+   "roomtone",
+   0,
+   16.9,
+   0.09
+  ],
+  [
+   "rain",
+   16.4,
+   23.6,
+   0.13
+  ],
+  [
+   "drone",
+   16.9,
+   23.4,
+   0.08
+  ],
+  [
+   "wind",
+   28.5,
+   44,
+   0.08
+  ],
+  [
+   "birds",
+   28.9,
+   44,
+   0.07
+  ]
+ ],
+ "music": {
+  "level": 0.085,
+  "bpm": 72,
+  "reverb": 0.3,
+  "final_chord": true,
+  "sections": [
+   [
+    0,
+    16.67,
+    [
+     "Am",
+     "F",
+     "C",
+     "G"
+    ],
+    4,
+    72,
+    "sparse",
+    0.8
+   ],
+   [
+    16.67,
+    23.33,
+    [
+     "Am",
+     "Dm",
+     "Am",
+     "E"
+    ],
+    4,
+    72,
+    "dark",
+    0.8
+   ],
+   [
+    23.33,
+    28.75,
+    [
+     "F",
+     "C",
+     "G",
+     "Am"
+    ],
+    4,
+    72,
+    "warm",
+    0.9
+   ],
+   [
+    28.75,
+    32.5,
+    [
+     "F",
+     "G",
+     "Am",
+     "G"
+    ],
+    2,
+    72,
+    "build",
+    0.9
+   ],
+   [
+    32.5,
+    36.67,
+    [
+     "C",
+     "G",
+     "Am",
+     "F"
+    ],
+    4,
+    72,
+    "triumph",
+    1.0
+   ],
+   [
+    36.67,
+    44,
+    [
+     "F",
+     "C",
+     "G",
+     "C"
+    ],
+    4,
+    72,
+    "tender",
+    0.8
+   ]
+  ],
+  "hits": [
+   [
+    23.33,
+    "swell",
+    0.18
+   ],
+   [
+    32.5,
+    "riser",
+    0.3
+   ],
+   [
+    32.5,
+    "boom",
+    0.22
+   ]
+  ]
+ },
+ "mix": {
+  "duck_db": 9,
+  "bed_duck_db": 4,
+  "transition_gain": 0.45
+ }
+}

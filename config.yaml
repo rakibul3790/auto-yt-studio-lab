@@ -1,0 +1,114 @@
+# ===========================================================
+#  Auto YT Studio — সব সেটিং এই একটা ফাইলে
+#  GitHub-এ এই ফাইল খুলে পেনসিল (Edit) চাপলেই বদলাতে পারবে।
+# ===========================================================
+
+channel:
+  # চ্যানেলের বিষয় (শুধু তোমার নোট আর স্ক্রিপ্ট-প্রম্পটের জন্য)
+  topic: "Weird & Mind-Blowing Facts (Shorts প্রধান)"
+
+  # ভিডিওর ভাষা: en = English (ইংলিশ দর্শকের জন্য), bn = বাংলা, hi = হিন্দি ...
+  language: "en"
+
+  # ভয়েস (ফ্রি Microsoft Edge ভয়েস) — যেকোনো একটা নাম বসাও:
+  #   American (ছেলে):  en-US-AndrewNeural (উষ্ণ, গল্প বলার মতো), en-US-BrianNeural, en-US-ChristopherNeural
+  #   American (মেয়ে):  en-US-AvaNeural (পরিষ্কার, স্বাভাবিক), en-US-EmmaNeural, en-US-JennyNeural
+  #   British:          en-GB-RyanNeural (ছেলে), en-GB-SoniaNeural (মেয়ে)
+  #   বাংলা চাইলে:      bn-BD-NabanitaNeural, bn-BD-PradeepNeural (language: "bn" করো)
+  #   ElevenLabs (পেইড, ক্রেডিট খরচ হয়):  "elevenlabs:<Voice ID>"
+  voice: "elevenlabs:XA3P1cj7XJexe6Zq0ATX"   # রাকিবের বাছাই করা ElevenLabs ভয়েস (২৫ নভেম্বর)
+  eleven_model: "eleven_v3"      # v3: স্ক্রিপ্টের "say" লাইনের [laughs], [sighs], [whispers] পড়ে আবেগ দেয়
+  eleven_v3_stability: 0.0       # 0.0 = সবচেয়ে প্রাণবন্ত (Creative), অক্টোপাস ভিডিওর মতো
+  eleven_v3_similarity: 0.8
+  # ElevenLabs কাজ না করলে (key নেই, ক্রেডিট শেষ, সার্ভার সমস্যা) এই ফ্রি ভয়েসে ভিডিও হবে
+  voice_fallback: "en-US-AndrewNeural"
+  voice_rate: "+4%"      # কথার গতি, যেমন "+10%" বা "-5%"
+  voice_pitch: "+0Hz"    # শুধু Edge ভয়েসে কাজ করে
+
+  # YouTube ক্যাটাগরি নম্বর: 27 = Education, 22 = People & Blogs,
+  # 24 = Entertainment, 28 = Science & Technology, 26 = Howto & Style
+  category_id: "27"
+
+  # প্রতিটা ভিডিওতে যোগ হবে এমন ট্যাগ
+  # (স্ক্রিপ্টের নিজের ট্যাগ আগে বসে, তারপর এগুলো; মোট সর্বোচ্চ ১৫টা)
+  default_tags: ["facts", "did you know", "fun facts", "mind blowing facts",
+                 "interesting facts", "amazing facts", "shorts", "MindBlip"]
+  # প্রতিটা Short-এর ডেসক্রিপশনে থাকবে এমন হ্যাশট্যাগ (স্ক্রিপ্টের হ্যাশট্যাগের পরে)
+  default_hashtags: ["Shorts", "facts", "didyouknow"]
+
+  # প্রতিটা ভিডিওর ডেসক্রিপশনের শেষে যোগ হবে
+  description_footer: "A new mind-blowing fact every day. Subscribe so you never miss one!"
+
+  made_for_kids: false
+  # AI ভয়েস/ছবি থাকলে YouTube-কে জানানো নিয়ম; true রাখাই নিরাপদ
+  synthetic_media: true
+
+
+# ভয়েস পালা: প্রতিটা ভিডিওতে পালা করে ছেলে আর মেয়ের ভয়েস (ছেলে, মেয়ে, ছেলে, পরের দিন মেয়ে ...)।
+# কোন ভিডিওতে কোন ভয়েস গেল, logs/voice-test.csv-এ লেখা থাকে (পরে কোনটা ভালো চলছে দেখার জন্য)।
+# days: 0 মানে সবসময় চলবে; কোনো সংখ্যা দিলে তত দিন পর থেমে উপরের channel: voice চলবে।
+# ভয়েস দুটো Kokoro (ফ্রি, ওপেন-সোর্স, GitHub-এই চলে, কোনো চাবি লাগে না)।
+voice_test:
+  enabled: false             # ভয়েস পালা বন্ধ: এখন সব ভিডিও উপরের channel.voice দিয়ে
+  days: 0
+  voices:
+    - label: "Michael (man)"
+      voice: "kokoro:am_michael"
+      rate: "+0%"
+      pitch: "+0Hz"
+    - label: "Heart (woman)"
+      voice: "kokoro:af_heart"
+      rate: "+0%"
+      pitch: "+0Hz"
+
+video:
+  # খাড়া Short বানানো হবে নতুন "pro" স্টাইলে: শট বাই শট ক্লিপ, ক্যামেরা মুভ, ট্রানজিশন,
+  # শব্দে শব্দে ক্যাপশন, সাউন্ড ডিজাইন, আর শেষে কোয়ালিটি চেক
+  pro_shorts: true
+  # ElevenLabs-এ পুরো স্ক্রিপ্ট একবারে পড়ানো হয় (একটা কল), যাতে কথা টানা আর স্বাভাবিক শোনায়
+  eleven_whole: true
+  # প্রতিটা Short এই লাইন দিয়ে শেষ হবে (স্ক্রিপ্টে আগে থেকে "follow" থাকলে আর যোগ হবে না)
+  follow_line: "Follow for more weird facts!"
+  width: 1920
+  height: 1080
+  fps: 30
+  scene_pause: 0.35          # প্রতিটা দৃশ্যের শেষে কত সেকেন্ড বিরতি
+  subtitles: true            # নিচে লেখা (সাবটাইটেল) দেখাবে কিনা
+  subtitle_max_chars: 42     # এক লাইনে সর্বোচ্চ কত অক্ষর
+  highlight: true            # দরকারি শব্দ হলুদ বক্সে (স্ক্রিপ্টের "highlight", না থাকলে সংখ্যা)
+  music_volume: 0.06         # assets/music-এর গানের আওয়াজ (0 = বন্ধ); কথার সময় আরও নামে
+  map_music_volume: 0.06     # ম্যাপ-স্টাইলের ভিডিওতে গানের আওয়াজ
+  sfx_volume: 0.25           # পপ, হুশ ইত্যাদির আওয়াজ, ভয়েসের তুলনায় মেপে বসে (0 = বন্ধ)
+  clips: true                # Pixabay থেকে ছবির বদলে ছোট ভিডিও ক্লিপ (না পেলে ছবি)
+  cut_after_seconds: 5.5     # এর চেয়ে লম্বা দৃশ্যে মাঝখানে নতুন ক্লিপে কাট
+  transitions: true          # দৃশ্য বদলের সময় স্লাইড/জুম ট্রানজিশন আর হুশ শব্দ
+  transition_seconds: 0.35
+  fade_seconds: 0.8          # শুরুতে ফেড-ইন, শেষে ফেড-আউট
+  # ছবির উৎস: "auto" = PIXABAY_API_KEY (বা PEXELS_API_KEY) Secret থাকলে ফ্রি
+  # সত্যিকারের ছবি, না থাকলে নিজে বানানো রঙিন স্লাইড। দুটোই থাকলে আগে Pexels,
+  # না পেলে Pixabay। "slides" = সবসময় নিজে বানানো স্লাইড।
+  visuals: "auto"
+  # নিজে বানানো স্লাইডের রঙ (একেক দৃশ্যে একেকটা)
+  palette:
+    - ["#0f2027", "#2c5364"]
+    - ["#1d1347", "#5b2a86"]
+    - ["#0b3d2e", "#1f8a5b"]
+    - ["#3a1c10", "#c0562b"]
+    - ["#101935", "#3e5c9a"]
+
+shorts:
+  # স্ক্রিপ্টে "format": "short" দিলে শুধু খাড়া (9:16) Short বানাবে আর আপলোড করবে।
+  # enabled: true হলে লম্বা (16:9) ভিডিওগুলোরও একটা Short ভার্সন আপলোড হবে
+  # (স্ক্রিপ্টে "shorts": false দিলে সেই ভিডিওর জন্য হবে না)।
+  enabled: true
+  max_seconds: 180           # YouTube Shorts সর্বোচ্চ ৩ মিনিট
+
+run:
+  videos_per_run: 3          # প্রতিদিন (প্রতিবার চালালে) কয়টা ভিডিও বানাবে আর আপলোড করবে
+  # কিউ খালি হলে রানটা "failed" দেখাবে, যাতে GitHub তোমাকে ইমেইল করে
+  fail_when_queue_empty: true
+  # private, unlisted বা public। public = আপলোডের সাথে সাথে সবাই দেখতে পাবে।
+  privacy: "public"
+  # এক দিনে (বাংলাদেশ সময়) সর্বোচ্চ কয়টা কিউর ভিডিও আপলোড হবে। এর বেশি হলে রান কিছু না করে থামবে।
+  # 0 = কোনো সীমা নেই।
+  max_uploads_per_day: 3

@@ -1,0 +1,16 @@
+# Only checks whether the ELEVENLABS_API_KEY secret is set. Calls no API and spends nothing.
+name: ElevenLabs key check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Is the secret set?
+        env:
+          K: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          if [ -n "$K" ]; then echo "ELEVENLABS_API_KEY is set (length ${#K})"; else echo "::error::ELEVENLABS_API_KEY is NOT set"; exit 1; fi

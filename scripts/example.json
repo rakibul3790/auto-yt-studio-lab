@@ -1,0 +1,35 @@
+{
+  "title": "Why Does the Moon Change Shape? Explained in 60 Seconds",
+  "description": "Some nights the Moon is a perfect circle, other nights it is a thin sliver. Here is the simple reason behind the Moon's phases.",
+  "tags": ["moon phases", "why does the moon change shape", "astronomy for beginners", "space facts", "science explained"],
+  "hashtags": ["science", "space"],
+  "thumbnail_text": "Why Does the Moon Change?",
+  "shorts": false,
+  "scenes": [
+    {
+      "on_screen": "Why does the Moon change shape?",
+      "visual": "full moon night sky",
+      "text": "Some nights the Moon is a perfect circle. Other nights it is just a thin silver curve. But does the Moon really grow and shrink? Let's find out."
+    },
+    {
+      "on_screen": "The Moon has no light of its own",
+      "visual": "sun light space",
+      "text": "Here is the first secret. The Moon does not make any light. What we see is sunlight bouncing off its surface and travelling back to our eyes."
+    },
+    {
+      "on_screen": "Half is always lit",
+      "visual": "moon earth orbit",
+      "text": "At any moment, the half of the Moon facing the Sun is lit up. As the Moon travels around the Earth, we simply see more or less of that bright half."
+    },
+    {
+      "on_screen": "New Moon to Full Moon",
+      "visual": "crescent moon",
+      "text": "When the bright side faces us, we get a full moon. When it faces away, we get a new moon. In between, we see crescents and half moons."
+    },
+    {
+      "on_screen": "About 29 and a half days",
+      "visual": "moon phases",
+      "text": "The whole cycle takes about twenty nine and a half days. If you enjoyed this, subscribe for more quick science explained simply."
+    }
+  ]
+}

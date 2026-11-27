@@ -1,0 +1,73 @@
+{
+  "title": "Spider Silk Is Stronger Than Steel",
+  "format": "short",
+  "description": "Ounce for ounce, some spider silk is stronger than steel, and it can stretch too.",
+  "tags": [
+    "spider silk",
+    "spiders",
+    "materials",
+    "science facts",
+    "nature facts",
+    "weird facts",
+    "engineering",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "science",
+    "facts"
+  ],
+  "thumbnail_text": "Stronger than steel",
+  "scenes": [
+    {
+      "on_screen": "Stronger than steel",
+      "visual": "spider web dew",
+      "text": "Spider silk can be stronger than steel.",
+      "highlight": [
+        "stronger than steel"
+      ],
+      "subject": "spider",
+      "say": "[excited] Spider silk can be STRONGER than steel.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Weight for weight",
+      "visual": "spider on web",
+      "text": "Compared weight for weight, some kinds of spider silk are stronger than steel.",
+      "highlight": [
+        "weight for weight"
+      ],
+      "subject": "spider",
+      "say": "Compared weight for weight, some kinds of spider silk are stronger than steel."
+    },
+    {
+      "on_screen": "And it stretches",
+      "visual": "spider web close up",
+      "text": "Unlike steel, it can also stretch a long way before it breaks. That is why a web can stop a flying insect without snapping.",
+      "highlight": [
+        "stretch a long way"
+      ],
+      "subject": "web",
+      "say": "Unlike steel, it can also stretch a long way before it breaks. [chuckles] That is why a web can stop a flying insect without snapping."
+    },
+    {
+      "on_screen": "Scientists want it",
+      "visual": "laboratory",
+      "text": "Researchers have spent years trying to copy it, for things like medical stitches and lightweight protective gear.",
+      "highlight": [
+        "medical stitches"
+      ],
+      "say": "Researchers have spent years trying to copy it, for things like medical stitches and lightweight protective gear."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "spider web sunlight",
+      "text": "One of the strongest materials on Earth is spun by a spider. Follow for more weird facts.",
+      "highlight": [
+        "spun by a spider"
+      ],
+      "subject": "web",
+      "say": "[laughs] One of the strongest materials on Earth is spun by a spider. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "upbeat"
+}

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>She Called Every Evening — Fabelo Studio</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="../../lib/scribble.js"></script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   "She Called Every Evening" — Fabelo Studio emotional Short (46 s)
+   Scribble never speaks. Busy at his laptop, he declines his mom's calls
+   every evening. A photo reminds him she was never too busy for him.
+   He calls her back.
+   Safe area = square [-500, 500] → 9:16, 16:9, 1:1 all work.
+   ===================================================================== */
+const S = Scribble, C = S.palette, sv = S.svg;
+const DUR = 46, G = 300;
+const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = S.EASE.inOut, f1 = (v) => v.toFixed(1);
+const TXT = (x, y, size, fill, op, str, anchor = 'middle', rot = 0) =>
+  `<text x="${f1(x)}" y="${f1(y)}" text-anchor="${anchor}" font-family="Caveat, cursive" font-weight="700" font-size="${size}" fill="${fill}" opacity="${op.toFixed(2)}"${rot ? ` transform="rotate(${rot} ${f1(x)} ${f1(y)})"` : ''}>${str}</text>`;
+
+const LINES = [
+  ['narrator', 1.0, 3.6, "Every evening, his mom called."],
+  ['narrator', 6.2, 9.2, "And every evening, he was too busy."],
+  ['oldmom',   9.9, 11.8, "It's okay. He's busy."],
+  ['narrator', 17.5, 19.3, "But he forgot something."],
+  ['narrator', 24.0, 28.4, "When he was small, she was never too busy for him."],
+  ['youngmom', 28.8, 30.5, "I'm here, sweetheart."],
+  ['oldmom',   34.4, 37.6, "Sweetheart? I... I just missed your voice."],
+  ['narrator', 38.6, 41.4, "Call them back. They're still waiting."],
+];
+
+/* ---------- poses ---------- */
+const SITL = { lL: [85, 0], lR: [95, 8] };
+S.registerPose('type',     Object.assign({ lean: 12, head: 10, aL: [72, 104], aR: [80, 110] }, SITL));
+S.registerPose('sitIdle',  Object.assign({ lean: 2,  head: 4,  aL: [20, 50],  aR: [30, 60] }, SITL));
+S.registerPose('tap',      Object.assign({ lean: 28, head: 12, aL: [60, 95],  aR: [118, 122] }, SITL));
+S.registerPose('sitPhone', Object.assign({ lean: 0,  head: 8,  aL: [25, 55],  aR: [160, 250] }, SITL));
+S.registerPose('sitSad',   Object.assign({ lean: 10, head: 18, aL: [25, 50],  aR: [30, 55] }, SITL));
+S.registerPose('phoneEar', { lean: 3, head: 8, aL: [-20, -10], aR: [160, 250], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('phoneLow', { lean: 6, head: 16, aL: [-18, -8], aR: [40, 125], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('floorSit', { lean: -4, head: 6, aL: [30, 60], aR: [-30, -60], lL: [90, 92], lR: [86, 90] });
+S.registerPose('floorCry', { lean: 8, head: 16, aL: [40, 160], aR: [-40, -160], lL: [90, 92], lR: [86, 90] });
+S.registerPose('hug',      { lean: 24, head: 4, aL: [80, 125], aR: [92, 135], lL: [70, -20], lR: [80, -10] });
+S.registerCostume('granny', {
+  body: sv.path('M-20 -4 Q0 6 20 -4 L24 44 Q0 54 -24 44 Z', { fill: '#A89A86', w: 4 }) + sv.path('M-14 2 L0 22 L14 2', { stroke: '#7D705F', w: 3 }),
+  face: sv.circle(-10, -2, 8.5, { w: 3 }) + sv.circle(10, -2, 8.5, { w: 3 }) + sv.line(-1.5, -3, 1.5, -3, 3)
+});
+S.registerCostume('dress', {
+  body: sv.path('M-12 -3 Q0 4 12 -3 L26 48 Q0 56 -26 48 Z', { fill: '#8FA9C4', w: 4 })
+});
+
+/* ---------- scene ---------- */
+const sc = S.createScene(document.body, { duration: DUR, ground: G, fadeIn: 0.9, fadeOut: 1.2 });
+
+// visibility of the present-day office (hidden during the flashback and the end card)
+const officeOp = (t) => {
+  if (t < 19.4) return 1;
+  if (t < 20.2) return 1 - (t - 19.4) / 0.8;
+  if (t < 30.8) return 0;
+  if (t < 31.5) return (t - 30.8) / 0.7;
+  if (t < 41.6) return 1;
+  return clamp(1 - (t - 41.6) / 0.7);
+};
+const flashOp = (t) => clamp(Math.min((t - 19.8) / 0.7, (31.0 - t) / 0.6));     // flashback layer
+
+// light: cool evening tint in the present, warm sepia in the memory
+sc.custom((t, scn) => {
+  const v = scn.view || { x: -889, y: -500, w: 1778, h: 1000 };
+  const ev = 0.32 * officeOp(t), mem = 0.38 * flashOp(t);
+  let out = '';
+  if (ev > 0.005) out += `<rect x="${v.x - 10}" y="${v.y - 10}" width="${v.w + 20}" height="${v.h + 20}" fill="#B9C3D9" style="mix-blend-mode:multiply" opacity="${ev.toFixed(3)}"/>`;
+  if (mem > 0.005) out += `<rect x="${v.x - 10}" y="${v.y - 10}" width="${v.w + 20}" height="${v.h + 20}" fill="#EBC98E" style="mix-blend-mode:multiply" opacity="${mem.toFixed(3)}"/>`;
+  return out;
+}, 'back');
+
+/* ---------- office set ---------- */
+const DESK_Y = 140;          // desk top
+const PHONE_X = 14;          // phone on the desk
+const RINGS = [[2.4, 5.7], [13.0, 14.7], [15.4, 16.9]];   // incoming calls he declines
+const ringing = (t) => RINGS.some(([a, b]) => t >= a && t < b);
+const missed = (t) => RINGS.filter(([, b]) => t >= b).length;
+const phoneOnDesk = (t) => t < 31.9;
+
+sc.custom((t) => {
+  const op = officeOp(t); if (op <= 0.005) return '';
+  let s = '';
+  // window with the moon (evening)
+  s += sv.path('M-440 -330 L-290 -330 L-290 -170 L-440 -170 Z', { fill: '#2F3B57', w: 6 }) +
+       sv.line(-365, -330, -365, -170, 4) + sv.line(-440, -250, -290, -250, 4) +
+       sv.path('M-322 -306 A16 16 0 1 0 -306 -282 A12 12 0 1 1 -322 -306 Z', { fill: '#F3E3B0', w: 2.5 }) +
+       sv.dot(-410, -300, 2.5, '#F3E3B0') + sv.dot(-392, -214, 2, '#F3E3B0') + sv.dot(-330, -200, 2.5, '#F3E3B0');
+  // chair (seat at Scribble's hip height)
+  s += sv.path('M-300 213 L-172 213 L-172 226 L-300 226 Z', { fill: '#6B4A2E', w: 5 }) +
+       sv.line(-292, 226, -300, 300, 6) + sv.line(-180, 226, -172, 300, 6) +
+       sv.line(-298, 218, -306, 84, 7) + sv.path('M-320 78 Q-306 64 -292 78 L-292 150 L-320 150 Z', { fill: '#6B4A2E', w: 5 });
+  // desk
+  s += sv.path(`M-150 ${DESK_Y} L360 ${DESK_Y} L360 ${DESK_Y + 16} L-150 ${DESK_Y + 16} Z`, { fill: '#C9A27A', w: 5 }) +
+       sv.line(-130, DESK_Y + 16, -130, 300, 7) + sv.line(340, DESK_Y + 16, 340, 300, 7) +
+       sv.path(`M200 ${DESK_Y + 16} L330 ${DESK_Y + 16} L330 ${DESK_Y + 100} L200 ${DESK_Y + 100} Z`, { fill: '#B48C64', w: 4 }) + sv.line(245, DESK_Y + 58, 285, DESK_Y + 58, 4);
+  // laptop (keyboard toward Scribble, screen hinged on the far side)
+  const glow = 0.22 + 0.05 * Math.sin(t * 3);
+  s += `<path d="M-30 ${DESK_Y - 14} L-150 ${DESK_Y - 70} L-150 ${DESK_Y - 190} L-36 ${DESK_Y - 128} Z" fill="#CFE6FF" opacity="${glow.toFixed(2)}"/>`;
+  s += sv.path(`M-140 ${DESK_Y - 1} L-28 ${DESK_Y - 1} L-28 ${DESK_Y - 12} L-140 ${DESK_Y - 12} Z`, { fill: '#9AA3AD', w: 4 }) +
+       sv.path(`M-34 ${DESK_Y - 10} L-20 ${DESK_Y - 132} L-8 ${DESK_Y - 130} L-22 ${DESK_Y - 8} Z`, { fill: '#9AA3AD', w: 4 }) +
+       sv.dot(-14, DESK_Y - 70, 4, '#E9EEF2');
+  // framed photo: mom and little Scribble
+  const fx = 282, fy = DESK_Y;
+  s += sv.path(`M${fx - 34} ${fy} L${fx + 34} ${fy} L${fx + 34} ${fy - 78} L${fx - 34} ${fy - 78} Z`, { fill: '#F6EEDC', w: 5 }) +
+       sv.path(`M${fx - 25} ${fy - 9} L${fx + 25} ${fy - 9} L${fx + 25} ${fy - 69} L${fx - 25} ${fy - 69} Z`, { fill: '#FFFDF6', w: 2.5 }) +
+       sv.circle(fx - 8, fy - 52, 7, { w: 2.5 }) + sv.line(fx - 8, fy - 45, fx - 8, fy - 22, 2.5) + sv.line(fx - 8, fy - 22, fx - 14, fy - 12, 2.5) + sv.line(fx - 8, fy - 22, fx - 2, fy - 12, 2.5) +
+       sv.circle(fx + 12, fy - 38, 5, { w: 2.5 }) + sv.line(fx + 12, fy - 33, fx + 12, fy - 20, 2.5) + sv.line(fx + 12, fy - 20, fx + 8, fy - 12, 2.5) + sv.line(fx + 12, fy - 20, fx + 16, fy - 12, 2.5) +
+       sv.path(`M${fx + 7} ${fy - 32} L${fx + 17} ${fy - 32}`, { stroke: C.red, w: 3 }) + sv.line(fx - 8, fy - 38, fx + 8, fy - 28, 2.5);
+  // the phone
+  if (phoneOnDesk(t)) {
+    const r = ringing(t), sh = r ? Math.sin(t * 60) * 5 : 0;
+    const scr = r ? '#E9F6FF' : '#3A4150';
+    let ph = sv.path('M-16 0 L16 0 L16 -60 L-16 -60 Z', { fill: C.ink, w: 4 }) + sv.path('M-12 -7 L12 -7 L12 -53 L-12 -53 Z', { fill: scr, w: 1.5 });
+    if (r) ph += TXT(0, -36, 13, C.ink, 1, 'Mom') + `<path d="M0 -16 C-7 -20 -8 -27 -3 -28 C-1 -28 0 -26 0 -25 C0 -26 1 -28 3 -28 C8 -27 7 -20 0 -16 Z" fill="${C.red}"/>`;
+    s += `<g transform="translate(${PHONE_X} ${DESK_Y}) rotate(${sh.toFixed(1)} 0 -2) scale(1.3)">${ph}</g>`;
+    if (r) for (let k = 0; k < 3; k++) {          // ring arcs
+      const ph2 = (t * 1.6 + k / 3) % 1, rr = 40 + ph2 * 60, o = 0.8 * (1 - ph2);
+      s += sv.path(`M${PHONE_X + rr * 0.6} ${DESK_Y - 30 - rr * 0.8} Q${PHONE_X + rr} ${DESK_Y - 30} ${PHONE_X + rr * 0.6} ${DESK_Y - 30 + rr * 0.5}`, { stroke: C.ink, w: 4, op: o.toFixed(2) });
+    }
+    const m = missed(t);
+    if (m && !r) s += `<circle cx="${PHONE_X + 21}" cy="${DESK_Y - 78}" r="15" fill="${C.red}" stroke="${C.ink}" stroke-width="3"/>` + TXT(PHONE_X + 21, DESK_Y - 70, 23, '#fff', 1, String(m));
+  }
+  return `<g opacity="${op.toFixed(3)}">${s}</g>`;
+}, 'back');
+
+/* ---------- call bubble (mom at home) ---------- */
+const BX = 272, BY = -250, BR = 200;
+const BUBBLES = [[2.6, 12.3], [32.0, 41.5]];
+const bubbleK = (t) => { for (const [a, b] of BUBBLES) if (t >= a - 0.01 && t <= b + 0.01) return Math.min(S.EASE.back(clamp((t - a) / 0.4)), ease(clamp((b - t) / 0.4))); return 0; };
+sc.custom((t) => {
+  const k = bubbleK(t); if (k <= 0.01) return '';
+  const r = BR * k;
+  let s = sv.circle(BX, BY, r, { fill: '#FFFDF7', w: 6 });
+  s += sv.line(BX - r * 0.75, BY + r * 0.6, BX + r * 0.75, BY + r * 0.6, 3);       // her floor
+  // little window + lamp in her room
+  if (k > 0.9) s += sv.path(`M${BX - 140} ${BY - 80} L${BX - 82} ${BY - 80} L${BX - 82} ${BY - 10} L${BX - 140} ${BY - 10} Z`, { fill: '#2F3B57', w: 3 }) + sv.line(BX - 111, BY - 80, BX - 111, BY - 10, 2);
+  // trail of dots toward the phone
+  const dots = [[140, -30, 14], [104, 12, 10], [78, 44, 7]];
+  dots.forEach(([x, y, rr], i) => { if (k > 0.5 + i * 0.12) s += sv.circle(x, y, rr, { fill: '#FFFDF7', w: 4 }); });
+  return s;
+}, 'back');
+
+/* ---------- characters ---------- */
+const s = sc.character({ x: -236, scale: 2.8, pose: 'type', expr: 'neutral', costume: 'office' });    // Scribble (grown up)
+const oldmom = sc.character({ x: BX, y: BY + BR * 0.6, scale: 1.25, scarf: false, hair: 'bun', costume: 'granny', pose: 'phoneEar', hold: 'phone', expr: 'happy', opacity: 0 });
+const ymom = sc.character({ x: 330, scale: 2.35, scarf: false, hair: 'long', costume: 'dress', pose: 'phoneEar', hold: 'phone', expr: 'happy', opacity: 0, facing: -1 });
+const kid = sc.character({ x: -150, scale: 1.6, pose: 'idle', expr: 'happy', opacity: 0 });         // little Scribble (memory)
+
+// Scene 1 — Monday (0–12.3)
+s.drawOn(0.4, 1.0);
+s.look(0.2, [3, 2]);
+s.expr(2.6, 'confused').look(2.6, [4, 4]);                 // glances at the phone
+s.pose(4.9, 'tap', { expr: 'neutral', dur: 0.35 });        // declines
+s.pose(5.7, 'type', { expr: 'neutral', dur: 0.4 }).look(5.7, [3, 2]);
+oldmom.fade(2.9, 0.3, 1);
+oldmom.expr(5.8, 'confused');
+oldmom.pose(6.6, 'phoneLow', { expr: 'sad', dur: 0.6 });
+oldmom.talk(9.9, 11.7).expr(9.7, 'calm');
+oldmom.expr(11.7, 'sad');
+oldmom.fade(11.7, 0.45, 0);
+
+// Montage — Tuesday, Wednesday (12.3–17.2)
+s.expr(13.0, 'confused').look(13.0, [4, 4]);
+s.pose(14.0, 'tap', { expr: 'neutral', dur: 0.3 }).pose(14.75, 'type', { dur: 0.3 }).look(14.75, [3, 2]);
+s.expr(15.4, 'angry').look(15.4, [4, 4]);
+s.pose(16.3, 'tap', { expr: 'angry', dur: 0.25 }).pose(16.95, 'type', { expr: 'neutral', dur: 0.3 }).look(16.95, [3, 2]);
+sc.text('Monday', { x: -330, y: -400, size: 52, at: 1.0, until: 12.2, write: 0.5, color: '#3A3A3A' });
+sc.text('Tuesday', { x: -330, y: -400, size: 52, at: 12.5, until: 15.0, write: 0.4, color: '#3A3A3A' });
+sc.text('Wednesday', { x: -330, y: -400, size: 52, at: 15.2, until: 17.4, write: 0.4, color: '#3A3A3A' });
+
+// He notices the photo (17.2–19.6)
+s.pose(17.4, 'sitIdle', { expr: 'thinking', dur: 0.5 }).look(17.4, [5, -1]);
+s.expr(18.6, 'sad');
+s.fade(19.4, 0.7, 0);
+
+// the photo grows into the memory (18.0–20.4)
+sc.custom((t) => {
+  if (t < 18.0 || t > 20.4) return '';
+  const k = ease(clamp((t - 18.0) / 0.9)), o = clamp(Math.min((t - 18.0) / 0.3, (20.4 - t) / 0.6));
+  const x = lerp(282, 40, k), y = lerp(140, 60, k), sc_ = lerp(1, 4.2, k);
+  const fr = sv.path('M-34 0 L34 0 L34 -78 L-34 -78 Z', { fill: '#F6EEDC', w: 5 / sc_ * 1.6 }) +
+    sv.path('M-25 -9 L25 -9 L25 -69 L-25 -69 Z', { fill: '#FFFDF6', w: 1.2 }) +
+    sv.circle(-8, -52, 7, { w: 1.6 }) + sv.line(-8, -45, -8, -22, 1.6) + sv.line(-8, -22, -14, -12, 1.6) + sv.line(-8, -22, -2, -12, 1.6) +
+    sv.line(-8, -38, 8, -28, 1.6) +
+    sv.circle(12, -38, 5, { w: 1.6 }) + sv.line(12, -33, 12, -20, 1.6) + sv.line(12, -20, 8, -12, 1.6) + sv.line(12, -20, 16, -12, 1.6) +
+    sv.path('M7 -32 L17 -32', { stroke: C.red, w: 2.2 }) +
+    `<path d="M2 -60 C-3 -63 -4 -67 -1 -68 C0 -68 2 -67 2 -66 C2 -67 4 -68 5 -68 C8 -67 7 -63 2 -60 Z" fill="${C.red}"/>`;
+  return `<g opacity="${o.toFixed(2)}" transform="translate(${f1(x)} ${f1(y)}) scale(${sc_.toFixed(3)})">${fr}</g>`;
+}, 'front');
+
+// Scene 2 — memory (20–31)
+sc.text('years ago...', { x: 0, y: -400, size: 62, at: 20.2, until: 23.6, write: 0.6 });
+kid.fade(20.0, 0.5, 1);
+ymom.fade(20.0, 0.5, 1);
+ymom.talk(20.4, 22.4);                                          // she is on a phone call
+kid.run(20.6, 22.3, 90).pose(20.6, 'cheer', { expr: 'excited' });
+kid.rotateTo(22.3, 0.22, 82).pose(22.3, 'shocked', { expr: 'shocked', dur: 0.15 });
+kid.rotateTo(22.75, 0.2, 0).pose(22.75, 'floorSit', { expr: 'sad', dur: 0.2 });
+kid.pose(23.2, 'floorCry', { expr: 'sad', dur: 0.3 });
+ymom.expr(22.45, 'shocked').look(22.45, [-4, 3]);
+ymom.hold(22.9, null).pose(22.9, 'idle', { expr: 'shocked', dur: 0.2 });        // drops the call at once
+sc.prop('phone', { x: 300, y: G, scale: 0.4, at: 22.95, draw: 0, out: 30.6 });
+ymom.run(23.1, 24.0, 215);
+ymom.pose(24.05, 'hug', { expr: 'calm', dur: 0.4 });
+kid.pose(25.2, 'floorSit', { expr: 'sad', dur: 0.4 }).look(25.2, [4, -4]);
+kid.expr(26.6, 'calm');
+kid.expr(27.8, 'happy');
+ymom.expr(27.6, 'happy').talk(28.8, 30.4);
+kid.fade(30.4, 0.6, 0); ymom.fade(30.4, 0.6, 0);
+// tears while he cries
+sc.custom((t) => {
+  if (t < 22.9 || t > 25.6) return '';
+  const x = kid.x.at(t), sc_ = kid.scale.at(t), hy = G - 92 * sc_;
+  let out = '';
+  for (const side of [-1, 1]) for (let k = 0; k < 2; k++) {
+    const ph = (t * 1.8 + k * 0.5 + (side > 0 ? 0.25 : 0)) % 1;
+    out += `<path d="M${f1(x + side * 14 * sc_)} ${f1(hy + ph * 40)} q-4 6 0 9 q4 -3 0 -9 Z" fill="#7FA6D6" stroke="#4C6C99" stroke-width="2" opacity="${(0.9 * (1 - ph)).toFixed(2)}"/>`;
+  }
+  return out;
+}, 'front');
+
+// Scene 3 — he calls back (31–41.6)
+s.pose(30.6, 'sitSad', { expr: 'sad', dur: 0.01 }).fade(30.9, 0.6, 1);
+s.look(31.4, [4, 3]).expr(31.4, 'calm');
+s.hold(31.9, 'phone').pose(31.9, 'sitPhone', { expr: 'calm', dur: 0.45 });
+oldmom.pose(31.9, 'phoneLow', { expr: 'sad', dur: 0.01 }).fade(32.2, 0.4, 1);
+oldmom.look(33.4, [3, 4]).expr(33.4, 'shocked');
+oldmom.pose(33.9, 'phoneEar', { expr: 'excited', dur: 0.35 });
+oldmom.talk(34.4, 37.5);
+s.expr(34.6, 'happy');
+oldmom.expr(37.6, 'happy');
+oldmom.fade(41.1, 0.4, 0);
+s.fade(41.4, 0.7, 0);
+// her phone rings in her hand
+sc.custom((t) => {
+  if (t < 32.4 || t > 33.9) return '';
+  let out = '';
+  for (let k = 0; k < 3; k++) {
+    const ph = (t * 1.6 + k / 3) % 1, rr = 14 + ph * 30, o = 0.8 * (1 - ph), cx = BX + 34, cy = BY + 42;
+    out += sv.path(`M${f1(cx + rr * 0.6)} ${f1(cy - rr * 0.8)} Q${f1(cx + rr)} ${f1(cy)} ${f1(cx + rr * 0.6)} ${f1(cy + rr * 0.6)}`, { stroke: C.ink, w: 3, op: o.toFixed(2) });
+  }
+  return out;
+}, 'front');
+// little hearts floating from his phone to her
+sc.custom((t) => {
+  if (t < 37.4 || t > 41.6) return '';
+  let out = '';
+  for (let i = 0; i < 4; i++) {
+    const ph = (t - 37.4 - i * 0.7) / 2.2; if (ph < 0 || ph > 1) continue;
+    const x = lerp(-170, 150, ph) + Math.sin(ph * 9 + i) * 14, y = lerp(10, -150, ph) - Math.sin(ph * Math.PI) * 60;
+    const scl = 0.32 * Math.sin(ph * Math.PI) + 0.12, o = Math.sin(ph * Math.PI);
+    out += `<g transform="translate(${f1(x)} ${f1(y)}) scale(${scl.toFixed(2)})" opacity="${o.toFixed(2)}">` + S.PROPS.heart(t) + `</g>`;
+  }
+  return out;
+}, 'front');
+
+// end card
+sc.text('Call them back.', { x: 0, y: -90, size: 96, at: 42.1, until: 45.4, write: 0.8 });
+sc.text("They're still waiting.", { x: 0, y: 10, size: 60, at: 42.8, until: 45.4, write: 0.8, color: '#3A3A3A' });
+sc.prop('heart', { x: 0, y: 150, scale: 0.6, at: 43.6, draw: 0.5, out: 45.4 });
+
+/* ---------- on-screen words ---------- */
+function say(who, t0, t1, str) {
+  const words = str.split(' '), chunks = []; let cur = '';
+  for (const w of words) { if ((cur + ' ' + w).trim().length > 24 && cur) { chunks.push(cur); cur = w; } else cur = (cur + ' ' + w).trim(); }
+  if (cur) chunks.push(cur);
+  const tot = chunks.reduce((n, c) => n + c.length, 0); let t = t0;
+  for (const c of chunks) {
+    const d = (t1 - t0) * c.length / tot;
+    const isQuote = who !== 'narrator';
+    sc.text(isQuote ? `"${c}"` : c, { x: 0, y: 420, size: isQuote ? 56 : 50, at: t, until: t + d - 0.05, write: 0.25, color: isQuote ? '#1B1B1B' : '#3A3A3A' });
+    t += d;
+  }
+}
+LINES.filter((l) => l[1] < 41.6).forEach(([who, a, b, str]) => say(who, a, b, str));
+
+/* portrait-only header (above the safe square, invisible at 16:9) */
+sc.custom((t) => {
+  const op = t < 41.4 ? 1 : clamp(1 - (t - 41.4) / 0.6);
+  if (op <= 0) return '';
+  return `<g opacity="${op.toFixed(2)}">` + TXT(0, -700, 108, C.ink, 1, 'SHE CALLED') + TXT(0, -592, 108, C.ink, 1, `EVERY <tspan fill="${C.red}">EVENING</tspan>`) + `</g>`;
+}, 'front');
+
+window.__LINES = LINES;
+sc.exposeForRecording();
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+}
+</script>
+</body>
+</html>

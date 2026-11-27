@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Scribble2 expressions</title>
+<style>html,body{margin:0;background:#F6EEDF}</style>
+<script src="../lib/scribble2.js"></script></head>
+<body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const K = Scribble2;
+const T = (x, y, t, size = 24, c = '#4A3F33', a = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${a}" fill="${c}" font-family="'Segoe Print','Comic Sans MS',cursive" font-weight="700">${t}</text>`;
+let s = K.defs();
+s += `<defs><radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0%" stop-color="#FBF5E9"/><stop offset="100%" stop-color="#EADCC3"/></radialGradient></defs>`;
+s += `<rect width="1920" height="1080" fill="url(#paper)"/>`;
+s += T(960, 62, 'Scribble · expressions', 40, '#2A231C');
+const faces = ['neutral', 'smile', 'happy', 'sad', 'worried', 'cry', 'surprised', 'angry', 'focused', 'sleepy'];
+const rows = [['front', 'FRONT', {}], ['q', '3/4', {}], ['side', 'SIDE', {}]];
+rows.forEach(([view, label], ri) => {
+  const y = 250 + ri * 290;
+  s += T(70, y + 8, label, 26, '#7A6A55', 'start');
+  faces.forEach((fc, i) => {
+    const x = 285 + i * 165;
+    const look = fc === 'focused' ? [0.2, 0.9] : [0, 0];
+    s += K.head(x, y, 74, { view, f: 1, face: fc, look });
+    if (ri === 2) s += T(x, y + 118, fc, 22);
+  });
+});
+document.getElementById('s').innerHTML = s;
+</script>
+</body></html>

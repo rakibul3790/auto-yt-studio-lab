@@ -1,0 +1,128 @@
+{
+  "title": "On Venus, One Spin Takes Longer Than a Year",
+  "format": "short",
+  "description": "Venus takes about 243 Earth days to spin once, but only about 225 Earth days to orbit the Sun. And it spins backwards.",
+  "tags": [
+    "venus",
+    "venus facts",
+    "day on venus",
+    "space facts",
+    "planets",
+    "solar system",
+    "astronomy",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "space",
+    "facts"
+  ],
+  "thumbnail_text": "Birthday before bedtime",
+  "scenes": [
+    {
+      "on_screen": "Birthday before bedtime",
+      "visual": "planet venus",
+      "subject": "venus",
+      "text": "On Venus, you'd celebrate a birthday before a single day is over.",
+      "highlight": [
+        "before a single day"
+      ],
+      "say": "[laughs] On Venus, you'd celebrate a birthday before a single day is over.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Slowest spin",
+      "visual": "venus planet space",
+      "subject": "venus",
+      "text": "Our closest neighbor spins so slowly",
+      "highlight": [
+        "so slowly"
+      ],
+      "say": "Our closest neighbor spins so slowly"
+    },
+    {
+      "on_screen": "1 spin = 243 days",
+      "visual": "planet rotating space",
+      "subject": "planet",
+      "text": "that one full turn takes two hundred and forty three Earth days.",
+      "highlight": [
+        "forty three Earth days"
+      ],
+      "say": "that one full turn takes two hundred and forty three Earth days."
+    },
+    {
+      "on_screen": "1 year = 225 days",
+      "visual": "solar system orbit sun",
+      "subject": "sun",
+      "text": "But one trip around the Sun takes only about two hundred and twenty five.",
+      "highlight": [
+        "twenty five"
+      ],
+      "say": "[curious] But one trip around the Sun takes only about two hundred and twenty five."
+    },
+    {
+      "on_screen": "Spin longer than year",
+      "visual": "venus surface",
+      "subject": "venus",
+      "text": "So one spin outlasts a whole year.",
+      "highlight": [
+        "outlasts a whole year"
+      ],
+      "say": "[gasps] So one spin outlasts a whole year.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "It gets weirder",
+      "visual": "yellow clouds planet",
+      "subject": "planet",
+      "text": "It gets weirder.",
+      "highlight": [
+        "weirder"
+      ],
+      "say": "[whispers] It gets weirder.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Spins backwards",
+      "visual": "planet space dark",
+      "subject": "planet",
+      "text": "Venus spins backwards,",
+      "highlight": [
+        "spins backwards"
+      ],
+      "say": "Venus spins BACKWARDS,",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Sun rises in the west",
+      "visual": "sunrise sky",
+      "subject": "sunrise",
+      "text": "so the Sun rises in the west and sets in the east.",
+      "highlight": [
+        "rises in the west"
+      ],
+      "say": "so the Sun rises in the west and sets in the east."
+    },
+    {
+      "on_screen": "All upside down",
+      "visual": "old clock",
+      "subject": "clock",
+      "text": "Clocks, calendars, even sunrise, all upside down.",
+      "highlight": [
+        "all upside down"
+      ],
+      "say": "[laughs] Clocks, calendars, even sunrise, all upside down."
+    },
+    {
+      "on_screen": "Which is why",
+      "visual": "planet venus",
+      "subject": "venus",
+      "text": "Which is exactly why...",
+      "highlight": [
+        "exactly why"
+      ],
+      "say": "Which is exactly why..."
+    }
+  ],
+  "music_mood": "mysterious"
+}

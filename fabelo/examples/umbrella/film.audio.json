@@ -1,0 +1,43 @@
+{"duration": 52,
+ "voices": {
+  "narrator": {"voice": "af_heart", "speed": 0.86, "semitones": 0, "fx": "room", "gain": 0.85},
+  "mom":      {"voice": "af_bella", "speed": 0.95, "semitones": 0, "fx": "room", "gain": 0.85},
+  "oldmom":   {"voice": "af_bella", "speed": 0.86, "semitones": -2, "fx": "warm", "gain": 0.9}
+ },
+ "lines": [
+  ["narrator", 1.2, 4.9, "Every rainy day, she tilted the umbrella toward him."],
+  ["mom", 6.2, 7.9, "Stay dry, sweetheart."],
+  ["narrator", 8.8, 13.0, "He never noticed she was the one getting wet."],
+  ["narrator", 16.4, 18.4, "Years went by."],
+  ["narrator", 22.6, 26.2, "Then one day, she was the one caught in the rain."],
+  ["oldmom", 27.6, 29.6, "Oh... you'll get wet."],
+  ["narrator", 30.6, 35.0, "He just smiled. Now he understood why she never minded."],
+  ["narrator", 41.6, 46.6, "Hold the umbrella for the ones who once held it for you."]
+ ],
+ "sfx": [
+  ["step", 0.7, 0.22, {"every": 0.45, "until": 4.2}],
+  ["step", 0.9, 0.12, {"every": 0.3, "until": 4.2}],
+  ["pop", 5.0, 0.12],
+  ["whoosh", 14.6, 0.2, {"d": 0.8}],
+  ["chime", 15.9, 0.18],
+  ["tick", 16.2, 0.07, {"every": 0.5, "until": 20.4}],
+  ["step", 15.5, 0.18, {"every": 0.5, "until": 20.6}],
+  ["thud", 21.7, 0.35],
+  ["dark_whoosh", 21.5, 0.35],
+  ["step", 23.1, 0.25, {"every": 0.34, "until": 25.4}],
+  ["whoosh", 25.9, 0.15, {"d": 0.5}],
+  ["pluck", 30.3, 0.14, {"note": 72}],
+  ["pluck", 30.8, 0.12, {"note": 76}],
+  ["chime", 33.1, 0.16],
+  ["step", 36.5, 0.15, {"every": 0.6, "until": 46.0}],
+  ["chime", 46.9, 0.22],
+  ["pluck", 48.6, 0.16, {"note": 79}]
+ ],
+ "beds": [["rain", 0.3, 15.3, 0.09], ["rain", 21.6, 43.5, 0.10], ["birds", 43.0, 52.0, 0.04]],
+ "music": {"level": 0.05, "final_chord": true, "sections": [
+  [0, 15, ["Am","F","C","G"], 4, 64, "sparse", 0.8],
+  [15, 22, ["C","G","Am","F"], 2, 70, "tender", 0.8],
+  [22, 30, ["Am","Dm","Am","E"], 4, 58, "dark", 0.75],
+  [30, 42, ["F","C","G","Am"], 4, 64, "warm", 0.9],
+  [42, 52, ["C","Am","F","G"], 4, 66, "tender", 0.85]]}
+}

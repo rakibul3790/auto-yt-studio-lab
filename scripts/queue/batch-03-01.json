@@ -1,0 +1,75 @@
+{
+  "title": "Hummingbirds Can't Walk",
+  "format": "short",
+  "description": "Hummingbirds are amazing fliers, but their tiny feet cannot walk or hop.",
+  "tags": [
+    "hummingbird",
+    "birds",
+    "animal facts",
+    "nature facts",
+    "flight",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "hummingbird",
+    "facts"
+  ],
+  "thumbnail_text": "They can't walk",
+  "scenes": [
+    {
+      "on_screen": "Can't walk",
+      "visual": "hummingbird flying",
+      "text": "Hummingbirds are some of the best fliers on the planet. But they cannot walk.",
+      "highlight": [
+        "cannot walk"
+      ],
+      "subject": "hummingbird",
+      "say": "Hummingbirds are some of the best fliers on the planet. [chuckles] But they cannot walk.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Tiny feet",
+      "visual": "hummingbird perched branch",
+      "text": "Their feet are tiny and weak. They can grip a branch and shuffle sideways, but they cannot walk or even hop.",
+      "highlight": [
+        "tiny and weak"
+      ],
+      "subject": "hummingbird",
+      "say": "[sighs] Their feet are tiny and weak. They can grip a branch and shuffle sideways, but they cannot walk or even hop.",
+      "look": "sad"
+    },
+    {
+      "on_screen": "Always flying",
+      "visual": "hummingbird hovering flower",
+      "text": "So to move even a few inches, a hummingbird has to fly. Its wings can beat around fifty times every second.",
+      "highlight": [
+        "fifty times"
+      ],
+      "subject": "hummingbird",
+      "say": "So to move even a few inches, a hummingbird has to fly. [excited] Its wings can beat around FIFTY times every second.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Backwards too",
+      "visual": "hummingbird close up",
+      "text": "They are also among the only birds that can fly backwards, and they can hover in one spot like a tiny helicopter.",
+      "highlight": [
+        "fly backwards"
+      ],
+      "subject": "hummingbird",
+      "say": "They are also among the only birds that can fly backwards, and they can hover in one spot like a tiny helicopter."
+    },
+    {
+      "on_screen": "Built to fly",
+      "visual": "colorful hummingbird",
+      "text": "Built to fly, not to walk. Follow for more weird facts.",
+      "highlight": [
+        "Built to fly"
+      ],
+      "subject": "hummingbird",
+      "say": "[laughs] Built to fly, not to walk. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "quirky"
+}

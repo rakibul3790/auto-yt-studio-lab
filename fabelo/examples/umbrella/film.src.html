@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>She Always Held the Umbrella — Fabelo Studio</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="../../lib/scribble.js"></script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   "She Always Held the Umbrella" — Fabelo Studio emotional Short (52 s)
+   Scribble never speaks. Mom tilts the umbrella toward him and gets wet;
+   years later he does the same for her.
+   Safe area = square [-500, 500] → 9:16, 16:9, 1:1 all work.
+   ===================================================================== */
+const S = Scribble, C = S.palette, sv = S.svg;
+const DUR = 52, G = 300;
+const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = S.EASE.inOut;
+const UMB = '#2B4C7E';            // mom's blue umbrella (the same one, all his life)
+
+const LINES = [
+  ['narrator', 1.2, 4.9, "Every rainy day, she tilted the umbrella toward him."],
+  ['mom',      6.2, 7.9, "Stay dry, sweetheart."],
+  ['narrator', 8.8, 13.0, "He never noticed she was the one getting wet."],
+  ['narrator', 16.4, 18.4, "Years went by."],
+  ['narrator', 22.6, 26.2, "Then one day, she was the one caught in the rain."],
+  ['oldmom',   27.6, 29.6, "Oh... you'll get wet."],
+  ['narrator', 30.6, 35.0, "He just smiled. Now he understood why she never minded."],
+  ['narrator', 41.6, 46.6, "Hold the umbrella for the ones who once held it for you."],
+];
+
+/* ---------- poses, costume, props ---------- */
+S.registerPose('umbrella', { lean: 0, head: 0, aL: [-26, -18], aR: [150, 178], lL: [-12, -14], lR: [12, 14] });
+S.registerPose('umbrellaReach', { lean: 4, head: 6, aL: [-24, -16], aR: [122, 162], lL: [-12, -14], lR: [12, 14] });
+S.registerPose('umbrellaOld', { lean: 6, head: 8, aL: [-18, -8], aR: [150, 178], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('shield', { lean: 9, head: 14, aL: [-20, -10], aR: [140, 235], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('oldIdle', { lean: 8, head: 8, aL: [-18, -8], aR: [24, 40], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('touch', { lean: 6, head: 2, aL: [-18, -8], aR: [70, 95], lL: [-10, -12], lR: [10, 12] });
+S.registerCostume('granny', {
+  body: sv.path('M-20 -4 Q0 6 20 -4 L24 44 Q0 54 -24 44 Z', { fill: '#A89A86', w: 4 }) + sv.path('M-14 2 L0 22 L14 2', { stroke: '#7D705F', w: 3 }),
+  face: sv.circle(-10, -2, 8.5, { w: 3 }) + sv.circle(10, -2, 8.5, { w: 3 }) + sv.line(-1.5, -3, 1.5, -3, 3)
+});
+// umbrella held in the right hand; opts.tilt in degrees (+ = forward)
+S.registerProp('umbrella', (t, o = {}) => {
+  const tilt = o.tilt || 0;
+  const canopy =
+    sv.path('M-88 -84 Q-84 -132 0 -136 Q84 -132 88 -84 Q66 -96 44 -84 Q22 -96 0 -84 Q-22 -96 -44 -84 Q-66 -96 -88 -84 Z', { fill: UMB, w: 5 }) +
+    sv.path('M0 -136 L-44 -84 M0 -136 L0 -84 M0 -136 L44 -84', { stroke: '#18294A', w: 2.5 }) +
+    sv.line(0, -136, 0, -148, 5);
+  const shaft = sv.line(0, 12, 0, -84, 5) + sv.path('M0 12 Q0 26 -9 26 Q-17 26 -17 18', { w: 5 });
+  return `<g transform="rotate(${tilt})">${shaft}${canopy}</g>`;
+}, { s: 1, dx: 0, dy: 0, rot: 0 });
+S.registerProp('cane', () => sv.line(0, 0, 0, -118, 5, '#6B4A2E') + sv.path('M0 -118 Q0 -132 14 -132 Q24 -132 24 -122', { stroke: '#6B4A2E', w: 5 }), null);
+S.registerProp('puddle', () => `<ellipse cx="0" cy="4" rx="90" ry="12" fill="#9DB0C9" opacity="0.45"/>` + sv.path('M-70 4 Q0 -6 70 4', { stroke: '#7E93C2', w: 2.5 }), null);
+
+/* ---------- scene ---------- */
+const sc = S.createScene(document.body, { duration: DUR, ground: G, fadeIn: 0.9, fadeOut: 1.2 });
+
+// weather & light
+const RAIN = (t) => {   // 0..1 intensity
+  if (t < 0.3) return 0;
+  if (t < 14.5) return clamp((t - 0.3) / 0.8);
+  if (t < 15.5) return 1 - (t - 14.5);
+  if (t < 21.6) return 0;
+  if (t < 39.5) return clamp((t - 21.6) / 0.8);
+  if (t < 43.5) return 1 - (t - 39.5) / 4;
+  return 0;
+};
+const tint = (t) => {
+  if (t < 14.8) return { c: '#B9C3D6', o: 0.75 };
+  if (t < 15.8) return { c: '#B9C3D6', o: lerp(0.75, 0, t - 14.8) };
+  if (t < 21.2) return { c: '#F3D9A4', o: 0.35 * Math.sin(clamp((t - 15.8) / 5.4) * Math.PI) };
+  if (t < 22.2) return { c: '#9FAAC4', o: lerp(0, 0.85, t - 21.2) };
+  if (t < 39.5) return { c: '#9FAAC4', o: 0.85 };
+  if (t < 44) { const k = ease((t - 39.5) / 4.5); return k < 0.5 ? { c: '#9FAAC4', o: lerp(0.85, 0, k * 2) } : { c: '#F3C98B', o: lerp(0, 0.45, (k - 0.5) * 2) }; }
+  return { c: '#F3C98B', o: 0.45 };
+};
+sc.custom((t, scn) => {
+  const v = scn.view || { x: -889, y: -500, w: 1778, h: 1000 }, k = tint(t);
+  if (k.o <= 0.005) return '';
+  return `<rect x="${v.x - 10}" y="${v.y - 10}" width="${v.w + 20}" height="${v.h + 20}" fill="${k.c}" style="mix-blend-mode:multiply" opacity="${k.o.toFixed(3)}"/>`;
+}, 'back');
+
+/* ---------- characters ---------- */
+const s = sc.character({ x: -160, scale: 1.55, pose: 'idle', expr: 'happy' });                                   // Scribble (little)
+const mom = sc.character({ x: -420, scale: 2.6, scarf: false, hair: 'long', pose: 'umbrellaReach', hold: 'umbrella', expr: 'happy' });
+mom._hand = [62, -136];
+const gran = sc.character({ x: -250, scale: 2.4, scarf: false, hair: 'bun', costume: 'granny', pose: 'shield', expr: 'sad', opacity: 0 });
+const setTilt = (ch, t0, dur, a, b, n = 8) => { for (let i = 0; i <= n; i++) ch.hold(t0 + dur * i / n, 'umbrella', { tilt: lerp(a, b, ease(i / n)) }); };
+
+// Scene 1 — childhood (0–15)
+mom.hold(0, 'umbrella', { tilt: 24 });
+
+mom.walk(0.6, 4.2, -170, { keepArms: true });
+s.walk(0.6, 4.2, -10);
+s.face(5.0, -1).look(5.0, [-3, -5]).expr(5.0, 'happy');
+mom.talk(6.2, 7.8).expr(6.0, 'happy');
+mom.expr(8.4, 'calm');
+s.face(10.2, 1).look(10.2, [3, -2]).pose(10.2, 'wave', { expr: 'excited' }).wave(10.2, 11.6).pose(11.8, 'idle', { expr: 'happy' });
+sc.prop('puddle', { x: 300, y: G, scale: 1.0, at: 0, draw: 0, out: 15.2 });
+mom.fade(14.4, 1.0, 0);
+
+// Scene 2 — years go by (15–22)
+s.walk(15.4, 20.6, 260);
+s.scaleTo(15.4, 5.2, 2.6);
+sc.prop('sun', { x: -300, y: -330, scale: 0.8, at: 15.8, draw: 0.6, out: 20.6 });
+sc.prop('cloud', { x: 250, y: -360, scale: 0.9, at: 16.4, draw: 0.6, out: 20.8 });
+sc.prop('clock', { x: 0, y: -170, scale: 0.9, at: 16.0, draw: 0.5, out: 20.4 });
+sc.text('years later...', { x: 0, y: -400, size: 64, at: 16.2, until: 20.6, write: 0.6 });
+s.hold(20.9, 'umbrella', { tilt: 0 }).pose(20.9, 'umbrella', { expr: 'neutral' });
+s.face(21.4, -1);
+
+// Scene 3 — her turn (22–40)
+gran.fade(21.8, 0.8, 1);
+sc.prop('cane', { x: -330, y: G, scale: 2.4, at: 21.8, draw: 0, out: 36.2, outDur: 0.5 });
+s.expr(22.4, 'shocked');
+s.walk(23.0, 25.4, 10, { keepArms: true });
+s.expr(25.4, 'calm');
+setTilt(s, 25.8, 0.9, 0, 30);               // he tilts it toward her
+gran.pose(26.2, 'oldIdle', { expr: 'shocked', dur: 0.5 });
+gran.look(26.2, [3, -5]).expr(27.2, 'happy').talk(27.6, 29.4);
+s.expr(30.2, 'happy');
+gran.pose(33.0, 'touch', { expr: 'calm', dur: 0.6 });
+gran.expr(34.4, 'happy');
+// walk away together, umbrella over her
+gran.pose(36.0, 'oldIdle', { expr: 'happy', dur: 0.4 });
+s.face(36.0, 1); setTilt(s, 36.0, 0.6, 30, -30, 6);
+gran.walk(36.4, 46.4, 760);
+s.walk(36.4, 46.4, 1000, { keepArms: true });
+gran.fade(45.4, 1.0, 0); s.fade(45.4, 1.0, 0);
+sc.prop('sun', { x: 320, y: -330, scale: 0.9, at: 41.0, draw: 0.8, out: 51 });
+
+// final words
+sc.text('Hold the umbrella', { x: 0, y: -120, size: 84, at: 46.9, until: 51.4, write: 0.8 });
+sc.text('for the ones who once held it for you.', { x: 0, y: -30, size: 56, at: 47.6, until: 51.4, write: 1.0, color: '#3A3A3A' });
+sc.prop('heart', { x: 0, y: 90, scale: 0.55, at: 48.6, draw: 0.5, out: 51.4 });
+
+/* ---------- rain (with umbrella shelters) ---------- */
+// canopy in world space, from the holder's live position (hand offset measured for pose 'umbrella')
+const HAND = [16, -150];         // right-hand position in character units for pose 'umbrella' (facing right)
+function canopy(ch, t) {
+  const op = ch.opacity.at(t); if (op < 0.5) return null;
+  const h = ch.holdT.at(t); if (!h || h.name !== 'umbrella') return null;
+  const sc_ = ch.scale.at(t), f = ch.facing.at(t), tilt = (h.opts.tilt || 0) * Math.PI / 180, HAND_ = ch._hand || HAND;
+  const cx = ch.x.at(t) + f * (HAND_[0] + Math.sin(tilt) * 110) * sc_;
+  const cy = G + (HAND_[1] - Math.cos(tilt) * 110) * sc_;
+  return { cx, cy, hw: 88 * sc_ };
+}
+sc.custom((t, scn) => {
+  const I = RAIN(t); if (I <= 0) return '';
+  const v = scn.view || { x: -889, y: -500, w: 1778, h: 1000 };
+  const cs = [canopy(mom, t), canopy(s, t)].filter(Boolean);
+  let out = '';
+  const N = 170, H = v.h + 260;
+  for (let i = 0; i < N; i++) {
+    if (i / N > I) continue;
+    const x0 = v.x + ((i * 0.6180339) % 1) * (v.w + 200) - 50;
+    const y = v.y - 130 + ((t * 1500 + i * 397) % H);
+    const x = x0 - (y - v.y) * 0.12;
+    if (y > G + 6) continue;
+    let blocked = false;
+    for (const c of cs) if (y > c.cy - 20 && Math.abs(x - c.cx) < c.hw) { blocked = true; break; }
+    if (blocked) continue;
+    out += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${(x - 5).toFixed(1)}" y2="${(y + 42).toFixed(1)}" stroke="#5E6F8F" stroke-width="3" stroke-linecap="round" opacity="0.55"/>`;
+  }
+  // ripples on the ground
+  for (let i = 0; i < 26 * I; i++) {
+    const ph = (t * 1.7 + i * 0.37) % 1, x = v.x + ((i * 0.381966 + 0.13) % 1) * v.w;
+    out += `<ellipse cx="${x.toFixed(1)}" cy="${G + 4}" rx="${(4 + 26 * ph).toFixed(1)}" ry="${(1.5 + 5 * ph).toFixed(1)}" fill="none" stroke="#5E6F8F" stroke-width="2" opacity="${(0.5 * (1 - ph)).toFixed(2)}"/>`;
+  }
+  // drips from the canopy edges
+  for (const c of cs) for (let k = 0; k < 2; k++) {
+    const ph = (t * 2.2 + k * 0.5) % 1, ex = c.cx + (k ? 1 : -1) * c.hw * 0.98;
+    out += `<line x1="${ex.toFixed(1)}" y1="${(c.cy + 10 + ph * 260).toFixed(1)}" x2="${ex.toFixed(1)}" y2="${(c.cy + 30 + ph * 260).toFixed(1)}" stroke="#5E6F8F" stroke-width="3" stroke-linecap="round" opacity="${(0.7 * (1 - ph)).toFixed(2)}"/>`;
+  }
+  return out;
+}, 'front');
+
+// splashes on the one who is getting wet (mom in scene 1, Scribble in scene 3)
+function wetSpot(ch, side, t, from, to) {
+  if (t < from || t > to || RAIN(t) < 0.5) return '';
+  const sc_ = ch.scale.at(t), f = ch.facing.at(t), x = ch.x.at(t) + side * f * 24 * sc_, y = G - 112 * sc_;
+  let out = '';
+  for (let k = 0; k < 3; k++) {
+    const ph = (t * 2.6 + k / 3) % 1, dx = (k - 1) * 9 * sc_;
+    out += sv.path(`M${(x + dx - 9).toFixed(1)} ${(y - 4 * ph).toFixed(1)} q -6 ${(-10 * ph).toFixed(1)} -12 ${(-4 * ph).toFixed(1)} M${(x + dx + 9).toFixed(1)} ${(y - 4 * ph).toFixed(1)} q 6 ${(-10 * ph).toFixed(1)} 12 ${(-4 * ph).toFixed(1)}`, { stroke: '#5E6F8F', w: 2.5, op: (0.8 * (1 - ph)).toFixed(2) });
+    out += `<line x1="${(x + dx).toFixed(1)}" y1="${(y + 30 * ph * sc_).toFixed(1)}" x2="${(x + dx).toFixed(1)}" y2="${(y + 30 * ph * sc_ + 14).toFixed(1)}" stroke="#5E6F8F" stroke-width="3" stroke-linecap="round" opacity="${(0.6 * (1 - ph)).toFixed(2)}"/>`;
+  }
+  return out;
+}
+sc.custom((t) => wetSpot(mom, -1, t, 4.0, 14.4) + wetSpot(s, -1, t, 26.6, 40), 'front');
+
+/* ---------- on-screen words ---------- */
+function say(who, t0, t1, str) {
+  const words = str.split(' '), chunks = []; let cur = '';
+  for (const w of words) { if ((cur + ' ' + w).trim().length > 24 && cur) { chunks.push(cur); cur = w; } else cur = (cur + ' ' + w).trim(); }
+  if (cur) chunks.push(cur);
+  const tot = chunks.reduce((n, c) => n + c.length, 0); let t = t0;
+  for (const c of chunks) {
+    const d = (t1 - t0) * c.length / tot;
+    const isMom = who !== 'narrator';
+    sc.text(isMom ? `"${c}"` : c, { x: 0, y: 400, size: isMom ? 58 : 50, at: t, until: t + d - 0.05, write: 0.25, color: isMom ? '#1B1B1B' : '#3A3A3A' });
+    t += d;
+  }
+}
+LINES.forEach(([who, a, b, str]) => say(who, a, b, str));
+
+/* portrait-only header (lives above the safe square, invisible at 16:9) */
+sc.custom((t) => {
+  const op = t < 46.4 ? 1 : clamp(1 - (t - 46.4) / 0.6);
+  if (op <= 0) return '';
+  return `<g opacity="${op.toFixed(2)}"><text x="0" y="-700" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="112" fill="#1B1B1B">SHE ALWAYS HELD</text>` +
+    `<text x="0" y="-590" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="112" fill="#1B1B1B">THE <tspan fill="${UMB}">UMBRELLA</tspan></text></g>`;
+}, 'front');
+
+window.__LINES = LINES;
+sc.exposeForRecording();
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+}
+</script>
+</body>
+</html>

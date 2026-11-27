@@ -1,0 +1,76 @@
+{
+  "title": "This Shrimp Snaps Hard Enough to Create Heat Like the Sun",
+  "format": "short",
+  "description": "The pistol shrimp snaps its claw so fast that it makes a bubble that briefly gets incredibly hot.",
+  "tags": [
+    "pistol shrimp",
+    "ocean animals",
+    "animal facts",
+    "sea creatures",
+    "weird facts",
+    "physics",
+    "nature facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "ocean",
+    "facts"
+  ],
+  "thumbnail_text": "Shrimp vs the Sun",
+  "scenes": [
+    {
+      "on_screen": "The pistol shrimp",
+      "visual": "shrimp underwater",
+      "text": "There is a shrimp with a claw that works like a weapon. It is called the pistol shrimp.",
+      "highlight": [
+        "pistol shrimp"
+      ],
+      "subject": "shrimp",
+      "say": "[curious] There is a shrimp with a claw that works like a WEAPON. It is called the pistol shrimp.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "A super fast snap",
+      "visual": "shrimp claw",
+      "text": "It snaps its claw shut so quickly that it shoots out a jet of water and creates a tiny bubble.",
+      "highlight": [
+        "a jet of water"
+      ],
+      "subject": "shrimp",
+      "say": "It snaps its claw shut so quickly that it shoots out a jet of water and creates a tiny bubble."
+    },
+    {
+      "on_screen": "Thousands of degrees",
+      "visual": "underwater bubbles",
+      "text": "When that bubble collapses, the inside briefly reaches thousands of degrees, close to the temperature of the Sun's surface.",
+      "highlight": [
+        "thousands of degrees"
+      ],
+      "subject": "bubbles",
+      "say": "[gasps] When that bubble collapses, the inside briefly reaches THOUSANDS of degrees, close to the temperature of the Sun's surface.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Loud and stunning",
+      "visual": "shrimp reef",
+      "text": "The snap is also one of the loudest sounds in the ocean, and it can stun small fish nearby.",
+      "highlight": [
+        "loudest sounds"
+      ],
+      "subject": "shrimp",
+      "say": "[shouts] The snap is also one of the LOUDEST sounds in the ocean, and it can stun small fish nearby.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "shrimp sea floor",
+      "text": "Small shrimp, huge power. Follow for more weird facts.",
+      "highlight": [
+        "huge power"
+      ],
+      "subject": "shrimp",
+      "say": "[laughs] Small shrimp, huge power. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic"
+}

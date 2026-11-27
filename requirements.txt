@@ -1,0 +1,9 @@
+edge-tts>=7.0,<8
+gTTS>=2.5
+Pillow>=10.0
+PyYAML>=6.0
+requests>=2.31
+google-api-python-client>=2.100
+google-auth>=2.23
+google-auth-oauthlib>=1.1
+numpy>=1.26

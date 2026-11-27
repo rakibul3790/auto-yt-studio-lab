@@ -1,0 +1,75 @@
+{
+  "title": "Tiny Water Bears Have Survived Outer Space",
+  "format": "short",
+  "description": "Tardigrades are microscopic animals tough enough to survive being exposed to space.",
+  "tags": [
+    "tardigrade",
+    "water bear",
+    "space facts",
+    "microscopic animals",
+    "survival",
+    "weird facts",
+    "science facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "science",
+    "facts"
+  ],
+  "thumbnail_text": "Survived space",
+  "scenes": [
+    {
+      "on_screen": "Meet the water bear",
+      "visual": "tardigrade",
+      "text": "There is a tiny animal that has survived a trip into outer space. It is the tardigrade, also called the water bear.",
+      "highlight": [
+        "outer space"
+      ],
+      "subject": "tardigrade",
+      "say": "[excited] There is a tiny animal that has survived a trip into OUTER SPACE. It is the tardigrade, also called the water bear.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Smaller than a millimeter",
+      "visual": "moss close up",
+      "text": "Tardigrades are smaller than a millimeter long and live almost everywhere, even in the moss on a garden wall.",
+      "highlight": [
+        "a millimeter"
+      ],
+      "subject": "moss",
+      "say": "Tardigrades are smaller than a millimeter long and live almost everywhere, even in the moss on a garden wall."
+    },
+    {
+      "on_screen": "Exposed to space",
+      "visual": "earth from space",
+      "text": "In two thousand seven, scientists sent some into orbit and exposed them to the vacuum of space. Some survived and even had babies afterward.",
+      "highlight": [
+        "had babies"
+      ],
+      "say": "In two thousand seven, scientists sent some into orbit and exposed them to the vacuum of space. [gasps] Some survived and even had babies afterward.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Their secret",
+      "visual": "tardigrade microscope",
+      "text": "When conditions get harsh, they dry out and curl up into a tiny ball, almost shutting down their bodies until things get better.",
+      "highlight": [
+        "a tiny ball"
+      ],
+      "subject": "tardigrade",
+      "say": "[softly] When conditions get harsh, they dry out and curl up into a tiny ball, almost shutting down their bodies until things get better.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "moss garden",
+      "text": "The toughest animal on Earth might be living in your garden. Follow for more weird facts.",
+      "highlight": [
+        "in your garden"
+      ],
+      "subject": "moss",
+      "say": "[chuckles] The toughest animal on Earth might be living in your garden. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic"
+}

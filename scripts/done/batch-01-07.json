@@ -1,0 +1,80 @@
+{
+  "title": "There Are More Chess Games Than Atoms in the Universe",
+  "format": "short",
+  "description": "The number of possible chess games is so big it beats the number of atoms in the observable universe.",
+  "tags": [
+    "chess",
+    "math facts",
+    "universe",
+    "atoms",
+    "big numbers",
+    "weird facts",
+    "science facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "chess",
+    "facts"
+  ],
+  "thumbnail_text": "More than atoms",
+  "scenes": [
+    {
+      "on_screen": "Chess vs the universe",
+      "visual": "chess board",
+      "text": "There are more possible games of chess than there are atoms in the observable universe.",
+      "highlight": [
+        "more possible games"
+      ],
+      "subject": "chess",
+      "say": "[whispers] There are more possible games of chess... than there are atoms in the observable universe.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Atoms: about 10 to the 80",
+      "visual": "galaxy space",
+      "text": "Scientists estimate the observable universe holds about ten to the power of eighty atoms. That is a one followed by eighty zeros.",
+      "highlight": [
+        "eighty zeros"
+      ],
+      "say": "Scientists estimate the observable universe holds about ten to the power of eighty atoms. That is a one followed by EIGHTY zeros."
+    },
+    {
+      "on_screen": "Chess: about 10 to the 120",
+      "visual": "chess pieces",
+      "text": "A famous estimate puts the number of possible chess games at around ten to the power of one hundred and twenty.",
+      "highlight": [
+        "one hundred and twenty"
+      ],
+      "subject": "chess",
+      "say": "[excited] A famous estimate puts the number of possible chess games at around ten to the power of one hundred and twenty.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "40 zeros bigger",
+      "visual": "chess pieces board",
+      "text": "That is not a little bigger. It is forty extra zeros. Every game you play is almost certainly one that has never been played before.",
+      "highlight": [
+        "forty extra zeros"
+      ],
+      "subject": "chess",
+      "say": "[gasps] That is not a little bigger. It is FORTY extra zeros. Every game you play is almost certainly one that has never been played before.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "chess game",
+      "text": "So your next game of chess might be history in the making. Follow for more weird facts.",
+      "highlight": [
+        "history in the making"
+      ],
+      "subject": "chess",
+      "say": "[chuckles] So your next game of chess might be history in the making. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "mysterious",
+  "result": {
+    "uploaded_at": "2026-11-25T23:50:51Z",
+    "short_id": "ymnhlX3B9mc",
+    "short_url": "https://youtube.com/shorts/ymnhlX3B9mc"
+  }
+}

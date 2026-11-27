@@ -1,0 +1,74 @@
+{
+  "title": "Earth Has More Trees Than the Milky Way Has Stars",
+  "format": "short",
+  "description": "Scientists estimate there are about three trillion trees on Earth, far more than the stars in our galaxy.",
+  "tags": [
+    "trees",
+    "milky way",
+    "stars",
+    "nature facts",
+    "space facts",
+    "weird facts",
+    "forests",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "nature",
+    "facts"
+  ],
+  "thumbnail_text": "More trees than stars",
+  "scenes": [
+    {
+      "on_screen": "Trees vs stars",
+      "visual": "forest from above",
+      "text": "There are more trees on Earth than stars in our galaxy.",
+      "highlight": [
+        "more trees"
+      ],
+      "subject": "forest",
+      "say": "[excited] There are more trees on Earth... than stars in our galaxy.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "About 3 trillion trees",
+      "visual": "green forest",
+      "text": "A large study estimated there are about three trillion trees on our planet.",
+      "highlight": [
+        "three trillion trees"
+      ],
+      "subject": "forest",
+      "say": "A large study estimated there are about THREE TRILLION trees on our planet.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "100 to 400 billion stars",
+      "visual": "milky way galaxy",
+      "text": "The Milky Way is thought to have somewhere between one hundred and four hundred billion stars.",
+      "highlight": [
+        "four hundred billion"
+      ],
+      "subject": "galaxy",
+      "say": "The Milky Way is thought to have somewhere between one hundred and four hundred billion stars."
+    },
+    {
+      "on_screen": "But we're losing them",
+      "visual": "tree stumps",
+      "text": "The same study found that billions of trees are cut down every year, so that number keeps shrinking.",
+      "highlight": [
+        "keeps shrinking"
+      ],
+      "say": "[sighs] [sad] The same study found that billions of trees are cut down every year, so that number keeps shrinking.",
+      "look": "sad"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "tree sunlight",
+      "text": "Every one of those trees counts. Follow for more weird facts.",
+      "highlight": [
+        "counts"
+      ],
+      "say": "[warmly] Every one of those trees counts. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "calm"
+}

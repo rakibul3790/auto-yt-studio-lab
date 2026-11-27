@@ -1,0 +1,72 @@
+{
+  "title": "You Can't See the Great Wall From Space",
+  "format": "short",
+  "description": "Despite the famous myth, the Great Wall of China is not visible to the naked eye from the Moon, and is very hard to see from orbit.",
+  "tags": [
+    "great wall of china",
+    "space",
+    "myths",
+    "history",
+    "earth from space",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "greatwall",
+    "facts"
+  ],
+  "thumbnail_text": "Not visible from space",
+  "scenes": [
+    {
+      "on_screen": "A famous myth",
+      "visual": "great wall of china",
+      "text": "You may have heard that the Great Wall of China is the only human-made thing you can see from space. It is a myth.",
+      "highlight": [
+        "It is a myth"
+      ],
+      "subject": "wall",
+      "say": "You may have heard that the Great Wall of China is the only human-made thing you can see from space. [chuckles] It is a myth.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Too narrow",
+      "visual": "great wall mountains",
+      "text": "The wall is very long, but mostly only a few meters wide, and its color blends in with the land around it.",
+      "highlight": [
+        "a few meters wide"
+      ],
+      "subject": "wall",
+      "say": "The wall is very long, but mostly only a few meters wide, and its color blends in with the land around it."
+    },
+    {
+      "on_screen": "From the Moon",
+      "visual": "full moon",
+      "text": "From the Moon, astronauts say you cannot see any single human-made structure at all.",
+      "highlight": [
+        "from the Moon"
+      ],
+      "subject": "moon",
+      "say": "[curious] From the Moon, astronauts say you cannot see any single human-made structure at all."
+    },
+    {
+      "on_screen": "From orbit",
+      "visual": "earth from space",
+      "text": "Even from low orbit, astronauts say the wall is very hard to spot with the naked eye. City lights at night are much easier.",
+      "highlight": [
+        "city lights"
+      ],
+      "say": "Even from low orbit, astronauts say the wall is very hard to spot with the naked eye. City lights at night are much easier."
+    },
+    {
+      "on_screen": "Big, not wide",
+      "visual": "great wall sunset",
+      "text": "Long does not mean visible. Follow for more weird facts.",
+      "highlight": [
+        "Long does not mean visible"
+      ],
+      "subject": "wall",
+      "say": "[laughs] Long does not mean visible. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "mysterious"
+}

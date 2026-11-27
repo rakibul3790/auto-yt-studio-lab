@@ -1,0 +1,72 @@
+{
+  "title": "Your Stomach Gets a New Lining Every Few Days",
+  "format": "short",
+  "description": "Your stomach replaces the cells of its inner lining every few days to protect itself from its own acid.",
+  "tags": [
+    "human body",
+    "stomach",
+    "biology",
+    "health facts",
+    "body facts",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "humanbody",
+    "facts"
+  ],
+  "thumbnail_text": "A new lining",
+  "scenes": [
+    {
+      "on_screen": "New every few days",
+      "visual": "stomach anatomy",
+      "text": "Your stomach gives itself a fresh new lining every few days.",
+      "highlight": [
+        "every few days"
+      ],
+      "subject": "stomach",
+      "say": "[curious] Your stomach gives itself a fresh new lining every few days.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Strong acid",
+      "visual": "lemon slices",
+      "text": "That is because stomach acid is strong enough to break down tough food, and it would slowly damage the stomach too.",
+      "highlight": [
+        "stomach acid"
+      ],
+      "say": "[serious] That is because stomach acid is strong enough to break down tough food, and it would slowly damage the stomach too.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Mucus shield",
+      "visual": "stomach anatomy illustration",
+      "text": "A thick layer of mucus protects the wall, and the cells underneath are replaced again and again.",
+      "highlight": [
+        "layer of mucus"
+      ],
+      "subject": "stomach",
+      "say": "A thick layer of mucus protects the wall, and the cells underneath are replaced again and again."
+    },
+    {
+      "on_screen": "Always repairing",
+      "visual": "doctor anatomy",
+      "text": "Those cells only last a few days before new ones take their place, so the damage never builds up.",
+      "highlight": [
+        "a few days"
+      ],
+      "subject": "anatomy",
+      "say": "Those cells only last a few days before new ones take their place, so the damage never builds up."
+    },
+    {
+      "on_screen": "Self repair",
+      "visual": "healthy breakfast",
+      "text": "Your body is always quietly rebuilding itself. Follow for more weird facts.",
+      "highlight": [
+        "rebuilding itself"
+      ],
+      "say": "[softly] Your body is always quietly rebuilding itself. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "calm"
+}

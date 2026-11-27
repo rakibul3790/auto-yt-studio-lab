@@ -1,0 +1,40 @@
+# Makes samples of free, more expressive AI voices to compare (samples/expressive/).
+name: Expressive voice samples
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  samples:
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chatterbox, kokoro]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg espeak-ng
+      - name: Install ${{ matrix.engine }} (CPU only)
+        run: |
+          if [ "${{ matrix.engine }}" = chatterbox ]; then
+            pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+            pip install chatterbox-tts soundfile
+          else
+            pip install torch --index-url https://download.pytorch.org/whl/cpu
+            pip install "kokoro>=0.9.4" soundfile
+          fi
+      - run: python tools/expressive_samples.py ${{ matrix.engine }}
+      - name: Save samples to the repo
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add samples/expressive
+          git commit -m "Expressive voice samples: ${{ matrix.engine }}"
+          for i in 1 2 3 4; do git pull --rebase && git push && break; sleep 5; done

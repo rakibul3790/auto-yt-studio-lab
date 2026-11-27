@@ -1,0 +1,1071 @@
+{
+ "props": [
+  {
+   "name": "moon",
+   "x": -330,
+   "at": 6.6,
+   "draw": 0.8,
+   "out": 39.2
+  },
+  {
+   "name": "question",
+   "x": 230,
+   "at": 9,
+   "draw": 0,
+   "out": 14.2
+  },
+  {
+   "name": "money",
+   "x": -290,
+   "at": 16.4,
+   "draw": 0,
+   "out": 19.4
+  },
+  {
+   "name": "hut",
+   "x": -380,
+   "at": 26.5,
+   "draw": 0.8,
+   "out": 39.2
+  },
+  {
+   "name": "hut",
+   "x": 385,
+   "at": 26.7,
+   "draw": 0.8,
+   "out": 39.2
+  },
+  {
+   "name": "bell",
+   "x": 0,
+   "at": 27,
+   "draw": 0.5,
+   "out": 33.8
+  },
+  {
+   "name": "campfire",
+   "x": -180,
+   "at": 28,
+   "draw": 0.6,
+   "out": 33.6
+  },
+  {
+   "name": "firecover",
+   "x": -180,
+   "at": 33,
+   "draw": 0,
+   "out": 39.2
+  },
+  {
+   "name": "bed",
+   "x": 0,
+   "at": 39.4,
+   "draw": 0.6,
+   "out": 62.9
+  },
+  {
+   "name": "blanket",
+   "x": 0,
+   "at": 39.6,
+   "draw": 0.5,
+   "out": 62.9
+  },
+  {
+   "name": "stool",
+   "x": 300,
+   "at": 39.5,
+   "draw": 0,
+   "out": 62.9
+  },
+  {
+   "name": "candle",
+   "x": 300,
+   "at": 39.6,
+   "draw": 0,
+   "out": 44.2
+  },
+  {
+   "name": "scroll",
+   "x": -330,
+   "at": 48.6,
+   "draw": 0.6,
+   "out": 52.6
+  },
+  {
+   "name": "wallclock",
+   "x": 330,
+   "at": 49.5,
+   "draw": 0.6,
+   "out": 62.9
+  },
+  {
+   "name": "dreamcloud",
+   "x": -150,
+   "at": 65.7,
+   "draw": 0,
+   "out": 68.2
+  },
+  {
+   "name": "campfire",
+   "x": -10,
+   "at": 66.4,
+   "draw": 0.6,
+   "out": 74.2
+  },
+  {
+   "name": "house",
+   "x": 395,
+   "at": 74,
+   "draw": 0.7,
+   "out": 77.3
+  },
+  {
+   "name": "woodpile",
+   "x": -340,
+   "at": 77.4,
+   "draw": 0.6,
+   "out": 84.8
+  },
+  {
+   "name": "gaslamp",
+   "x": -390,
+   "at": 85.6,
+   "draw": 0.8,
+   "out": 100.2
+  },
+  {
+   "name": "gaslamp",
+   "x": 390,
+   "at": 85.9,
+   "draw": 0.8,
+   "out": 100.2
+  },
+  {
+   "name": "lightbulb",
+   "x": 0,
+   "at": 89.6,
+   "draw": 0,
+   "out": 93
+  },
+  {
+   "name": "bed",
+   "x": 0,
+   "at": 100.6,
+   "draw": 0,
+   "out": 111.2
+  },
+  {
+   "name": "blanket",
+   "x": 0,
+   "at": 100.6,
+   "draw": 0,
+   "out": 111.2
+  },
+  {
+   "name": "wallclock",
+   "x": 330,
+   "at": 100.8,
+   "draw": 0.5,
+   "out": 111.2
+  },
+  {
+   "name": "moon",
+   "x": -330,
+   "at": 101,
+   "draw": 0.6,
+   "out": 111.2
+  }
+ ],
+ "texts": [
+  {
+   "str": "Before electricity,",
+   "y": 446,
+   "at": 0.9,
+   "until": 2.57027027027027,
+   "write": 0
+  },
+  {
+   "str": "when the sun went down,",
+   "y": 446,
+   "at": 2.62027027027027,
+   "until": 4.652702702702702,
+   "write": 0
+  },
+  {
+   "str": "the world went dark.",
+   "y": 446,
+   "at": 4.702702702702702,
+   "until": 6.463513513513512,
+   "write": 0
+  },
+  {
+   "str": "Really dark.",
+   "y": 446,
+   "at": 6.513513513513512,
+   "until": 7.549999999999999,
+   "write": 0
+  },
+  {
+   "str": "So what did people actually do",
+   "y": 446,
+   "at": 8,
+   "until": 10.411538461538461,
+   "write": 0
+  },
+  {
+   "str": "all night? The answer is",
+   "y": 446,
+   "at": 10.461538461538462,
+   "until": 12.38076923076923,
+   "write": 0
+  },
+  {
+   "str": "stranger than you think.",
+   "y": 446,
+   "at": 12.430769230769231,
+   "until": 14.35,
+   "write": 0
+  },
+  {
+   "str": "First, light cost money.",
+   "y": 446,
+   "at": 15,
+   "until": 16.610377358490567,
+   "write": 0
+  },
+  {
+   "str": "Beeswax candles were for the",
+   "y": 446,
+   "at": 16.660377358490567,
+   "until": 18.54748427672956,
+   "write": 0
+  },
+  {
+   "str": "rich. Most families burned smoky",
+   "y": 446,
+   "at": 18.59748427672956,
+   "until": 20.76132075471698,
+   "write": 0
+  },
+  {
+   "str": "tallow, made from animal fat.",
+   "y": 446,
+   "at": 20.81132075471698,
+   "until": 22.76761006289308,
+   "write": 0
+  },
+  {
+   "str": "The poorest just dipped dried",
+   "y": 446,
+   "at": 22.81761006289308,
+   "until": 24.77389937106918,
+   "write": 0
+  },
+  {
+   "str": "rushes in grease.",
+   "y": 446,
+   "at": 24.82389937106918,
+   "until": 25.95,
+   "write": 0
+  },
+  {
+   "str": "In medieval towns, an evening",
+   "y": 446,
+   "at": 26.5,
+   "until": 28.50965909090909,
+   "write": 0
+  },
+  {
+   "str": "bell told everyone to cover",
+   "y": 446,
+   "at": 28.55965909090909,
+   "until": 30.427272727272726,
+   "write": 0
+  },
+  {
+   "str": "their fires, so wooden houses",
+   "y": 446,
+   "at": 30.477272727272727,
+   "until": 32.48693181818182,
+   "write": 0
+  },
+  {
+   "str": "wouldn't burn down.",
+   "y": 446,
+   "at": 32.53693181818182,
+   "until": 33.83636363636364,
+   "write": 0
+  },
+  {
+   "str": "Cover fire, in French,",
+   "y": 446,
+   "at": 33.88636363636364,
+   "until": 35.39886363636364,
+   "write": 0
+  },
+  {
+   "str": "is couvre-feu. That's where we",
+   "y": 446,
+   "at": 35.44886363636364,
+   "until": 37.52954545454546,
+   "write": 0
+  },
+  {
+   "str": "get the word curfew.",
+   "y": 446,
+   "at": 37.57954545454546,
+   "until": 38.95000000000001,
+   "write": 0
+  },
+  {
+   "str": "With no light and little to do,",
+   "y": 446,
+   "at": 39.5,
+   "until": 42.12241379310345,
+   "write": 0
+  },
+  {
+   "str": "most people were in bed within",
+   "y": 446,
+   "at": 42.172413793103445,
+   "until": 44.70862068965517,
+   "write": 0
+  },
+  {
+   "str": "an hour or two after dark.",
+   "y": 446,
+   "at": 44.75862068965517,
+   "until": 46.949999999999996,
+   "write": 0
+  },
+  {
+   "str": "But here's the twist.",
+   "y": 446,
+   "at": 47.5,
+   "until": 49.09825581395349,
+   "write": 0
+  },
+  {
+   "str": "Historian Roger Ekirch found",
+   "y": 446,
+   "at": 49.14825581395349,
+   "until": 51.29593023255814,
+   "write": 0
+  },
+  {
+   "str": "thousands of old records",
+   "y": 446,
+   "at": 51.34593023255814,
+   "until": 53.1796511627907,
+   "write": 0
+  },
+  {
+   "str": "describing two sleeps.",
+   "y": 446,
+   "at": 53.229651162790695,
+   "until": 54.90639534883721,
+   "write": 0
+  },
+  {
+   "str": "A first sleep, then waking up",
+   "y": 446,
+   "at": 54.956395348837205,
+   "until": 57.18255813953488,
+   "write": 0
+  },
+  {
+   "str": "after midnight, and a second",
+   "y": 446,
+   "at": 57.23255813953488,
+   "until": 59.38023255813953,
+   "write": 0
+  },
+  {
+   "str": "sleep until morning.",
+   "y": 446,
+   "at": 59.43023255813953,
+   "until": 60.949999999999996,
+   "write": 0
+  },
+  {
+   "str": "That break could last an hour or",
+   "y": 446,
+   "at": 61.5,
+   "until": 64.49294478527608,
+   "write": 0
+  },
+  {
+   "str": "more, and people used it.",
+   "y": 446,
+   "at": 64.54294478527608,
+   "until": 66.87024539877301,
+   "write": 0
+  },
+  {
+   "str": "They prayed, thought about their",
+   "y": 446,
+   "at": 66.920245398773,
+   "until": 69.91319018404909,
+   "write": 0
+  },
+  {
+   "str": "dreams, talked with family,",
+   "y": 446,
+   "at": 69.96319018404908,
+   "until": 72.48067484662577,
+   "write": 0
+  },
+  {
+   "str": "tended the fire, and even",
+   "y": 446,
+   "at": 72.53067484662577,
+   "until": 74.8579754601227,
+   "write": 0
+  },
+  {
+   "str": "visited the neighbors.",
+   "y": 446,
+   "at": 74.9079754601227,
+   "until": 76.95,
+   "write": 0
+  },
+  {
+   "str": "And yes, a few used the darkness",
+   "y": 446,
+   "at": 77.5,
+   "until": 81.08636363636364,
+   "write": 0
+  },
+  {
+   "str": "to steal their neighbor's",
+   "y": 446,
+   "at": 81.13636363636364,
+   "until": 83.92727272727274,
+   "write": 0
+  },
+  {
+   "str": "firewood.",
+   "y": 446,
+   "at": 83.97727272727273,
+   "until": 84.95,
+   "write": 0
+  },
+  {
+   "str": "Then came artificial light.",
+   "y": 446,
+   "at": 85.5,
+   "until": 87.51052631578948,
+   "write": 0
+  },
+  {
+   "str": "Gas lamps, and later electric",
+   "y": 446,
+   "at": 87.56052631578947,
+   "until": 89.72368421052632,
+   "write": 0
+  },
+  {
+   "str": "bulbs, kept the night bright.",
+   "y": 446,
+   "at": 89.77368421052631,
+   "until": 91.93684210526315,
+   "write": 0
+  },
+  {
+   "str": "People stayed up later,",
+   "y": 446,
+   "at": 91.98684210526315,
+   "until": 93.69210526315788,
+   "write": 0
+  },
+  {
+   "str": "and by the eighteen hundreds,",
+   "y": 446,
+   "at": 93.74210526315788,
+   "until": 95.90526315789472,
+   "write": 0
+  },
+  {
+   "str": "that first sleep slowly",
+   "y": 446,
+   "at": 95.95526315789472,
+   "until": 97.66052631578945,
+   "write": 0
+  },
+  {
+   "str": "stretched into one long night.",
+   "y": 446,
+   "at": 97.71052631578945,
+   "until": 99.94999999999997,
+   "write": 0
+  },
+  {
+   "str": "So if you ever wake up in the",
+   "y": 446,
+   "at": 100.5,
+   "until": 103.46298701298701,
+   "write": 0
+  },
+  {
+   "str": "middle of the night,",
+   "y": 446,
+   "at": 103.51298701298701,
+   "until": 105.5409090909091,
+   "write": 0
+  },
+  {
+   "str": "don't panic. For centuries,",
+   "y": 446,
+   "at": 105.5909090909091,
+   "until": 108.3461038961039,
+   "write": 0
+  },
+  {
+   "str": "a break in the night was",
+   "y": 446,
+   "at": 108.3961038961039,
+   "until": 110.83961038961039,
+   "write": 0
+  },
+  {
+   "str": "perfectly normal. Subscribe for",
+   "y": 446,
+   "at": 110.88961038961038,
+   "until": 114.0603896103896,
+   "write": 0
+  },
+  {
+   "str": "more forgotten history.",
+   "y": 446,
+   "at": 114.1103896103896,
+   "until": 116.45,
+   "write": 0
+  },
+  {
+   "str": "What did people do all night?",
+   "y": -385,
+   "at": 8.1,
+   "until": 14.4,
+   "write": 0.5
+  },
+  {
+   "str": "Light cost money",
+   "y": -385,
+   "at": 15.2,
+   "until": 19,
+   "write": 0.5
+  },
+  {
+   "str": "Beeswax = rich",
+   "y": 120,
+   "at": 16.6,
+   "until": 19.4,
+   "write": 0.6
+  },
+  {
+   "str": "Tallow = animal fat",
+   "y": 120,
+   "at": 19.8,
+   "until": 23,
+   "write": 0.6
+  },
+  {
+   "str": "Smoky & smelly",
+   "y": -385,
+   "at": 19.8,
+   "until": 23,
+   "write": 0.5
+  },
+  {
+   "str": "Rushlight",
+   "y": -385,
+   "at": 23.2,
+   "until": 26,
+   "write": 0.5
+  },
+  {
+   "str": "rush + grease",
+   "y": 120,
+   "at": 23.4,
+   "until": 26,
+   "write": 0.6
+  },
+  {
+   "str": "DING!",
+   "y": -300,
+   "at": 27.6,
+   "until": 29,
+   "write": 0.6
+  },
+  {
+   "str": "DONG!",
+   "y": -260,
+   "at": 29.2,
+   "until": 30.6,
+   "write": 0.6
+  },
+  {
+   "str": "Couvre-feu = \"cover fire\"",
+   "y": -385,
+   "at": 34.5,
+   "until": 39,
+   "write": 0.5
+  },
+  {
+   "str": "\u2192 CURFEW",
+   "y": -305,
+   "at": 36.3,
+   "until": 39,
+   "write": 0.6
+  },
+  {
+   "str": "In bed soon after dark",
+   "y": -385,
+   "at": 39.9,
+   "until": 46.8,
+   "write": 0.5
+  },
+  {
+   "str": "2,000+ old records",
+   "y": 90,
+   "at": 49,
+   "until": 52.6,
+   "write": 0.6
+  },
+  {
+   "str": "FIRST SLEEP",
+   "y": -385,
+   "at": 51,
+   "until": 54.6,
+   "write": 0.5
+  },
+  {
+   "str": "~ midnight",
+   "y": -10,
+   "at": 55,
+   "until": 58.5,
+   "write": 0.6
+  },
+  {
+   "str": "SECOND SLEEP",
+   "y": -385,
+   "at": 58.6,
+   "until": 61.2,
+   "write": 0.5
+  },
+  {
+   "str": "An hour or more awake",
+   "y": -385,
+   "at": 61.7,
+   "until": 63.2,
+   "write": 0.5
+  },
+  {
+   "str": "Pray",
+   "y": -385,
+   "at": 63.4,
+   "until": 65.5,
+   "write": 0.5
+  },
+  {
+   "str": "Dreams",
+   "y": -385,
+   "at": 65.7,
+   "until": 68.2,
+   "write": 0.5
+  },
+  {
+   "str": "Talk with family",
+   "y": -385,
+   "at": 68.4,
+   "until": 71.5,
+   "write": 0.5
+  },
+  {
+   "str": "Tend the fire",
+   "y": -385,
+   "at": 71.7,
+   "until": 74,
+   "write": 0.5
+  },
+  {
+   "str": "Visit the neighbors",
+   "y": -385,
+   "at": 74.2,
+   "until": 77.2,
+   "write": 0.5
+  },
+  {
+   "str": "Shhh...",
+   "y": -385,
+   "at": 78,
+   "until": 84.6,
+   "write": 0.5
+  },
+  {
+   "str": "Gas lamps",
+   "y": -385,
+   "at": 86.2,
+   "until": 89.4,
+   "write": 0.5
+  },
+  {
+   "str": "Electric light",
+   "y": -385,
+   "at": 89.8,
+   "until": 93,
+   "write": 0.5
+  },
+  {
+   "str": "Staying up later",
+   "y": -385,
+   "at": 93.3,
+   "until": 95.6,
+   "write": 0.5
+  },
+  {
+   "str": "1800s: one long sleep",
+   "y": -385,
+   "at": 95.9,
+   "until": 100,
+   "write": 0.5
+  },
+  {
+   "str": "3 a.m.",
+   "y": -10,
+   "at": 101.4,
+   "until": 104.4,
+   "write": 0.6
+  },
+  {
+   "str": "Don't panic",
+   "y": -385,
+   "at": 103.4,
+   "until": 106.6,
+   "write": 0.5
+  },
+  {
+   "str": "Totally normal",
+   "y": -385,
+   "at": 106.8,
+   "until": 110.8,
+   "write": 0.5
+  },
+  {
+   "str": "Subscribe for more forgotten history",
+   "y": -385,
+   "at": 111.6,
+   "until": 116.5,
+   "write": 0.5
+  }
+ ],
+ "chars": [
+  {
+   "walks": [
+    {
+     "t0": 30.4,
+     "t1": 31.8,
+     "from": 0,
+     "to": -60,
+     "run": false,
+     "keepArms": false
+    },
+    {
+     "t0": 74.2,
+     "t1": 76.2,
+     "from": -200,
+     "to": 250,
+     "run": false,
+     "keepArms": false
+    },
+    {
+     "t0": 77.8,
+     "t1": 79.6,
+     "from": 250,
+     "to": -220,
+     "run": false,
+     "keepArms": false
+    },
+    {
+     "t0": 81,
+     "t1": 83.6,
+     "from": -220,
+     "to": 120,
+     "run": false,
+     "keepArms": true
+    }
+   ],
+   "costume": [
+    {
+     "t": 23.1,
+     "v": "peasant"
+    },
+    {
+     "t": 39.7,
+     "v": null
+    },
+    {
+     "t": 86,
+     "v": "gent"
+    },
+    {
+     "t": 89.6,
+     "v": "office"
+    },
+    {
+     "t": 100.8,
+     "v": null
+    }
+   ],
+   "hold": [
+    {
+     "t": 15.1,
+     "v": {
+      "name": "candle",
+      "opts": {}
+     }
+    },
+    {
+     "t": 19.6,
+     "v": {
+      "name": "candle",
+      "opts": {
+       "smoke": true
+      }
+     }
+    },
+    {
+     "t": 23.1,
+     "v": {
+      "name": "rushlight",
+      "opts": {}
+     }
+    },
+    {
+     "t": 26.4,
+     "v": null
+    },
+    {
+     "t": 79.8,
+     "v": {
+      "name": "logs",
+      "opts": {}
+     }
+    },
+    {
+     "t": 85.2,
+     "v": null
+    },
+    {
+     "t": 93.2,
+     "v": {
+      "name": "phone",
+      "opts": {}
+     }
+    },
+    {
+     "t": 100.8,
+     "v": null
+    }
+   ],
+   "expr": [
+    {
+     "t": 5.9,
+     "v": "scared"
+    },
+    {
+     "t": 8.2,
+     "v": "thinking"
+    },
+    {
+     "t": 11.9,
+     "v": "confused"
+    },
+    {
+     "t": 15.1,
+     "v": "neutral"
+    },
+    {
+     "t": 17,
+     "v": "smirk"
+    },
+    {
+     "t": 19.6,
+     "v": "confused"
+    },
+    {
+     "t": 23.1,
+     "v": "proud"
+    },
+    {
+     "t": 26.4,
+     "v": "neutral"
+    },
+    {
+     "t": 27.4,
+     "v": "shocked"
+    },
+    {
+     "t": 31.9,
+     "v": "neutral"
+    },
+    {
+     "t": 34.4,
+     "v": "happy"
+    },
+    {
+     "t": 62.9,
+     "v": "calm"
+    },
+    {
+     "t": 65.6,
+     "v": "thinking"
+    },
+    {
+     "t": 68.3,
+     "v": "happy"
+    },
+    {
+     "t": 71.6,
+     "v": "neutral"
+    },
+    {
+     "t": 74.1,
+     "v": "happy"
+    },
+    {
+     "t": 77.6,
+     "v": "smirk"
+    },
+    {
+     "t": 79.8,
+     "v": "smirk"
+    },
+    {
+     "t": 83.7,
+     "v": "happy"
+    },
+    {
+     "t": 85.2,
+     "v": "neutral"
+    },
+    {
+     "t": 86,
+     "v": "excited"
+    },
+    {
+     "t": 89.6,
+     "v": "excited"
+    },
+    {
+     "t": 93.2,
+     "v": "neutral"
+    },
+    {
+     "t": 95.8,
+     "v": "sleepy"
+    },
+    {
+     "t": 111,
+     "v": "happy"
+    },
+    {
+     "t": 115.8,
+     "v": "happy"
+    }
+   ],
+   "draw": {
+    "t0": 0.9,
+    "dur": 1.5
+   },
+   "talks": [
+    {
+     "t0": 68.4,
+     "t1": 69.8
+    },
+    {
+     "t0": 111.6,
+     "t1": 115.4
+    }
+   ],
+   "scale": 2.2
+  },
+  {
+   "walks": [],
+   "costume": [],
+   "hold": [],
+   "expr": [
+    {
+     "t": 40.6,
+     "v": "sleepy"
+    },
+    {
+     "t": 42.6,
+     "v": "calm"
+    },
+    {
+     "t": 54.8,
+     "v": "shocked"
+    },
+    {
+     "t": 56.2,
+     "v": "neutral"
+    },
+    {
+     "t": 58.3,
+     "v": "calm"
+    },
+    {
+     "t": 61.6,
+     "v": "neutral"
+    },
+    {
+     "t": 100.5,
+     "v": "calm"
+    },
+    {
+     "t": 101.6,
+     "v": "shocked"
+    },
+    {
+     "t": 103.6,
+     "v": "calm"
+    },
+    {
+     "t": 105,
+     "v": "happy"
+    }
+   ],
+   "draw": null,
+   "talks": [],
+   "scale": 1.8
+  },
+  {
+   "walks": [],
+   "costume": [],
+   "hold": [],
+   "expr": [
+    {
+     "t": 68.3,
+     "v": "happy"
+    },
+    {
+     "t": 69.9,
+     "v": "happy"
+    },
+    {
+     "t": 71.6,
+     "v": "neutral"
+    }
+   ],
+   "draw": null,
+   "talks": [
+    {
+     "t0": 69.9,
+     "t1": 71.4
+    }
+   ],
+   "scale": 2.1
+  }
+ ]
+}

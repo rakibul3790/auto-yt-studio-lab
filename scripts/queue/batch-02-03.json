@@ -1,0 +1,75 @@
+{
+  "title": "Koala Fingerprints Look Almost Exactly Like Ours",
+  "format": "short",
+  "description": "Koalas have fingerprints so similar to human ones that they are hard to tell apart, even under a microscope.",
+  "tags": [
+    "koala",
+    "fingerprints",
+    "animal facts",
+    "australia animals",
+    "weird facts",
+    "nature facts",
+    "evolution",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "animals",
+    "facts"
+  ],
+  "thumbnail_text": "Koala fingerprints",
+  "scenes": [
+    {
+      "on_screen": "Koala fingerprints",
+      "visual": "koala in tree",
+      "text": "Koalas have fingerprints. And they look almost exactly like ours.",
+      "highlight": [
+        "fingerprints"
+      ],
+      "subject": "koala",
+      "say": "[curious] Koalas have fingerprints. And... [laughs] they look almost exactly like ours.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Loops and swirls",
+      "visual": "fingerprint close up",
+      "text": "They have the same loops, arches and swirls that we have on our fingertips.",
+      "highlight": [
+        "loops, arches and swirls"
+      ],
+      "subject": "fingerprint",
+      "say": "They have the same loops, arches and swirls that we have on our fingertips."
+    },
+    {
+      "on_screen": "Hard to tell apart",
+      "visual": "koala close up",
+      "text": "Scientists have said that even under a microscope, koala prints can be very hard to tell apart from human ones.",
+      "highlight": [
+        "hard to tell apart"
+      ],
+      "subject": "koala",
+      "say": "[whispers] Scientists have said that even under a microscope, koala prints can be very hard to tell apart from human ones.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Why?",
+      "visual": "koala eating eucalyptus",
+      "text": "Koalas are not close relatives of ours. Their prints probably developed to help them grip branches and handle their leafy food.",
+      "highlight": [
+        "grip branches"
+      ],
+      "subject": "koala",
+      "say": "Koalas are not close relatives of ours. Their prints probably developed to help them grip branches and handle their leafy food."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "koala sleeping",
+      "text": "Nature sometimes solves the same problem twice. Follow for more weird facts.",
+      "highlight": [
+        "the same problem twice"
+      ],
+      "subject": "koala",
+      "say": "[warmly] Nature sometimes solves the same problem twice. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "quirky"
+}

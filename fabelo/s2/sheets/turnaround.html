@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Scribble2 turnaround</title>
+<style>html,body{margin:0;background:#F6EEDF}</style>
+<script src="../lib/scribble2.js"></script></head>
+<body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const K = Scribble2;
+const T = (x, y, t, size = 28, c = '#4A3F33') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="middle" fill="${c}" font-family="'Segoe Print','Comic Sans MS',cursive" font-weight="700">${t}</text>`;
+let s = K.defs();
+s += `<defs><radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0%" stop-color="#FBF5E9"/><stop offset="100%" stop-color="#EADCC3"/></radialGradient></defs>`;
+s += `<rect width="1920" height="1080" fill="url(#paper)"/>`;
+s += T(960, 62, 'Scribble · turnaround (B)', 40, '#2A231C');
+const GY = 1000, SC = 1.08;
+s += `<path d="M60 ${GY + 2} L1860 ${GY + 2}" stroke="#CDBB9C" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>`;
+const items = [
+  ['front', 1, K.POSES.idleFront, 'neutral', 'FRONT'],
+  ['q', 1, K.POSES.idleQ, 'neutral', '3/4'],
+  ['side', 1, K.POSES.idleSide, 'neutral', 'SIDE'],
+  ['back', 1, K.POSES.idleFront, 'neutral', 'BACK'],
+];
+items.forEach(([view, f, pose, face, label], i) => {
+  const x = 255 + i * 470;
+  s += K.draw({ view, f, pose, face, x, y: GY, scale: SC });
+  s += T(x, GY + 52, label);
+});
+document.getElementById('s').innerHTML = s;
+</script>
+</body></html>

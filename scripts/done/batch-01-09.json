@@ -1,0 +1,80 @@
+{
+  "title": "Oxford University Is Older Than the Aztec Empire",
+  "format": "short",
+  "description": "Teaching at Oxford began long before the Aztecs founded their great capital city.",
+  "tags": [
+    "oxford",
+    "aztecs",
+    "history facts",
+    "timeline",
+    "universities",
+    "weird facts",
+    "medieval",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "history",
+    "facts"
+  ],
+  "thumbnail_text": "Older than the Aztecs",
+  "scenes": [
+    {
+      "on_screen": "Older than the Aztecs",
+      "visual": "oxford university",
+      "text": "Oxford University is older than the Aztec Empire.",
+      "highlight": [
+        "older"
+      ],
+      "subject": "oxford",
+      "say": "[excited] Oxford University is OLDER than the Aztec Empire.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Oxford: 1096",
+      "visual": "oxford university library",
+      "text": "There is evidence of teaching at Oxford as early as ten ninety six, more than nine hundred years ago.",
+      "highlight": [
+        "nine hundred years"
+      ],
+      "subject": "oxford",
+      "say": "There is evidence of teaching at Oxford as early as ten ninety six, more than nine hundred years ago."
+    },
+    {
+      "on_screen": "Tenochtitlan: 1325",
+      "visual": "aztec temple ruins",
+      "text": "The Aztecs founded their capital city, Tenochtitlan, in thirteen twenty five. That is over two hundred years later.",
+      "highlight": [
+        "two hundred years later"
+      ],
+      "subject": "aztec",
+      "say": "The Aztecs founded their capital city, Tenochtitlan, in thirteen twenty five. [gasps] That is over two hundred years later.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Same planet, different worlds",
+      "visual": "oxford college",
+      "text": "So students were already studying in Oxford long before one of the most famous empires in the Americas even began.",
+      "highlight": [
+        "long before"
+      ],
+      "subject": "oxford",
+      "say": "So students were already studying in Oxford long before one of the most famous empires in the Americas even began."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "oxford library books",
+      "text": "Our timelines overlap in ways school never mentioned. Follow for more weird facts.",
+      "highlight": [
+        "overlap"
+      ],
+      "subject": "oxford",
+      "say": "[laughs] Our timelines overlap in ways school never mentioned. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic",
+  "result": {
+    "uploaded_at": "2026-11-26T22:45:17Z",
+    "short_id": "CuqM1vUjh8o",
+    "short_url": "https://youtube.com/shorts/CuqM1vUjh8o"
+  }
+}

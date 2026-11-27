@@ -1,0 +1,72 @@
+{
+  "title": "Bananas Are Berries but Strawberries Aren't",
+  "format": "short",
+  "description": "Botanists have a strict definition of a berry, and it gives some surprising answers.",
+  "tags": [
+    "bananas",
+    "strawberries",
+    "berries",
+    "fruit facts",
+    "botany",
+    "weird facts",
+    "food facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "food",
+    "facts"
+  ],
+  "thumbnail_text": "Bananas are berries",
+  "scenes": [
+    {
+      "on_screen": "Is a banana a berry?",
+      "visual": "bunch of bananas",
+      "text": "Is a banana a berry? According to scientists, yes it is.",
+      "highlight": [
+        "yes it is"
+      ],
+      "subject": "banana"
+    },
+    {
+      "on_screen": "The real definition",
+      "visual": "blueberries berries",
+      "text": "To a botanist, a berry is a fruit that grows from a single flower with one ovary, and usually holds several seeds inside.",
+      "highlight": [
+        "single flower"
+      ],
+      "subject": "berry"
+    },
+    {
+      "on_screen": "Strawberry: not a berry",
+      "visual": "fresh strawberries",
+      "text": "By that rule, bananas, grapes and even tomatoes are berries. But the strawberry is not, because its seeds sit on the outside.",
+      "highlight": [
+        "tomatoes"
+      ],
+      "subject": "strawberry"
+    },
+    {
+      "on_screen": "Pumpkins too",
+      "visual": "pumpkins",
+      "text": "Pumpkins and cucumbers count as a kind of berry too, while raspberries do not.",
+      "highlight": [
+        "raspberries do not"
+      ],
+      "subject": "pumpkin"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "bananas strawberries fruit",
+      "text": "So the berry aisle has been lying to you. Follow for more weird facts.",
+      "highlight": [
+        "lying to you"
+      ],
+      "subject": "fruit"
+    }
+  ],
+  "result": {
+    "uploaded_at": "2026-11-25T14:07:24Z",
+    "short_id": "He4voc7VMSA",
+    "short_url": "https://youtube.com/shorts/He4voc7VMSA"
+  }
+}

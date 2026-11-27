@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Did People Do at Night Before Electricity?</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="scribble.js"></script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   "What Did People Do at Night Before Electricity?"  — 120 s
+   Built on the Scribble library (v1.1). Safe area = square [-500, 500],
+   so the video works at 16:9, 9:16, 1:1 and any other ratio.
+   Voice-over lines + timings live in VO below (also in voice_lines.json).
+   ===================================================================== */
+const S = Scribble, C = S.palette, sv = S.svg;
+const DUR = 120, GROUND = 300;
+
+/* ---------- voice-over (start, end, text) ---------- */
+const VO = [
+  [0.9, 7.6, "Before electricity, when the sun went down, the world went dark. Really dark."],
+  [8.0, 14.4, "So what did people actually do all night? The answer is stranger than you think."],
+  [15.0, 26.0, "First, light cost money. Beeswax candles were for the rich. Most families burned smoky tallow, made from animal fat. The poorest just dipped dried rushes in grease."],
+  [26.5, 39.0, "In medieval towns, an evening bell told everyone to cover their fires, so wooden houses wouldn't burn down. Cover fire, in French, is couvre-feu. That's where we get the word curfew."],
+  [39.5, 47.0, "With no light and little to do, most people were in bed within an hour or two after dark."],
+  [47.5, 61.0, "But here's the twist. Historian Roger Ekirch found thousands of old records describing two sleeps. A first sleep, then waking up after midnight, and a second sleep until morning."],
+  [61.5, 77.0, "That break could last an hour or more, and people used it. They prayed, thought about their dreams, talked with family, tended the fire, and even visited the neighbors."],
+  [77.5, 85.0, "And yes, a few used the darkness to steal their neighbor's firewood."],
+  [85.5, 100.0, "Then came artificial light. Gas lamps, and later electric bulbs, kept the night bright. People stayed up later, and by the eighteen hundreds, that first sleep slowly stretched into one long night."],
+  [100.5, 116.5, "So if you ever wake up in the middle of the night, don't panic. For centuries, a break in the night was perfectly normal. Subscribe for more forgotten history."]
+];
+window.VO = VO;
+
+/* ---------- extra props for this video ---------- */
+const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = S.EASE.inOut;
+S.registerProp('moon', () =>
+  sv.path('M10 -110 A44 44 0 1 0 54 -40 A34 34 0 1 1 10 -110 Z', { fill: C.white, w: 5 }) + sv.circle(0, -70, 4, { w: 2.5 }) + sv.circle(18, -86, 3, { w: 2.5 }));
+S.registerProp('candle', (t, o = {}) => {
+  const fl = 1 + 0.12 * Math.sin(t * 15) + 0.06 * Math.sin(t * 6.1);
+  let s = sv.dot(0, -70, 46 + 3 * Math.sin(t * 9), C.ochre).replace('class="f"', 'class="f" opacity="0.18"');
+  if (o.smoke) for (let i = 0; i < 3; i++) {
+    const k = ((t * 0.6 + i / 3) % 1), y = -100 - k * 70, x = Math.sin((t + i) * 3) * 8 * k;
+    s += `<path d="M${(x - 4).toFixed(1)} ${y.toFixed(1)} q6 -8 0 -16 q-6 -8 0 -16" fill="none" stroke="#7a7a7a" stroke-width="3" stroke-linecap="round" opacity="${(0.6 * (1 - k)).toFixed(2)}"/>`;
+  }
+  return s + sv.path('M-26 0 L26 0 Q22 -10 0 -10 Q-22 -10 -26 0 Z', { fill: C.paperDark, w: 4 }) +
+    sv.path('M-10 -8 L-10 -62 L10 -62 L10 -8', { fill: '#F6EFD9', w: 4 }) + sv.line(0, -62, 0, -70, 3) +
+    sv.g(sv.path('M0 -66 C-8 -74 -6 -86 0 -96 C6 -86 8 -74 0 -66 Z', { fill: C.ochre, w: 3 }), `translate(0 ${(-66 * (1 - fl)).toFixed(2)}) scale(1 ${fl.toFixed(3)})`);
+}, { s: 0.55, dx: 0, dy: 20, rot: 0 });
+S.registerProp('rushlight', (t) => {
+  const fl = 1 + 0.15 * Math.sin(t * 17);
+  return sv.dot(46, -96, 20, C.ochre).replace('class="f"', 'class="f" opacity="0.18"') +
+    sv.line(0, 0, 0, -60, 5) + sv.line(-14, 0, 14, 0, 6) + sv.line(0, -60, 44, -92, 3) +
+    sv.g(sv.path('M0 0 C-5 -5 -4 -12 0 -18 C4 -12 5 -5 0 0 Z', { fill: C.ochre, w: 2.5 }), `translate(46 -92) scale(1 ${fl.toFixed(3)})`);
+}, { s: 0.7, dx: 0, dy: 30, rot: 0 });
+S.registerProp('bell', (t, o = {}) => {
+  const [a, b] = o.swing || [-1, -1];
+  const k = t >= a && t <= b ? Math.sin((t - a) * 9) * 24 * (1 - (t - a) / (b - a + 0.01)) : 0;
+  return sv.line(-60, -150, 60, -150, 8, C.darkBrown) + sv.line(0, -150, 0, -136, 5) +
+    sv.g(sv.path('M-34 -40 C-34 -80 -24 -130 0 -132 C24 -130 34 -80 34 -40 L42 -30 L-42 -30 Z', { fill: C.ochre, w: 5 }) + sv.dot(0, -24, 7), `rotate(${k.toFixed(2)} 0 -136)`);
+});
+S.registerProp('firecover', () =>
+  sv.path('M-56 0 C-56 -50 -30 -70 0 -70 C30 -70 56 -50 56 0 Z', { fill: '#B8BCC2', w: 5 }) + sv.path('M-10 -70 Q0 -88 10 -70', { w: 5 }) + sv.line(-40, -24, 40, -24, 3));
+S.registerProp('bed', () =>
+  sv.line(-120, 0, -120, -24, 7) + sv.line(120, 0, 120, -24, 7) +
+  sv.path('M-130 -24 L130 -24 L130 -44 L-130 -44 Z', { fill: C.paperDark, w: 5 }) +
+  sv.path('M-136 -24 L-136 -110 Q-136 -122 -124 -122 L-118 -122 L-118 -24 Z', { fill: C.brown, w: 5 }) +
+  sv.path('M-114 -44 Q-118 -66 -96 -66 L-64 -64 Q-50 -62 -54 -46 Z', { fill: C.white, w: 4 }));
+S.registerProp('blanket', () =>
+  sv.path('M-30 -36 Q-34 -66 -6 -68 L126 -64 Q140 -60 136 -30 L134 -22 L-28 -22 Z', { fill: C.red, w: 5 }) +
+  sv.line(10, -60, 120, -56, 3) + sv.line(0, -48, 128, -44, 3));
+S.registerProp('woodpile', () => {
+  let s = '';
+  const pts = [[-48, -14], [-16, -14], [16, -14], [48, -14], [-32, -42], [0, -42], [32, -42], [-16, -70], [16, -70]];
+  for (const [x, y] of pts) s += sv.circle(x, y, 15, { fill: C.brown, w: 4 }) + sv.circle(x, y, 6, { w: 2.5 });
+  return s;
+});
+S.registerProp('logs', () =>
+  sv.path('M-50 -10 L50 -22 L52 -6 L-48 6 Z', { fill: C.brown, w: 4 }) + sv.path('M-50 -30 L50 -42 L52 -26 L-48 -14 Z', { fill: C.brown, w: 4 }) +
+  sv.line(-30, -2, -30, -36, 3, C.ink), { s: 0.55, dx: 0, dy: 10, rot: 0 });
+S.registerProp('gaslamp', (t) =>
+  sv.dot(0, -196, 70 + 4 * Math.sin(t * 3), C.ochre).replace('class="f"', 'class="f" opacity="0.16"') +
+  sv.line(0, 0, 0, -170, 7) + sv.line(-20, 0, 20, 0, 8) + sv.line(-16, -170, 16, -170, 5) +
+  sv.path('M-18 -172 L-24 -214 L24 -214 L18 -172 Z', { fill: C.ochre, w: 4 }) + sv.path('M-28 -214 L0 -232 L28 -214 Z', { fill: C.ink, w: 3 }));
+S.registerProp('wallclock', () =>
+  sv.circle(0, -50, 48, { fill: C.white, w: 5 }) + sv.line(0, -50, 0, -84, 4) + sv.line(0, -50, 22, -50, 6) + sv.dot(0, -50, 4) +
+  sv.line(0, -92, 0, -86, 3) + sv.line(0, -14, 0, -8, 3) + sv.line(-42, -50, -36, -50, 3) + sv.line(36, -50, 42, -50, 3));
+S.registerProp('dreamcloud', () =>
+  sv.circle(70, 10, 6, { w: 3 }) + sv.circle(50, -8, 9, { w: 3 }) +
+  sv.path('M-70 -30 C-90 -30 -90 -64 -66 -66 C-66 -96 -24 -102 -14 -78 C-2 -100 40 -96 38 -66 C66 -66 66 -30 42 -30 Z', { fill: C.white, w: 4 }) +
+  sv.circle(-30, -54, 7, { w: 3 }) + sv.path('M-10 -46 Q4 -60 18 -46', { w: 3 }) + sv.path('M-2 -62 l4 -8 l4 8 l-8 -5 l8 0 z', { fill: C.ochre, w: 2 }));
+S.registerCostume('dress', { body: sv.path('M-12 -3 L12 -3 L30 62 L-30 62 Z', { fill: '#8FB3A8', w: 4 }) + sv.line(-14, 18, 14, 18, 3) });
+S.registerCostume('gent', {
+  body: sv.path('M-9 2 L0 6 L9 2 L9 12 L0 8 L-9 12 Z', { fill: C.ink, w: 2 }),
+  head: sv.path('M-24 -22 L24 -22 L24 -27 L-24 -27 Z', { fill: C.ink, w: 3 }) + sv.path('M-15 -27 L-15 -60 L15 -60 L15 -27 Z', { fill: C.ink, w: 3 }) + sv.line(-15, -34, 15, -34, 3, C.red),
+  hideHair: true
+});
+S.registerCostume('nightcap', {
+  head: sv.path('M-28 -12 Q-30 -40 0 -40 Q26 -40 40 -14 Q48 4 56 6', { fill: C.white, w: 4 }) + sv.circle(58, 8, 7, { fill: C.red, w: 3 }),
+  hideHair: true
+});
+
+/* ---------- scene ---------- */
+const sc = S.createScene(document.body, { duration: DUR, ground: GROUND, fadeIn: 0.9, fadeOut: 1.0 });
+
+// night light level over time (0 = day, 0.34 = deep night)
+const night = (t) => {
+  if (t < 3) return 0;
+  if (t < 7.5) return 0.34 * ease((t - 3) / 4.5);
+  if (t < 85.5) return 0.34;
+  if (t < 92) return lerp(0.34, 0.12, ease((t - 85.5) / 6.5));
+  if (t < 100.5) return 0.12;
+  if (t < 103) return lerp(0.12, 0.32, ease((t - 100.5) / 2.5));
+  return 0.32;
+};
+const STARS = Array.from({ length: 46 }, (_, i) => [((i * 397) % 1000) / 1000, ((i * 211) % 1000) / 1000, 1.2 + ((i * 7) % 5) * 0.45, (i * 0.7) % 6.3]);
+sc.custom((t, scn) => {
+  const n = night(t), v = scn.view || { x: -889, y: -500, w: 1778, h: 1000 };
+  if (n <= 0) return '';
+  // multiply a cool blue over the paper: it turns night-blue but the ink stays crisp
+  let s = `<rect x="${v.x - 10}" y="${v.y - 10}" width="${v.w + 20}" height="${v.h + 20}" fill="#7E93C2" style="mix-blend-mode:multiply" opacity="${(n / 0.34 * 0.85).toFixed(3)}"/>`;
+  const so = clamp((n - 0.15) / 0.19);
+  if (so > 0) for (const [fx, fy, r, ph] of STARS) {
+    const x = v.x + fx * v.w, y = v.y + fy * (GROUND - 80 - v.y);
+    s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#FFFDF2" opacity="${(so * (0.55 + 0.45 * Math.sin(t * 2 + ph))).toFixed(2)}"/>`;
+  }
+  return s;
+}, 'back');
+
+// setting sun (clipped at the horizon)
+sc.custom((t) => {
+  if (t > 8) return '';
+  const k = ease(clamp((t - 1.2) / 5.4));
+  const y = lerp(-170, GROUND + 160, k);
+  return `<clipPath id="sky"><rect x="-5000" y="-5000" width="10000" height="${5000 + GROUND}"/></clipPath>` +
+    `<g clip-path="url(#sky)"><g transform="translate(330 ${y.toFixed(1)}) scale(1.1)">${S.propSVG('sun', t)}</g></g>`;
+}, 'back');
+
+// "Zzz" while sleeping
+const SLEEP = [[43.6, 54.6], [58.9, 61.4], [101.0, 101.5]];
+sc.custom((t) => {
+  let s = '';
+  for (const [a, b] of SLEEP) {
+    if (t < a || t > b) continue;
+    for (let i = 0; i < 3; i++) {
+      const k = ((t - a) * 0.45 + i / 3) % 1;
+      const op = Math.min(1, (t - a) * 2, (b - t) * 2) * Math.sin(k * Math.PI);
+      s += `<text x="${(-150 + k * 70 + i * 6).toFixed(1)}" y="${(160 - k * 150).toFixed(1)}" font-family="Caveat, cursive" font-weight="700" font-size="${(30 + k * 26).toFixed(1)}" fill="${C.ink}" opacity="${op.toFixed(2)}">z</text>`;
+    }
+  }
+  return s;
+}, 'front');
+
+// sleep diagram: two sleeps merging into one (L9)
+sc.custom((t) => {
+  const a = 95.8, b = 100.1;
+  if (t < a || t > b) return '';
+  const op = Math.min(1, (t - a) * 3, (b - t) * 3);
+  const m = ease(clamp((t - 97.2) / 1.6));        // 0 = two sleeps, 1 = one long sleep
+  const gap = lerp(130, 0, m), w = 250, y = -205;
+  const x1 = -w - gap / 2, x2 = gap / 2;
+  return `<g opacity="${op.toFixed(2)}">` +
+    sv.path(`M${x1} ${y} L${x1 + w} ${y} L${x1 + w} ${y + 44} L${x1} ${y + 44} Z`, { fill: '#2B4C7E', w: 4 }) +
+    sv.path(`M${x2} ${y} L${x2 + w} ${y} L${x2 + w} ${y + 44} L${x2} ${y + 44} Z`, { fill: '#2B4C7E', w: 4 }) +
+    (gap > 8 ? sv.path(`M${x1 + w} ${y + 22} L${x2} ${y + 22}`, { stroke: C.red, w: 5 }) : '') +
+    `<text x="${x1 + w / 2}" y="${y - 14}" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="34" fill="${C.ink}" opacity="${clamp(1 - m * 2.5).toFixed(2)}">first sleep</text>` +
+    `<text x="${x2 + w / 2}" y="${y - 14}" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="34" fill="${C.ink}" opacity="${clamp(1 - m * 2.5).toFixed(2)}">second sleep</text>` +
+    `<text x="0" y="${y + 66}" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="30" fill="${C.red}" opacity="${clamp(1 - m * 2.5).toFixed(2)}">awake</text>` +
+    `<text x="0" y="${y - 14}" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="38" fill="${C.ink}" opacity="${clamp(m * 2.5 - 1.5).toFixed(2)}">one long sleep</text>` +
+    `</g>`;
+}, 'back');
+
+/* ---------- helpers ---------- */
+const title = (str, at, until, o = {}) => sc.text(str, Object.assign({ y: -385, size: 66, at, until, write: 0.5 }, o));
+// split each VO line into short on-screen captions, timed by length
+function captions() {
+  for (const [a, b, txt] of VO) {
+    const words = txt.split(' '), chunks = [];
+    let cur = '';
+    for (const w of words) {
+      if ((cur + ' ' + w).trim().length > 32 && cur) { chunks.push(cur); cur = w; }
+      else cur = (cur + ' ' + w).trim();
+      if (/[.?!,]$/.test(w) && cur.length > 18) { chunks.push(cur); cur = ''; }
+    }
+    if (cur) chunks.push(cur);
+    const total = chunks.reduce((n, c) => n + c.length, 0);
+    let t = a;
+    for (const c of chunks) {
+      const d = (b - a) * (c.length / total);
+      sc.text(c, { y: 446, size: 46, at: t, until: t + d - 0.05, write: 0, color: C.ink });
+      t += d;
+    }
+  }
+}
+captions();
+
+/* ---------- characters ---------- */
+const s = sc.character({ x: 0, scale: 2.2 });                                   // Scribble (standing)
+const bed = sc.character({ x: 30, y: 228, scale: 1.8, anchor: 'hip', pose: 'sitUp', costume: 'nightcap', opacity: 0, expr: 'sleepy' }); // Scribble in bed
+const fam = sc.character({ x: 170, scale: 2.1, scarf: false, hair: 'long', costume: 'dress', opacity: 0, facing: -1 }); // family member
+
+/* L1 — sunset (0.9–7.6) */
+s.drawOn(0.9, 1.5);
+s.look(3.0, [4, -5]);
+s.pose(5.9, 'scared', { expr: 'scared', dur: 0.4 }).look(5.9, null);
+sc.prop('moon', { x: -330, y: -250, scale: 0.9, at: 6.6, draw: 0.8, out: 39.2 });
+
+/* L2 — the question (8.0–14.4) */
+title('What did people do all night?', 8.1, 14.4);
+s.pose(8.2, 'think', { expr: 'thinking' });
+sc.prop('question', { x: 230, y: 40, scale: 0.9, at: 9.0, draw: 0, out: 14.2 });
+s.pose(11.9, 'shrug', { expr: 'confused' });
+
+/* L3 — light cost money (15.0–26.0) */
+s.pose(15.1, 'hold', { expr: 'neutral' }).hold(15.1, 'candle');
+title('Light cost money', 15.2, 19.0);
+sc.prop('money', { x: -290, scale: 1.1, at: 16.4, draw: 0, out: 19.4 });
+sc.text('Beeswax = rich', { x: -290, y: 120, size: 44, at: 16.6, until: 19.4 });
+s.expr(17.0, 'smirk');
+s.hold(19.6, 'candle', { smoke: true }).expr(19.6, 'confused');
+sc.text('Tallow = animal fat', { x: -270, y: 120, size: 44, at: 19.8, until: 23.0 });
+title('Smoky & smelly', 19.8, 23.0);
+s.costume(23.1, 'peasant').hold(23.1, 'rushlight').expr(23.1, 'proud');
+title('Rushlight', 23.2, 26.0);
+sc.text('rush + grease', { x: -270, y: 120, size: 44, at: 23.4, until: 26.0 });
+
+/* L4 — curfew (26.5–39.0) */
+s.hold(26.4, null).pose(26.4, 'idle', { expr: 'neutral' });
+sc.prop('hut', { x: -380, scale: 0.95, at: 26.5, draw: 0.8, out: 39.2 });
+sc.prop('hut', { x: 385, scale: 0.85, at: 26.7, draw: 0.8, out: 39.2 });
+sc.prop('bell', { x: 0, y: -170, scale: 0.9, at: 27.0, draw: 0.5, out: 33.8, opts: { swing: [27.4, 32.4] } });
+sc.text('DING!', { x: 120, y: -300, size: 46, at: 27.6, until: 29.0, color: C.red });
+sc.text('DONG!', { x: -120, y: -260, size: 46, at: 29.2, until: 30.6, color: C.red });
+s.look(27.4, [0, -6]).expr(27.4, 'shocked');
+sc.prop('campfire', { x: -180, scale: 0.9, at: 28.0, draw: 0.6, out: 33.6 });
+s.walk(30.4, 31.8, -60).pose(31.9, 'carry', { expr: 'neutral' }).look(30.4, null);
+sc.prop('firecover', { x: -180, scale: 1.0, at: 33.0, draw: 0, out: 39.2, front: true });
+s.face(34.4, 1).pose(34.4, 'explain', { expr: 'happy' });
+title('Couvre-feu = "cover fire"', 34.5, 39.0);
+sc.text('→ CURFEW', { y: -305, size: 60, at: 36.3, until: 39.0, color: C.red });
+
+/* L5 — early to bed (39.5–47.0) */
+s.fade(39.3, 0.4, 0);
+s.costume(39.7, null);
+sc.prop('bed', { x: 0, scale: 1.5, at: 39.4, draw: 0.6, out: 62.9 });
+sc.prop('blanket', { x: 0, scale: 1.5, at: 39.6, draw: 0.5, out: 62.9, front: true });
+sc.prop('stool', { x: 300, scale: 1, at: 39.5, draw: 0, out: 62.9 });
+sc.prop('candle', { x: 300, y: 230, scale: 0.9, at: 39.6, draw: 0, out: 44.2 });
+bed.fade(39.7, 0.4, 1);
+bed.expr(40.6, 'sleepy');
+title('In bed soon after dark', 39.9, 46.8);
+bed.rotateTo(42.6, 0.9, -90).pose(42.6, 'lie', { expr: 'calm', dur: 0.9 });
+
+/* L6 — two sleeps (47.5–61.0) */
+sc.prop('scroll', { x: -330, y: 40, scale: 0.75, at: 48.6, draw: 0.6, out: 52.6 });
+sc.text('2,000+ old records', { x: -330, y: 90, size: 38, at: 49.0, until: 52.6 });
+sc.prop('wallclock', { x: 330, y: -120, scale: 0.9, at: 49.5, draw: 0.6, out: 62.9 });
+title('FIRST SLEEP', 51.0, 54.6, { color: '#2B4C7E' });
+bed.rotateTo(54.8, 0.7, 0).pose(54.8, 'sitUp', { expr: 'shocked', dur: 0.7 });
+sc.text('~ midnight', { x: 330, y: -10, size: 40, at: 55.0, until: 58.5 });
+bed.expr(56.2, 'neutral').look(56.2, [4, -3]);
+bed.rotateTo(58.3, 0.7, -90).pose(58.3, 'lie', { expr: 'calm', dur: 0.7 }).look(58.3, null);
+title('SECOND SLEEP', 58.6, 61.2, { color: '#2B4C7E' });
+
+/* L7 — what they did in the gap (61.5–77.0) */
+bed.rotateTo(61.6, 0.6, 0).pose(61.6, 'sitUp', { expr: 'neutral', dur: 0.6 });
+bed.fade(62.7, 0.3, 0);
+title('An hour or more awake', 61.7, 63.2);
+s.moveTo(62.9, 0, -200).face(62.9, 1).pose(62.9, 'pray', { expr: 'calm', dur: 0 }).fade(63.0, 0.4, 1);
+title('Pray', 63.4, 65.5);
+s.pose(65.6, 'think', { expr: 'thinking' });
+sc.prop('dreamcloud', { x: -150, y: -150, scale: 1.2, at: 65.7, draw: 0, out: 68.2 });
+title('Dreams', 65.7, 68.2);
+sc.prop('campfire', { x: -10, scale: 0.85, at: 66.4, draw: 0.6, out: 74.2 });
+fam.fade(68.2, 0.4, 1);
+s.pose(68.3, 'explain', { expr: 'happy' }).talk(68.4, 69.8);
+fam.pose(68.3, 'idle', { expr: 'happy' }).talk(69.9, 71.4).pose(69.9, 'explain', { expr: 'happy' });
+title('Talk with family', 68.4, 71.5);
+s.pose(71.6, 'crouch', { expr: 'neutral' });
+fam.pose(71.6, 'idle', { expr: 'neutral' });
+title('Tend the fire', 71.7, 74.0);
+fam.fade(73.9, 0.4, 0);
+sc.prop('house', { x: 395, scale: 0.95, at: 74.0, draw: 0.7, out: 77.3 });
+s.pose(74.1, 'idle', { expr: 'happy' }).walk(74.2, 76.2, 250);
+s.wave(76.3, 77.4);
+title('Visit the neighbors', 74.2, 77.2);
+
+/* L8 — firewood thief (77.5–85.0) */
+sc.prop('woodpile', { x: -340, scale: 1.1, at: 77.4, draw: 0.6, out: 84.8 });
+s.pose(77.6, 'crouch', { expr: 'smirk' }).walk(77.8, 79.6, -220);
+s.pose(79.8, 'carry', { expr: 'smirk' }).hold(79.8, 'logs');
+s.walk(81.0, 83.6, 120, { keepArms: true });
+title('Shhh...', 78.0, 84.6, { color: C.red });
+s.expr(83.7, 'happy');
+s.hold(85.2, null).pose(85.2, 'idle', { expr: 'neutral' });
+
+/* L9 — artificial light (85.5–100.0) */
+sc.prop('gaslamp', { x: -390, scale: 1.1, at: 85.6, draw: 0.8, out: 100.2 });
+sc.prop('gaslamp', { x: 390, scale: 1.1, at: 85.9, draw: 0.8, out: 100.2 });
+s.costume(86.0, 'gent').expr(86.0, 'excited').moveTo(86.0, 0.6, 0);
+title('Gas lamps', 86.2, 89.4);
+sc.prop('lightbulb', { x: 0, y: -170, scale: 1.0, at: 89.6, draw: 0, out: 93.0 });
+s.costume(89.6, 'office').pose(89.6, 'pointUp', { expr: 'excited' });
+title('Electric light', 89.8, 93.0);
+s.pose(93.2, 'hold', { expr: 'neutral' }).hold(93.2, 'phone');
+title('Staying up later', 93.3, 95.6);
+s.expr(95.8, 'sleepy');
+title('1800s: one long sleep', 95.9, 100.0);
+
+/* L10 — it's normal (100.5–116.5) */
+s.fade(100.4, 0.4, 0).hold(100.8, null).costume(100.8, null);
+sc.prop('bed', { x: 0, scale: 1.5, at: 100.6, draw: 0, out: 111.2 });
+sc.prop('blanket', { x: 0, scale: 1.5, at: 100.6, draw: 0, out: 111.2, front: true });
+sc.prop('wallclock', { x: 330, y: -120, scale: 0.9, at: 100.8, draw: 0.5, out: 111.2 });
+sc.prop('moon', { x: -330, y: -250, scale: 0.9, at: 101.0, draw: 0.6, out: 111.2 });
+bed.moveTo(100.5, 0, 30).rotateTo(100.5, 0, -90).pose(100.5, 'lie', { expr: 'calm', dur: 0 }).fade(100.7, 0.4, 1);
+sc.text('3 a.m.', { x: 330, y: -10, size: 42, at: 101.4, until: 104.4 });
+bed.rotateTo(101.6, 0.7, 0).pose(101.6, 'sitUp', { expr: 'shocked', dur: 0.7 });
+title("Don't panic", 103.4, 106.6);
+bed.expr(103.6, 'calm').pose(105.0, 'sitUp', { expr: 'happy' });
+title('Totally normal', 106.8, 110.8, { color: '#2B4C7E' });
+bed.fade(111.0, 0.4, 0);
+s.moveTo(111.0, 0, 0).face(111.0, 1).pose(111.0, 'wave', { expr: 'happy', dur: 0 }).fade(111.2, 0.4, 1);
+s.wave(111.4, 115.6).talk(111.6, 115.4);
+title('Subscribe for more forgotten history', 111.6, 116.5, { size: 58 });
+s.pose(115.8, 'idle', { expr: 'happy' });
+
+sc.exposeForRecording();
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+}
+</script>
+</body>
+</html>

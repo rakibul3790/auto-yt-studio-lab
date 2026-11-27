@@ -1,0 +1,127 @@
+{
+  "title": "This Giant Heart Can Beat Just Twice a Minute",
+  "format": "short",
+  "description": "A blue whale's heart weighs nearly 400 pounds and can slow to two beats a minute on a dive. Your heart beats about 70.",
+  "tags": [
+    "blue whale",
+    "blue whale heart",
+    "whale facts",
+    "animal facts",
+    "ocean facts",
+    "biggest heart",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "animals",
+    "facts"
+  ],
+  "thumbnail_text": "2 beats a minute",
+  "scenes": [
+    {
+      "on_screen": "You: about 70",
+      "visual": "heart beat monitor",
+      "subject": "heart",
+      "text": "Your heart beats about seventy times a minute.",
+      "highlight": [
+        "seventy times a minute"
+      ],
+      "say": "Your heart beats about seventy times a minute."
+    },
+    {
+      "on_screen": "This one: 2",
+      "visual": "blue whale underwater",
+      "subject": "whale",
+      "text": "This one can beat just twice.",
+      "highlight": [
+        "just twice"
+      ],
+      "say": "[whispers] This one can beat just twice.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Blue whale",
+      "visual": "blue whale swimming",
+      "subject": "whale",
+      "text": "It belongs to a blue whale,",
+      "highlight": [
+        "a blue whale"
+      ],
+      "say": "It belongs to a blue whale,"
+    },
+    {
+      "on_screen": "About 400 lb",
+      "visual": "blue whale ocean",
+      "subject": "whale",
+      "text": "and it weighs nearly four hundred pounds,",
+      "highlight": [
+        "four hundred pounds"
+      ],
+      "say": "[excited] and it weighs nearly FOUR HUNDRED pounds,",
+      "look": "excited"
+    },
+    {
+      "on_screen": "= 2 adults",
+      "visual": "two people standing",
+      "subject": "people",
+      "text": "about as much as two adults.",
+      "highlight": [
+        "two adults"
+      ],
+      "say": "[laughs] about as much as two adults."
+    },
+    {
+      "on_screen": "2 meters tall",
+      "visual": "whale close up",
+      "subject": "whale",
+      "text": "With its main blood vessels, it stands roughly two meters tall.",
+      "highlight": [
+        "two meters tall"
+      ],
+      "say": "With its main blood vessels, it stands roughly two meters tall."
+    },
+    {
+      "on_screen": "Dive: 2 beats",
+      "visual": "whale diving deep ocean",
+      "subject": "whale",
+      "text": "When the whale dives, its heart slows to two beats a minute to save oxygen.",
+      "highlight": [
+        "two beats a minute"
+      ],
+      "say": "[softly] When the whale dives, its heart slows to two beats a minute to save oxygen.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Surface: 37",
+      "visual": "whale surfacing blow",
+      "subject": "whale",
+      "text": "Then it surfaces and races to thirty seven, close to its limit.",
+      "highlight": [
+        "thirty seven"
+      ],
+      "say": "[excited] Then it surfaces and races to thirty seven, close to its limit.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Biggest heart on Earth",
+      "visual": "whale eye",
+      "subject": "whale",
+      "text": "The biggest heart on Earth, beating slower than you breathe.",
+      "highlight": [
+        "slower than you breathe"
+      ],
+      "say": "The biggest heart on Earth, beating slower than you breathe."
+    },
+    {
+      "on_screen": "Feel it",
+      "visual": "hand on chest",
+      "subject": "chest",
+      "text": "Now put a hand on your chest...",
+      "highlight": [
+        "your chest"
+      ],
+      "say": "[whispers] Now put a hand on your chest..."
+    }
+  ],
+  "music_mood": "calm"
+}

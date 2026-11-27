@@ -1,0 +1,178 @@
+{
+  "title": "One Second on Earth Looks Like This",
+  "format": "short",
+  "style": "map",
+  "description": "Lightning, newborn babies, and a planet racing around the Sun: everything that happens on Earth in one single second.",
+  "tags": [
+    "every second on earth",
+    "one second on earth",
+    "earth facts",
+    "space facts",
+    "lightning facts",
+    "science facts",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "facts",
+    "science"
+  ],
+  "thumbnail_text": "One second on Earth",
+  "scenes": [
+    {
+      "region": "africa",
+      "icons": [
+        "⚡"
+      ],
+      "icon_count": 8,
+      "number": "40",
+      "label": "lightning flashes",
+      "text": "Forty lightning flashes.",
+      "highlight": [
+        "Forty lightning flashes"
+      ],
+      "say": "[excited] Forty lightning flashes.",
+      "look": "excited"
+    },
+    {
+      "region": "south_asia",
+      "icons": [
+        "👶"
+      ],
+      "icon_count": 4,
+      "number": "4",
+      "label": "babies born",
+      "text": "Four newborn babies.",
+      "highlight": [
+        "Four newborn babies"
+      ],
+      "say": "[warmly] Four newborn babies."
+    },
+    {
+      "region": "europe",
+      "icons": [
+        "🕊️"
+      ],
+      "icon_count": 2,
+      "number": "2",
+      "label": "final breaths",
+      "text": "Two final breaths.",
+      "highlight": [
+        "Two final breaths"
+      ],
+      "say": "[sad] Two final breaths.",
+      "look": "sad"
+    },
+    {
+      "region": "world",
+      "icons": [
+        "⏱️"
+      ],
+      "icon_count": 1,
+      "label": "1 second",
+      "text": "That is one single second on Earth.",
+      "highlight": [
+        "one single second"
+      ],
+      "say": "That is one single second on Earth."
+    },
+    {
+      "region": "space",
+      "orbit": true,
+      "number": "30 km",
+      "label": "around the Sun",
+      "text": "In that same second, you flew thirty kilometers around the Sun.",
+      "highlight": [
+        "thirty kilometers"
+      ],
+      "say": "[excited] In that same second, you flew THIRTY kilometers around the Sun.",
+      "look": "excited"
+    },
+    {
+      "lon": 20,
+      "lat": 0,
+      "zoom": 70,
+      "icons": [
+        "🌀"
+      ],
+      "icon_count": 3,
+      "number": "0.5 km",
+      "label": "spun at the equator",
+      "text": "If you live near the equator, the ground under you spun almost half a kilometer.",
+      "highlight": [
+        "almost half a kilometer"
+      ],
+      "say": "If you live near the equator, the ground under you spun almost half a kilometer."
+    },
+    {
+      "region": "world",
+      "icons": [
+        "🧍"
+      ],
+      "icon_count": 1,
+      "label": "felt: nothing",
+      "text": "And you felt none of it.",
+      "highlight": [
+        "none of it"
+      ],
+      "say": "[whispers] And you felt none of it.",
+      "look": "whisper"
+    },
+    {
+      "region": "europe",
+      "icons": [
+        "❤️"
+      ],
+      "icon_count": 1,
+      "number": "1",
+      "label": "heartbeat",
+      "text": "Your heart beat about once.",
+      "highlight": [
+        "about once"
+      ],
+      "say": "[softly] Your heart beat about once.",
+      "look": "whisper"
+    },
+    {
+      "region": "pacific",
+      "icons": [
+        "🌊",
+        "☁️"
+      ],
+      "icon_count": 6,
+      "label": "never stops",
+      "text": "The planet never pauses, never slows, never waits for anyone.",
+      "highlight": [
+        "never waits"
+      ],
+      "say": "The planet never pauses, never slows, never waits for anyone."
+    },
+    {
+      "region": "world",
+      "icons": [
+        "⏱️"
+      ],
+      "icon_count": 1,
+      "label": "again",
+      "text": "By the time this sentence ends, it has happened again.",
+      "highlight": [
+        "happened again"
+      ],
+      "say": "[curious] By the time this sentence ends, it has happened again."
+    },
+    {
+      "region": "africa",
+      "icons": [
+        "👁️"
+      ],
+      "icon_count": 1,
+      "label": "don't blink",
+      "text": "So don't blink, because in one blink you just missed...",
+      "highlight": [
+        "don't blink"
+      ],
+      "say": "[chuckles] So don't blink, because in one blink you just missed..."
+    }
+  ],
+  "music_mood": "epic"
+}

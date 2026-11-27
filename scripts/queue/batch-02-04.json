@@ -1,0 +1,75 @@
+{
+  "title": "The Eiffel Tower Grows Taller in Summer",
+  "format": "short",
+  "description": "The iron tower in Paris expands in the heat and can stand about fifteen centimeters taller on hot days.",
+  "tags": [
+    "eiffel tower",
+    "paris",
+    "physics",
+    "thermal expansion",
+    "weird facts",
+    "science facts",
+    "landmarks",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "science",
+    "facts"
+  ],
+  "thumbnail_text": "It grows in summer",
+  "scenes": [
+    {
+      "on_screen": "A tower that grows",
+      "visual": "eiffel tower",
+      "text": "The Eiffel Tower gets taller every summer.",
+      "highlight": [
+        "taller every summer"
+      ],
+      "subject": "eiffel",
+      "say": "[excited] The Eiffel Tower gets TALLER every summer.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Iron expands",
+      "visual": "eiffel tower structure",
+      "text": "It is built from iron, and metal expands when it heats up.",
+      "highlight": [
+        "metal expands"
+      ],
+      "subject": "eiffel",
+      "say": "It is built from iron, and metal expands when it heats up."
+    },
+    {
+      "on_screen": "Up to 15 cm",
+      "visual": "eiffel tower summer",
+      "text": "On hot days, the tower can grow by up to about fifteen centimeters. That is about six inches.",
+      "highlight": [
+        "fifteen centimeters"
+      ],
+      "subject": "eiffel",
+      "say": "On hot days, the tower can grow by up to about fifteen centimeters. [gasps] That is about six inches.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "It even leans",
+      "visual": "eiffel tower sunset",
+      "text": "And because the Sun heats one side more than the other, the top can lean slightly away from the Sun during the day.",
+      "highlight": [
+        "lean slightly"
+      ],
+      "subject": "eiffel",
+      "say": "And because the Sun heats one side more than the other, the top can lean slightly away from the Sun during the day."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "eiffel tower winter",
+      "text": "In winter, it shrinks back down again. Follow for more weird facts.",
+      "highlight": [
+        "shrinks back"
+      ],
+      "subject": "eiffel",
+      "say": "[sighs] In winter, it shrinks back down again. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "upbeat"
+}

@@ -1,0 +1,155 @@
+{
+  "title": "This Happens Every Second on Earth",
+  "format": "short",
+  "style": "map",
+  "description": "Babies, lightning, emails, oil, the Sun and your own blood: what happens on Earth in a single second.",
+  "tags": [
+    "every second on earth",
+    "earth facts",
+    "space facts",
+    "science facts",
+    "weird facts",
+    "mind blowing facts",
+    "did you know"
+  ],
+  "hashtags": [
+    "facts",
+    "science"
+  ],
+  "thumbnail_text": "Every second",
+  "scenes": [
+    {
+      "region": "world",
+      "icons": [
+        "⏱️"
+      ],
+      "icon_count": 1,
+      "label": "1 second",
+      "text": "In the next second, all of this will happen on our planet, and you won't notice any of it.",
+      "highlight": [
+        "next second"
+      ]
+    },
+    {
+      "region": "south_asia",
+      "icons": [
+        "👶"
+      ],
+      "icon_count": 6,
+      "number": "4",
+      "label": "babies born",
+      "text": "Around four babies will be born.",
+      "highlight": [
+        "four babies"
+      ]
+    },
+    {
+      "region": "africa",
+      "icons": [
+        "⚡"
+      ],
+      "icon_count": 8,
+      "number": "40",
+      "label": "lightning strikes",
+      "text": "Lightning will strike the ground about forty times.",
+      "highlight": [
+        "forty times"
+      ]
+    },
+    {
+      "region": "north_america",
+      "icons": [
+        "📧",
+        "✉️"
+      ],
+      "icon_count": 9,
+      "number": "4,000,000",
+      "label": "emails sent",
+      "text": "People will send about four million emails.",
+      "highlight": [
+        "four million emails"
+      ]
+    },
+    {
+      "region": "middle_east",
+      "icons": [
+        "🛢️"
+      ],
+      "icon_count": 6,
+      "number": "1,200",
+      "label": "barrels of oil",
+      "text": "The world will burn through about twelve hundred barrels of oil.",
+      "highlight": [
+        "twelve hundred barrels"
+      ]
+    },
+    {
+      "region": "pacific",
+      "icons": [
+        "💧",
+        "☁️"
+      ],
+      "icon_count": 8,
+      "number": "16,000,000",
+      "label": "tons of water",
+      "text": "Sixteen million tons of water will rise from the seas into the sky.",
+      "highlight": [
+        "Sixteen million tons"
+      ]
+    },
+    {
+      "region": "space",
+      "orbit": true,
+      "number": "30 km",
+      "label": "around the Sun",
+      "text": "Our planet will race thirty kilometers along its path around the Sun.",
+      "highlight": [
+        "thirty kilometers"
+      ]
+    },
+    {
+      "region": "sun",
+      "icons": [
+        "🔥"
+      ],
+      "icon_count": 5,
+      "number": "4,000,000",
+      "label": "tons of the Sun",
+      "text": "And the Sun will turn four million tons of itself into pure energy.",
+      "highlight": [
+        "four million tons"
+      ]
+    },
+    {
+      "region": "europe",
+      "icons": [
+        "🩸",
+        "❤️"
+      ],
+      "icon_count": 7,
+      "number": "2,000,000",
+      "label": "new blood cells",
+      "text": "Inside your body, two million new red blood cells will be made.",
+      "highlight": [
+        "two million"
+      ]
+    },
+    {
+      "region": "world",
+      "icons": [
+        "⏱️"
+      ],
+      "icon_count": 1,
+      "label": "just 1 second",
+      "text": "All of that, in just one second. Follow for more.",
+      "highlight": [
+        "just one second"
+      ]
+    }
+  ],
+  "result": {
+    "uploaded_at": "2026-11-24T12:04:41Z",
+    "short_id": "mJ3EuKq6Vzg",
+    "short_url": "https://youtube.com/shorts/mJ3EuKq6Vzg"
+  }
+}

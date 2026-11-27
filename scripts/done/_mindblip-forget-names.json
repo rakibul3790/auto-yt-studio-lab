@@ -1,0 +1,3499 @@
+{
+  "title": "Why Your Brain Forgets Names Instantly (It's Not Your Fault)",
+  "style": "explainer",
+  "description": "You meet someone, they tell you their name… and 10 seconds later it's gone. Here's the psychology of why your brain drops names so fast — from the Baker–baker paradox to the next-in-line effect — and a simple 4-step trick to remember every name you hear.\n\nStay to the end: there's a memory test.\n\nWhose name do you always forget? Tell us in the comments.\n\nSubscribe to MindBlip for weird facts about your brain and body, every day.\n\nSources: McWeeny, Young, Hay & Ellis (1987) · Brenner (1973) · Cowan (2001) · Ebbinghaus (1885) · Bruce & Young (1986) · Brown (1991) · Burke & MacKay (1991) · Roediger & Karpicke (2006)\n\nChapters\n0:00 Why you forget names in seconds\n0:45 Reason 1: Names mean nothing\n1:53 Reason 2: You never caught it\n2:52 Reason 3: Your memory has a tiny inbox\n3:48 Reason 4: Faces win, names lose\n4:45 Reason 5: The tip-of-the-tongue trap\n5:44 The 4-step fix\n6:34 The memory test",
+  "chapters_auto": true,
+  "tags": [
+    "why do I forget names",
+    "forgetting names",
+    "how to remember names",
+    "psychology facts",
+    "brain facts",
+    "memory tricks",
+    "next in line effect",
+    "baker baker paradox",
+    "tip of the tongue",
+    "forgetting curve",
+    "weird brain facts",
+    "MindBlip"
+  ],
+  "hashtags": [
+    "#psychology",
+    "#brainfacts",
+    "#memory"
+  ],
+  "shorts": false,
+  "music": "investigations.mp3",
+  "music_volume": 0.05,
+  "sfx_volume": 0.3,
+  "caption_chars": 24,
+  "thumbnail_spec": {
+    "bg": "plain",
+    "els": [
+      {
+        "type": "sticker",
+        "name": "Megan",
+        "x": 0.32,
+        "y": 0.56,
+        "size": 400,
+        "rot": -8,
+        "dissolve": 4.88,
+        "dissolve_sfx": ""
+      },
+      {
+        "type": "blip",
+        "x": 0.78,
+        "y": 0.6,
+        "size": 320,
+        "pose": "shock"
+      },
+      {
+        "type": "text",
+        "text": "GONE IN",
+        "x": 0.6,
+        "y": 0.17,
+        "size": 130,
+        "color": "white"
+      },
+      {
+        "type": "text",
+        "text": "9s",
+        "x": 0.89,
+        "y": 0.17,
+        "size": 130,
+        "color": "black",
+        "box": "yellow"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "text": "",
+      "bg": "black",
+      "hold": 1.1,
+      "tr": "fade",
+      "chapter": "Why you forget names in seconds",
+      "els": [
+        {
+          "type": "line",
+          "pts": [
+            0.05,
+            0.5,
+            0.95,
+            0.5
+          ],
+          "at": 0.1,
+          "grow": 0.8,
+          "sfx": "zap"
+        }
+      ]
+    },
+    {
+      "text": "Okay, quick experiment. You're at a backyard barbecue.",
+      "bg": "backyard",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "crowd",
+          0.8
+        ]
+      ],
+      "cam": [
+        [
+          0,
+          1.0,
+          0.5,
+          0.5
+        ],
+        [
+          "e0",
+          1.06,
+          0.45,
+          0.55
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.36,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "plate",
+          "pop": "fade"
+        }
+      ],
+      "highlight": [
+        "backyard barbecue"
+      ]
+    },
+    {
+      "text": "Someone walks up, smiles, shakes your hand and says, 'Hi, I'm Megan.'",
+      "bg": "backyard",
+      "tr": "cut",
+      "sfx": [
+        [
+          0,
+          "crowd",
+          0.7
+        ]
+      ],
+      "cam": [
+        [
+          0,
+          1.04,
+          0.5,
+          0.55
+        ],
+        [
+          "e0",
+          1.1,
+          0.52,
+          0.52
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.36,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "plate",
+          "pop": "none",
+          "poses": [
+            [
+              "w4",
+              "hand"
+            ]
+          ]
+        },
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 1.15,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pop": "none",
+          "flip": true,
+          "path": [
+            [
+              "w3",
+              0.62,
+              0.6
+            ]
+          ],
+          "poses": [
+            [
+              "w3",
+              "wave"
+            ],
+            [
+              "w4",
+              "hand"
+            ]
+          ]
+        },
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.62,
+          "y": 0.6,
+          "at": "w11",
+          "size": 62,
+          "path": []
+        }
+      ],
+      "highlight": [
+        "Megan"
+      ]
+    },
+    {
+      "text": "You say your name back. You talk for two minutes.",
+      "bg": "backyard",
+      "tr": "cut",
+      "sfx": [
+        [
+          0,
+          "crowd",
+          0.7
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.36,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pop": "none",
+          "pose": "hand"
+        },
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 0.62,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pop": "none",
+          "flip": true,
+          "pose": "stand"
+        },
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.62,
+          "y": 0.6,
+          "at": 0,
+          "size": 62,
+          "pop": "none"
+        },
+        {
+          "type": "clock",
+          "x": 0.86,
+          "y": 0.2,
+          "r": 70,
+          "at": "w8",
+          "spin": 4,
+          "label": "2 MINUTES LATER",
+          "size": 46,
+          "sfx_at": [
+            [
+              "w8",
+              "tick"
+            ],
+            [
+              "w8+0.5",
+              "tick"
+            ],
+            [
+              "w8+1",
+              "tick"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "text": "She walks away… and her name is already gone.",
+      "bg": "backyard",
+      "tr": "cut",
+      "sfx": [
+        [
+          0,
+          "crowd",
+          0.6
+        ]
+      ],
+      "cam": [
+        [
+          0,
+          1.0,
+          0.5,
+          0.5
+        ],
+        [
+          "e0",
+          1.12,
+          0.36,
+          0.4
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.36,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pop": "none",
+          "pose": "stand"
+        },
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 0.62,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pop": "none",
+          "flip": true,
+          "poses": [
+            [
+              0,
+              "wave"
+            ]
+          ],
+          "path": [
+            [
+              "w2",
+              0.62,
+              0.6
+            ],
+            [
+              "e-0.3",
+              -0.25,
+              0.6
+            ]
+          ]
+        },
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.62,
+          "y": 0.6,
+          "at": 0,
+          "size": 62,
+          "pop": "none",
+          "path": [
+            [
+              "w2",
+              0.62,
+              0.6
+            ],
+            [
+              "e-0.3",
+              -0.25,
+              0.6
+            ]
+          ]
+        }
+      ],
+      "highlight": [
+        "already gone"
+      ]
+    },
+    {
+      "text": "Not fading. Gone.",
+      "bg": "backyard_blur",
+      "tr": "cut",
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.26,
+          "y": 0.82,
+          "h": 980,
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "bubble",
+          "kind": "thought",
+          "x": 0.64,
+          "y": 0.38,
+          "w": 620,
+          "h": 400,
+          "at": 0.1,
+          "sfx": "pop"
+        },
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.64,
+          "y": 0.36,
+          "at": 0.3,
+          "size": 150,
+          "dissolve": "w2",
+          "after_q": true,
+          "sfx_at": [
+            [
+              "w2+0.7",
+              "err"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "text": "Here's the strange part: you probably remember her job, her dog, even her shirt. Just not the one word she told you first.",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.2,
+          "y": 0.84,
+          "h": 980,
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "bubble",
+          "kind": "thought",
+          "x": 0.62,
+          "y": 0.4,
+          "w": 980,
+          "h": 560,
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "icon",
+          "emoji": "🩺",
+          "x": 0.44,
+          "y": 0.3,
+          "at": "w8",
+          "size": 130,
+          "sfx": "pop",
+          "label": "JOB",
+          "label_color": "navy"
+        },
+        {
+          "type": "icon",
+          "emoji": "🦮",
+          "x": 0.62,
+          "y": 0.22,
+          "at": "w10",
+          "size": 130,
+          "sfx": "pop",
+          "label": "DOG",
+          "label_color": "navy"
+        },
+        {
+          "type": "icon",
+          "emoji": "👗",
+          "x": 0.8,
+          "y": 0.3,
+          "at": "w13",
+          "size": 130,
+          "sfx": "pop",
+          "label": "SHIRT",
+          "label_color": "navy"
+        },
+        {
+          "type": "sticker",
+          "name": "",
+          "x": 0.62,
+          "y": 0.5,
+          "at": "w17",
+          "size": 120,
+          "blank": true,
+          "q": true,
+          "shake": [
+            "w17",
+            "e0"
+          ],
+          "sfx": "err"
+        }
+      ],
+      "highlight": [
+        "one word"
+      ]
+    },
+    {
+      "text": "That's not because you're bad with names. Your brain is built to drop them.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "whoosh"
+        ]
+      ],
+      "cam": [
+        [
+          0,
+          1.25,
+          0.5,
+          0.45
+        ],
+        [
+          1.0,
+          1.0,
+          0.5,
+          0.5
+        ],
+        [
+          "e0",
+          1.05,
+          0.5,
+          0.5
+        ]
+      ],
+      "els": [
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.5,
+          "size": 200,
+          "at": 0.4,
+          "sfx": "pop",
+          "pose": "wave"
+        },
+        {
+          "type": "text",
+          "text": "BUILT TO DROP THEM",
+          "x": 0.5,
+          "y": 0.18,
+          "size": 70,
+          "color": "pink",
+          "at": "w10",
+          "glow": ""
+        }
+      ],
+      "highlight": [
+        "built to drop them"
+      ]
+    },
+    {
+      "text": "Here are five reasons why — and a simple four-step trick to fix it.",
+      "bg": "brain",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "blip",
+          "x": 0.2,
+          "y": 0.58,
+          "size": 170,
+          "at": 0,
+          "sfx": "",
+          "pose": "point",
+          "pop": "none"
+        },
+        {
+          "type": "text",
+          "text": "5 REASONS",
+          "x": 0.58,
+          "y": 0.38,
+          "size": 130,
+          "color": "yellow",
+          "at": "w2",
+          "glow": "yellow",
+          "sfx": "pop"
+        },
+        {
+          "type": "text",
+          "text": "+ 1 FIX",
+          "x": 0.58,
+          "y": 0.6,
+          "size": 110,
+          "color": "white",
+          "at": "w9",
+          "glow": "",
+          "sfx": "pop"
+        }
+      ],
+      "highlight": [
+        "five reasons",
+        "four-step trick"
+      ]
+    },
+    {
+      "text": "Stick around, because at the end, I'm going to test you.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "pause": 0.7,
+      "els": [
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.66,
+          "size": 270,
+          "at": 0,
+          "sfx": "ding",
+          "pose": "sign",
+          "sign": "QUIZ AT THE END",
+          "pop": "none"
+        }
+      ],
+      "highlight": [
+        "test you"
+      ]
+    },
+    {
+      "text": "",
+      "bg": "navy",
+      "hold": 3.6,
+      "tr": "zap",
+      "sfx": [
+        [
+          0.05,
+          "zap"
+        ]
+      ],
+      "push": 0.04,
+      "els": [
+        {
+          "type": "logo",
+          "x": 0.5,
+          "y": 0.48,
+          "size": 170,
+          "at": 1.0,
+          "sfx": "ding"
+        }
+      ]
+    },
+    {
+      "text": "Reason number one: names don't mean anything.",
+      "bg": "navy",
+      "tr": "zap",
+      "pause": 0.7,
+      "chapter": "Reason 1: Names mean nothing",
+      "els": [
+        {
+          "type": "title",
+          "top": "REASON #1",
+          "sub": "NAMES MEAN NOTHING",
+          "x": 0.5,
+          "y": 0.42,
+          "sfx": "whoosh"
+        },
+        {
+          "type": "blip",
+          "x": 0.86,
+          "y": 0.66,
+          "size": 150,
+          "at": "w3",
+          "sfx": "pop",
+          "pose": "shrug"
+        }
+      ]
+    },
+    {
+      "text": "In 1987, researchers published a clever experiment in the British Journal of Psychology.",
+      "bg": "lab",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "source",
+          "text": "1987 • British Journal of Psychology",
+          "at": 0.2
+        },
+        {
+          "type": "card",
+          "face": "10",
+          "x": 0.14,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.15",
+          "rot": -7.5,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "face": "11",
+          "x": 0.28400000000000003,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.25",
+          "rot": -4.5,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "face": "12",
+          "x": 0.428,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.35",
+          "rot": -1.5,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "face": "13",
+          "x": 0.572,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.45",
+          "rot": 1.5,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "face": "14",
+          "x": 0.716,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.55",
+          "rot": 4.5,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "face": "15",
+          "x": 0.86,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": "p0.65",
+          "rot": 7.5,
+          "sfx": "pop"
+        }
+      ]
+    },
+    {
+      "text": "They showed people photos of faces and gave each face two labels: a name and a job.",
+      "bg": "lab",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "card",
+          "face": "10",
+          "x": 0.14,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": -7.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "card",
+          "face": "11",
+          "x": 0.28400000000000003,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": -4.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "card",
+          "face": "12",
+          "x": 0.428,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": -1.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "card",
+          "face": "13",
+          "x": 0.572,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": 1.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "card",
+          "face": "14",
+          "x": 0.716,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": 4.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "card",
+          "face": "15",
+          "x": 0.86,
+          "y": 0.42,
+          "w": 230,
+          "h": 270,
+          "color": "cyan",
+          "at": 0,
+          "rot": 7.5,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "source",
+          "text": "1987 • British Journal of Psychology",
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.11000000000000001,
+          "y": 0.66,
+          "at": "w13+0.00",
+          "color": "pink",
+          "size": 26,
+          "sfx": "pop"
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.18000000000000002,
+          "y": 0.66,
+          "at": "w16+0.00",
+          "color": "cyan",
+          "size": 26,
+          "sfx": "pop"
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.254,
+          "y": 0.66,
+          "at": "w13+0.05",
+          "color": "pink",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.324,
+          "y": 0.66,
+          "at": "w16+0.05",
+          "color": "cyan",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.398,
+          "y": 0.66,
+          "at": "w13+0.10",
+          "color": "pink",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.46799999999999997,
+          "y": 0.66,
+          "at": "w16+0.10",
+          "color": "cyan",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.5419999999999999,
+          "y": 0.66,
+          "at": "w13+0.15",
+          "color": "pink",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.612,
+          "y": 0.66,
+          "at": "w16+0.15",
+          "color": "cyan",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.6859999999999999,
+          "y": 0.66,
+          "at": "w13+0.20",
+          "color": "pink",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.756,
+          "y": 0.66,
+          "at": "w16+0.20",
+          "color": "cyan",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "NAME",
+          "x": 0.83,
+          "y": 0.66,
+          "at": "w13+0.25",
+          "color": "pink",
+          "size": 26,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "JOB",
+          "x": 0.9,
+          "y": 0.66,
+          "at": "w16+0.25",
+          "color": "cyan",
+          "size": 26,
+          "sfx": ""
+        }
+      ],
+      "highlight": [
+        "a name and a job"
+      ]
+    },
+    {
+      "text": "Here's the twist. Some labels could be either. 'Baker' can be a job. 'Baker' can also be a last name. Same word. Same sound.",
+      "bg": "lab",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "card",
+          "face": "13",
+          "x": 0.5,
+          "y": 0.36,
+          "w": 320,
+          "h": 380,
+          "color": "cyan",
+          "at": 0.2,
+          "sfx": "whoosh"
+        },
+        {
+          "type": "pill",
+          "text": "BAKER",
+          "x": 0.34,
+          "y": 0.72,
+          "at": "w12",
+          "color": "cyan",
+          "size": 50,
+          "sfx": "pop",
+          "icon": "🧑‍🍳"
+        },
+        {
+          "type": "pill",
+          "text": "Mr. BAKER",
+          "x": 0.66,
+          "y": 0.72,
+          "at": "w18",
+          "color": "pink",
+          "size": 50,
+          "sfx": "pop"
+        },
+        {
+          "type": "text",
+          "text": "SAME WORD. SAME SOUND.",
+          "x": 0.5,
+          "y": 0.1,
+          "size": 56,
+          "color": "white",
+          "at": "w20",
+          "glow": ""
+        }
+      ]
+    },
+    {
+      "text": "Later, people saw the faces again. They were much better at remembering that someone was a baker than remembering that someone was named Baker.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "push": 0.03,
+      "els": [
+        {
+          "type": "line",
+          "pts": [
+            0.5,
+            0.1,
+            0.5,
+            0.8
+          ],
+          "at": 0,
+          "grow": 0.4,
+          "color": "grey",
+          "width": 3,
+          "glow": false
+        },
+        {
+          "type": "pill",
+          "text": "BAKER",
+          "x": 0.27,
+          "y": 0.42,
+          "at": "w16",
+          "color": "cyan",
+          "size": 54,
+          "sfx": "pop",
+          "icon": "🧑‍🍳",
+          "path": [
+            [
+              "w16+0.6",
+              0.27,
+              0.42
+            ],
+            [
+              "w16+1.2",
+              0.27,
+              0.58
+            ]
+          ]
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.27,
+          "y": 0.24,
+          "at": "w16+1.2",
+          "sfx": "ding"
+        },
+        {
+          "type": "pill",
+          "text": "Mr. BAKER",
+          "x": 0.73,
+          "y": 0.42,
+          "at": "w22",
+          "color": "pink",
+          "size": 54,
+          "sfx": "pop",
+          "shake": [
+            "w22+0.4",
+            "w22+1.4"
+          ],
+          "path": [
+            [
+              "w22+1.4",
+              0.73,
+              0.42
+            ],
+            [
+              "e0",
+              0.73,
+              1.1
+            ]
+          ]
+        },
+        {
+          "type": "mark",
+          "kind": "cross",
+          "x": 0.73,
+          "y": 0.24,
+          "at": "w22+0.5",
+          "sfx": "err"
+        }
+      ]
+    },
+    {
+      "text": "Scientists call this the Baker–baker paradox.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "riser"
+        ]
+      ],
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "pill",
+          "text": "BAKER",
+          "x": 0.18,
+          "y": 0.62,
+          "at": 0,
+          "color": "cyan",
+          "size": 44,
+          "sfx": "",
+          "icon": "🧑‍🍳",
+          "pop": "none"
+        },
+        {
+          "type": "pill",
+          "text": "Mr. BAKER",
+          "x": 0.82,
+          "y": 0.62,
+          "at": 0,
+          "color": "pink",
+          "size": 44,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "text",
+          "text": "THE BAKER–BAKER PARADOX",
+          "x": 0.5,
+          "y": 0.42,
+          "size": 92,
+          "color": "yellow",
+          "at": "w4",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "Baker–baker paradox"
+      ]
+    },
+    {
+      "text": "Why does it happen? Because the job 'baker' plugs into everything you already know. Flour. Ovens. Early mornings. The smell of fresh bread. Your brain has dozens of hooks to hang that memory on.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "web",
+          "hub": "baker",
+          "x": 0.5,
+          "y": 0.45,
+          "r": 300,
+          "at": "w7",
+          "items": [
+            {
+              "emoji": "🌾",
+              "at": "w14",
+              "ang": -150
+            },
+            {
+              "emoji": "🔥",
+              "at": "w15",
+              "ang": -30
+            },
+            {
+              "emoji": "🌅",
+              "at": "w16",
+              "ang": 150
+            },
+            {
+              "emoji": "🍞",
+              "at": "w22",
+              "ang": 30
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "DOZENS OF HOOKS",
+          "x": 0.5,
+          "y": 0.1,
+          "size": 56,
+          "color": "white",
+          "at": "w28",
+          "glow": ""
+        }
+      ],
+      "highlight": [
+        "hooks"
+      ]
+    },
+    {
+      "text": "But 'Mr. Baker'? That tells you nothing. He might not even know how to make toast.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "push": 0.03,
+      "els": [
+        {
+          "type": "web",
+          "hub": "baker",
+          "x": 0.27,
+          "y": 0.45,
+          "r": 200,
+          "at": 0,
+          "pop": "none",
+          "items": [
+            {
+              "emoji": "🌾",
+              "at": -1,
+              "ang": -150
+            },
+            {
+              "emoji": "🔥",
+              "at": -1,
+              "ang": -30
+            },
+            {
+              "emoji": "🌅",
+              "at": -1,
+              "ang": 150
+            },
+            {
+              "emoji": "🍞",
+              "at": -1,
+              "ang": 30
+            }
+          ]
+        },
+        {
+          "type": "pill",
+          "text": "Mr. Baker",
+          "x": 0.72,
+          "y": 0.22,
+          "at": 0,
+          "color": "pink",
+          "size": 46,
+          "sfx": "pop"
+        },
+        {
+          "type": "text",
+          "text": "0 HOOKS",
+          "x": 0.72,
+          "y": 0.34,
+          "size": 52,
+          "color": "pink",
+          "at": "w6",
+          "glow": "",
+          "sfx": "err"
+        },
+        {
+          "type": "person",
+          "who": "suit",
+          "x": 0.68,
+          "y": 0.62,
+          "h": 330,
+          "at": "w8"
+        },
+        {
+          "type": "icon",
+          "emoji": "🍞",
+          "x": 0.8,
+          "y": 0.6,
+          "at": "w15",
+          "size": 90,
+          "sfx": "boing",
+          "tint": "grey",
+          "shake": [
+            "w15",
+            "w15+0.6"
+          ]
+        }
+      ]
+    },
+    {
+      "text": "A name is an arbitrary label — like a password nobody explained to you. And your brain is terrible at storing things that mean nothing.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "pill",
+          "text": "Mr. Baker",
+          "x": 0.5,
+          "y": 0.42,
+          "at": 0,
+          "color": "pink",
+          "size": 64,
+          "sfx": "pop",
+          "until": "w9"
+        },
+        {
+          "type": "card",
+          "text": "X7#Q!Z",
+          "emoji": "🔒",
+          "x": 0.5,
+          "y": 0.42,
+          "w": 420,
+          "h": 300,
+          "color": "pink",
+          "at": "w9",
+          "size": 54,
+          "sfx": "click",
+          "dissolve": "w23"
+        }
+      ],
+      "highlight": [
+        "arbitrary label",
+        "mean nothing"
+      ]
+    },
+    {
+      "text": "Reason number two: there's a good chance you never stored the name in the first place.",
+      "bg": "navy",
+      "tr": "zap",
+      "pause": 0.6,
+      "chapter": "Reason 2: You never caught it",
+      "els": [
+        {
+          "type": "title",
+          "top": "REASON #2",
+          "sub": "YOU NEVER CAUGHT IT",
+          "x": 0.5,
+          "y": 0.42,
+          "sfx": "whoosh"
+        }
+      ]
+    },
+    {
+      "text": "Think about what happens during an introduction. They say their name — and in that exact moment, what are you doing?",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "heart",
+          0.8
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.3,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "hand"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "flip": true,
+          "pose": "hand"
+        },
+        {
+          "type": "bubble",
+          "kind": "speech",
+          "text": "I'm Jessica!",
+          "x": 0.74,
+          "y": 0.17,
+          "w": 380,
+          "h": 150,
+          "size": 50,
+          "tail": "left",
+          "at": "w8",
+          "sfx": "pop"
+        }
+      ]
+    },
+    {
+      "text": "You're getting ready to say yours. Planning your handshake. Thinking about how you look.",
+      "bg": "backyard_blur",
+      "tr": "cut",
+      "sfx": [
+        [
+          0,
+          "heart",
+          1.0
+        ]
+      ],
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.3,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "hand",
+          "pop": "none"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "flip": true,
+          "pose": "hand",
+          "pop": "none"
+        },
+        {
+          "type": "bubble",
+          "kind": "speech",
+          "text": "I'm Jessica!",
+          "x": 0.74,
+          "y": 0.17,
+          "w": 380,
+          "h": 150,
+          "size": 50,
+          "tail": "left",
+          "at": 0,
+          "pop": "none",
+          "path": [
+            [
+              "w6",
+              0.74,
+              0.17
+            ],
+            [
+              "w9",
+              0.3,
+              0.12
+            ]
+          ],
+          "dissolve": "w13",
+          "dissolve_sfx": "pop"
+        },
+        {
+          "type": "bubble",
+          "kind": "thought",
+          "text": "I'm… uh…",
+          "x": 0.14,
+          "y": 0.2,
+          "w": 300,
+          "h": 170,
+          "size": 42,
+          "at": "w4",
+          "sfx": "pop"
+        },
+        {
+          "type": "icon",
+          "emoji": "✋",
+          "x": 0.3,
+          "y": 0.1,
+          "at": "w8",
+          "size": 90,
+          "sfx": "pop",
+          "ring": "cyan"
+        },
+        {
+          "type": "icon",
+          "emoji": "🪞",
+          "x": 0.44,
+          "y": 0.22,
+          "at": "w13",
+          "size": 90,
+          "sfx": "pop",
+          "ring": "cyan"
+        }
+      ],
+      "highlight": [
+        "say yours"
+      ]
+    },
+    {
+      "text": "In 1973, psychologist Malcolm Brenner tested this. He sat people in a circle and had them take turns reading words out loud.",
+      "bg": "film",
+      "look": "film",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "rattle",
+          0.9
+        ]
+      ],
+      "els": [
+        {
+          "type": "source",
+          "text": "1973 • Malcolm Brenner",
+          "at": 0.2
+        },
+        {
+          "type": "text",
+          "text": "1973",
+          "x": 0.14,
+          "y": 0.2,
+          "size": 110,
+          "color": "yellow",
+          "at": 0.2,
+          "glow": "yellow"
+        },
+        {
+          "type": "circle",
+          "x": 0.55,
+          "y": 0.48,
+          "r": 320,
+          "n": 8,
+          "at": "w12",
+          "speed": 1.0
+        }
+      ],
+      "highlight": [
+        "1973",
+        "Malcolm Brenner"
+      ]
+    },
+    {
+      "text": "Afterward, they tried to recall every word they'd heard. The result? People were worst at remembering the words spoken in the roughly nine seconds right before their own turn.",
+      "bg": "film",
+      "look": "film",
+      "tr": "cut",
+      "sfx": [
+        [
+          0,
+          "rattle",
+          0.8
+        ]
+      ],
+      "els": [
+        {
+          "type": "source",
+          "text": "1973 • Malcolm Brenner",
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "circle",
+          "x": 0.55,
+          "y": 0.48,
+          "r": 320,
+          "n": 8,
+          "at": 0,
+          "pop": "none",
+          "speed": 1.0,
+          "highlight": 0,
+          "highlight_at": "w10",
+          "grey": [
+            5,
+            6,
+            7
+          ],
+          "grey_at": "w22",
+          "sfx_at": [
+            [
+              "w10",
+              "ding"
+            ],
+            [
+              "w22",
+              "tick"
+            ],
+            [
+              "w22+0.6",
+              "tick"
+            ],
+            [
+              "w22+1.2",
+              "tick"
+            ]
+          ]
+        }
+      ],
+      "highlight": [
+        "roughly nine seconds"
+      ]
+    },
+    {
+      "text": "It's called the next-in-line effect.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "riser"
+        ]
+      ],
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "text",
+          "text": "THE NEXT-IN-LINE EFFECT",
+          "x": 0.5,
+          "y": 0.42,
+          "size": 96,
+          "color": "yellow",
+          "at": "w3",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "next-in-line effect"
+      ]
+    },
+    {
+      "text": "Your brain was so busy getting ready to perform that it never wrote the information down.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "notebook",
+          "x": 0.5,
+          "y": 0.55,
+          "at": 0,
+          "alarm": "w8",
+          "sfx": "pop"
+        }
+      ]
+    },
+    {
+      "text": "And an introduction is the perfect next-in-line moment. Their name arrives one second before you have to speak.",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.3,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "hand"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "flip": true,
+          "pose": "hand"
+        },
+        {
+          "type": "ring",
+          "x": 0.5,
+          "y": 0.25,
+          "r": 90,
+          "at": "w11",
+          "len": 1.0,
+          "label": "1 SECOND",
+          "color": "pink",
+          "sfx": "tick"
+        }
+      ],
+      "highlight": [
+        "one second"
+      ]
+    },
+    {
+      "text": "So often, you didn't forget the name. You never caught it.",
+      "bg": "backyard_blur",
+      "tr": "cut",
+      "pause": 0.7,
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.3,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "hand",
+          "pop": "none"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "flip": true,
+          "pose": "hand",
+          "pop": "none"
+        },
+        {
+          "type": "icon",
+          "emoji": "🧤",
+          "x": 0.36,
+          "y": 0.3,
+          "at": 0.2,
+          "size": 110,
+          "sfx": "pop"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 0.8,
+          "y": 0.28,
+          "at": "w4",
+          "size": 90,
+          "path": [
+            [
+              "w8",
+              0.8,
+              0.28
+            ],
+            [
+              "w8+1.0",
+              -0.15,
+              0.3
+            ]
+          ],
+          "sfx_at": [
+            [
+              "w8",
+              "whoosh"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "YOU NEVER CAUGHT IT.",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 74,
+          "color": "yellow",
+          "at": "w9",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "You never caught it"
+      ]
+    },
+    {
+      "text": "Reason number three: your short-term memory is tiny.",
+      "bg": "navy",
+      "tr": "zap",
+      "pause": 0.6,
+      "chapter": "Reason 3: Your memory has a tiny inbox",
+      "els": [
+        {
+          "type": "title",
+          "top": "REASON #3",
+          "sub": "YOUR MEMORY HAS A TINY INBOX",
+          "x": 0.5,
+          "y": 0.42,
+          "sfx": "whoosh"
+        }
+      ]
+    },
+    {
+      "text": "Psychologists estimate you can juggle only about four chunks of new information at once.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "inbox",
+          "x": 0.5,
+          "y": 0.52,
+          "at": 0.2,
+          "sfx": "pop",
+          "scale": 1.5
+        },
+        {
+          "type": "pill",
+          "text": "MAX ≈ 4",
+          "x": 0.5,
+          "y": 0.24,
+          "at": "w7",
+          "color": "yellow",
+          "size": 56,
+          "sfx": "ding"
+        }
+      ],
+      "highlight": [
+        "four chunks"
+      ]
+    },
+    {
+      "text": "Now picture that barbecue again. Her name. Her face. Where she works. The music. The burger in your hand. The question you're about to ask.",
+      "bg": "brain",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "inbox",
+          "x": 0.5,
+          "y": 0.52,
+          "at": 0,
+          "pop": "none",
+          "scale": 1.5,
+          "cards": [
+            {
+              "tag": "Jessica",
+              "at": "w6"
+            },
+            {
+              "emoji": "🙂",
+              "at": "w8"
+            },
+            {
+              "emoji": "💼",
+              "at": "w11"
+            },
+            {
+              "emoji": "🎵",
+              "at": "w13"
+            },
+            {
+              "emoji": "🍔",
+              "at": "w15"
+            },
+            {
+              "emoji": "❓",
+              "at": "w20"
+            }
+          ],
+          "drop_index": 0
+        },
+        {
+          "type": "pill",
+          "text": "MAX ≈ 4",
+          "x": 0.5,
+          "y": 0.24,
+          "at": 0,
+          "color": "yellow",
+          "size": 56,
+          "sfx": "",
+          "pop": "none"
+        }
+      ]
+    },
+    {
+      "text": "That name is fighting for space with everything else — and it's the weakest item in the room.",
+      "bg": "brain",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "inbox",
+          "x": 0.5,
+          "y": 0.52,
+          "at": 0,
+          "pop": "none",
+          "scale": 1.5,
+          "quiet": true,
+          "drop_index": 0,
+          "drop": "w13",
+          "cards": [
+            {
+              "tag": "Jessica",
+              "at": -2
+            },
+            {
+              "emoji": "🙂",
+              "at": -2
+            },
+            {
+              "emoji": "💼",
+              "at": -2
+            },
+            {
+              "emoji": "🎵",
+              "at": -2
+            },
+            {
+              "emoji": "🍔",
+              "at": -2
+            },
+            {
+              "emoji": "❓",
+              "at": -2
+            }
+          ]
+        },
+        {
+          "type": "pill",
+          "text": "MAX ≈ 4",
+          "x": 0.5,
+          "y": 0.24,
+          "at": 0,
+          "color": "yellow",
+          "size": 56,
+          "sfx": "",
+          "pop": "none"
+        }
+      ],
+      "highlight": [
+        "fighting for space"
+      ]
+    },
+    {
+      "text": "Then the clock starts. Back in the 1880s, German psychologist Hermann Ebbinghaus memorized lists of meaningless syllables and tracked how fast he forgot them.",
+      "bg": "sepia",
+      "look": "sepia",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "source",
+          "text": "1885 • Hermann Ebbinghaus",
+          "at": "w7"
+        },
+        {
+          "type": "clock",
+          "x": 0.72,
+          "y": 0.45,
+          "r": 110,
+          "at": "w2",
+          "spin": 0.25,
+          "sfx": "tick",
+          "sfx_at": [
+            [
+              "w2+1",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+2",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+3",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+4",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+5",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+6",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+7",
+              "tick",
+              0.8
+            ],
+            [
+              "w2+8",
+              "tick",
+              0.8
+            ]
+          ]
+        },
+        {
+          "type": "icon",
+          "emoji": "🪶",
+          "x": 0.2,
+          "y": 0.62,
+          "at": "w11",
+          "size": 110,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "text": "DAX",
+          "x": 0.3,
+          "y": 0.42,
+          "w": 220,
+          "h": 120,
+          "color": "navy",
+          "fill": "white",
+          "size": 52,
+          "rot": -6,
+          "at": "w15+0.0",
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "text": "BOK",
+          "x": 0.46,
+          "y": 0.36,
+          "w": 220,
+          "h": 120,
+          "color": "navy",
+          "fill": "white",
+          "size": 52,
+          "rot": 4,
+          "at": "w15+0.3",
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "text": "ZIF",
+          "x": 0.4,
+          "y": 0.58,
+          "w": 220,
+          "h": 120,
+          "color": "navy",
+          "fill": "white",
+          "size": 52,
+          "rot": -2,
+          "at": "w15+0.6",
+          "sfx": "pop"
+        }
+      ],
+      "highlight": [
+        "1880s"
+      ]
+    },
+    {
+      "text": "He lost more than half within an hour. He drew it as a curve that drops off a cliff, then slowly flattens out.",
+      "bg": "graph",
+      "tr": "dissolve",
+      "push": 0.03,
+      "els": [
+        {
+          "type": "graph",
+          "x": 0.52,
+          "y": 0.45,
+          "at": 0,
+          "draw": 4.0,
+          "dot": "MORE THAN HALF GONE",
+          "sfx_at": [
+            [
+              0.3,
+              "whoosh"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "text": "It's called the forgetting curve. And remember reason one? To your brain, a brand-new name is basically meaningless sound. So it slides down that same cliff — fast.",
+      "bg": "graph",
+      "tr": "cut",
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "graph",
+          "x": 0.52,
+          "y": 0.48,
+          "at": 0,
+          "pop": "none",
+          "draw": 0.01,
+          "slider": "w21",
+          "sfx_at": [
+            [
+              "w21",
+              "shimmer"
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "text": "THE FORGETTING CURVE",
+          "x": 0.5,
+          "y": 0.1,
+          "size": 70,
+          "color": "yellow",
+          "at": "w3",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "forgetting curve",
+        "meaningless sound",
+        "same cliff — fast"
+      ]
+    },
+    {
+      "text": "Reason number four: your brain handles faces and names in completely different ways.",
+      "bg": "navy",
+      "tr": "zap",
+      "pause": 0.6,
+      "chapter": "Reason 4: Faces win, names lose",
+      "els": [
+        {
+          "type": "title",
+          "top": "REASON #4",
+          "sub": "FACES WIN, NAMES LOSE",
+          "x": 0.5,
+          "y": 0.42,
+          "sfx": "whoosh"
+        }
+      ]
+    },
+    {
+      "text": "Recognizing a face is one of the things humans do best. You can spot a friend across a crowded room in a fraction of a second.",
+      "bg": "crowd",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "crowd",
+          0.5
+        ]
+      ],
+      "els": [
+        {
+          "type": "crowd",
+          "at": 0,
+          "highlight_at": "w13",
+          "sfx_at": [
+            [
+              "w13",
+              "ding"
+            ]
+          ]
+        },
+        {
+          "type": "icon",
+          "emoji": "⏱️",
+          "x": 0.9,
+          "y": 0.14,
+          "at": "w22",
+          "size": 100,
+          "sfx": "click"
+        }
+      ],
+      "highlight": [
+        "fraction of a second"
+      ]
+    },
+    {
+      "text": "But according to a famous model of face recognition by psychologists Vicki Bruce and Andy Young, knowing who someone is happens in steps.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "source",
+          "text": "Bruce & Young face-recognition model",
+          "at": "w11"
+        },
+        {
+          "type": "pill",
+          "text": "1",
+          "x": 0.36,
+          "y": 0.6,
+          "at": "w22",
+          "color": "cyan",
+          "size": 60,
+          "sfx": "pop"
+        },
+        {
+          "type": "pill",
+          "text": "2",
+          "x": 0.5,
+          "y": 0.48,
+          "at": "w22+0.3",
+          "color": "cyan",
+          "size": 60,
+          "sfx": "pop"
+        },
+        {
+          "type": "pill",
+          "text": "3",
+          "x": 0.64,
+          "y": 0.36,
+          "at": "w22+0.6",
+          "color": "pink",
+          "size": 60,
+          "sfx": "pop"
+        },
+        {
+          "type": "blip",
+          "x": 0.18,
+          "y": 0.6,
+          "size": 150,
+          "at": 0.3,
+          "sfx": "pop",
+          "pose": "point"
+        }
+      ],
+      "highlight": [
+        "in steps"
+      ]
+    },
+    {
+      "text": "First, the face feels familiar. Next, you pull up facts about them — where you met, what they do. The name comes last. It's at the very end of the chain.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "chain",
+          "x": 0.5,
+          "y": 0.42,
+          "w": 0.8,
+          "at": 0,
+          "pop": "none",
+          "links": [
+            {
+              "label": "FAMILIAR",
+              "emoji": "🙂",
+              "at": "w4"
+            },
+            {
+              "label": "FACTS",
+              "emoji": "🏦",
+              "emoji2": "⚽",
+              "at": "w9"
+            },
+            {
+              "label": "NAME",
+              "emoji": "🏷️",
+              "weak": true,
+              "at": "w20"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "FAMILIAR → FACTS → NAME",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 56,
+          "color": "white",
+          "at": "w27",
+          "glow": ""
+        }
+      ],
+      "highlight": [
+        "familiar",
+        "facts",
+        "name comes last"
+      ]
+    },
+    {
+      "text": "So when you see someone and think, 'I know you… you work at the bank… your kid plays soccer with mine…' — and the name just won't come — that's not random.",
+      "bg": "coffee",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.2,
+          "y": 0.64,
+          "h": 520,
+          "at": 0
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.42,
+          "y": 0.64,
+          "h": 520,
+          "at": 0,
+          "flip": true
+        },
+        {
+          "type": "bubble",
+          "kind": "thought",
+          "x": 0.73,
+          "y": 0.36,
+          "w": 640,
+          "h": 480,
+          "at": "w6"
+        },
+        {
+          "type": "icon",
+          "emoji": "🙂",
+          "x": 0.62,
+          "y": 0.24,
+          "at": "w8",
+          "size": 80,
+          "sfx": "pop"
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.84,
+          "y": 0.24,
+          "size": 70,
+          "at": "w8+0.3",
+          "sfx": "ding"
+        },
+        {
+          "type": "icon",
+          "emoji": "🏦",
+          "x": 0.62,
+          "y": 0.36,
+          "at": "w14",
+          "size": 80,
+          "sfx": "pop"
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.84,
+          "y": 0.36,
+          "size": 70,
+          "at": "w14+0.3",
+          "sfx": "ding"
+        },
+        {
+          "type": "icon",
+          "emoji": "⚽",
+          "x": 0.62,
+          "y": 0.48,
+          "at": "w18",
+          "size": 80,
+          "sfx": "pop"
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.84,
+          "y": 0.48,
+          "size": 70,
+          "at": "w18+0.3",
+          "sfx": "ding"
+        },
+        {
+          "type": "sticker",
+          "name": "",
+          "x": 0.67,
+          "y": 0.6,
+          "at": "w24",
+          "size": 80,
+          "blank": true,
+          "sfx": "pop"
+        },
+        {
+          "type": "spinner",
+          "x": 0.84,
+          "y": 0.6,
+          "r": 30,
+          "at": "w24+0.2"
+        }
+      ]
+    },
+    {
+      "text": "Your brain made it most of the way down the chain and got stuck at the final, weakest link.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "chain",
+          "x": 0.5,
+          "y": 0.42,
+          "w": 0.8,
+          "at": 0,
+          "pop": "none",
+          "quiet": true,
+          "links": [
+            {
+              "label": "FAMILIAR",
+              "emoji": "🙂",
+              "at": -1
+            },
+            {
+              "label": "FACTS",
+              "emoji": "🏦",
+              "emoji2": "⚽",
+              "at": -1
+            },
+            {
+              "label": "NAME",
+              "emoji": "🏷️",
+              "weak": true,
+              "at": -1
+            }
+          ],
+          "pulse": "w2",
+          "crack": "w13"
+        },
+        {
+          "type": "text",
+          "text": "FINAL, WEAKEST LINK",
+          "x": 0.5,
+          "y": 0.72,
+          "size": 64,
+          "color": "pink",
+          "at": "w16",
+          "glow": "",
+          "sfx": "err"
+        }
+      ],
+      "highlight": [
+        "final",
+        "weakest link"
+      ]
+    },
+    {
+      "text": "That's also why people say, 'I never forget a face.' Of course you don't. Faces are easy. Names are the hard part.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "bubble",
+          "kind": "speech",
+          "text": "I never forget a face.",
+          "x": 0.5,
+          "y": 0.3,
+          "w": 560,
+          "h": 170,
+          "size": 46,
+          "at": "w4",
+          "until": "w14",
+          "sfx": "pop"
+        },
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.68,
+          "size": 270,
+          "at": "w14",
+          "sfx": "pop",
+          "signs": [
+            "FACES: EASY",
+            "NAMES: HARD"
+          ]
+        }
+      ],
+      "highlight": [
+        "Faces are easy"
+      ]
+    },
+    {
+      "text": "Reason number five: sometimes the name is in there — you just can't get it out.",
+      "bg": "navy",
+      "tr": "zap",
+      "pause": 0.6,
+      "chapter": "Reason 5: The tip-of-the-tongue trap",
+      "els": [
+        {
+          "type": "title",
+          "top": "REASON #5",
+          "sub": "THE TIP-OF-THE-TONGUE TRAP",
+          "x": 0.5,
+          "y": 0.42,
+          "sfx": "whoosh"
+        }
+      ],
+      "highlight": [
+        "can't get it out"
+      ]
+    },
+    {
+      "text": "You know the feeling. It starts with a 'J'… it's right there…",
+      "bg": "navy",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "tension",
+          0.8
+        ]
+      ],
+      "cam": [
+        [
+          0,
+          1.0,
+          0.5,
+          0.5
+        ],
+        [
+          "e0",
+          1.07,
+          0.55,
+          0.45
+        ]
+      ],
+      "pause": 0.8,
+      "els": [
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.27,
+          "y": 0.78,
+          "h": 860,
+          "at": 0,
+          "pose": "think"
+        },
+        {
+          "type": "letters",
+          "word": "JESSICA",
+          "x": 0.66,
+          "y": 0.38,
+          "at": "w8",
+          "sfx": "pop"
+        }
+      ]
+    },
+    {
+      "text": "Psychologists call this a tip-of-the-tongue state. Research shows most people have one about once a week. They get more common as we age. And they're most often triggered by — you guessed it — people's names.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "text",
+          "text": "TIP-OF-THE-TONGUE",
+          "x": 0.5,
+          "y": 0.12,
+          "size": 60,
+          "color": "white",
+          "at": "w4",
+          "glow": ""
+        },
+        {
+          "type": "card",
+          "emoji": "📅",
+          "text": "1× / WEEK",
+          "x": 0.22,
+          "y": 0.48,
+          "w": 380,
+          "h": 330,
+          "at": "w13",
+          "size": 44,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "emoji": "⏳",
+          "text": "MORE WITH AGE",
+          "x": 0.5,
+          "y": 0.48,
+          "w": 380,
+          "h": 330,
+          "at": "w22",
+          "size": 40,
+          "sfx": "pop"
+        },
+        {
+          "type": "card",
+          "emoji": "🏷️",
+          "text": "#1 TRIGGER: NAMES",
+          "x": 0.78,
+          "y": 0.48,
+          "w": 380,
+          "h": 330,
+          "at": "w34",
+          "size": 36,
+          "color": "pink",
+          "sfx": "pop"
+        }
+      ],
+      "highlight": [
+        "once a week",
+        "as we age",
+        "people's names"
+      ]
+    },
+    {
+      "text": "One leading explanation is called the transmission deficit model.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "sfx": [
+        [
+          0,
+          "riser"
+        ]
+      ],
+      "pause": 0.6,
+      "els": [
+        {
+          "type": "text",
+          "text": "THE TRANSMISSION DEFICIT MODEL",
+          "x": 0.5,
+          "y": 0.42,
+          "size": 84,
+          "color": "yellow",
+          "at": "w6",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "transmission deficit"
+      ]
+    },
+    {
+      "text": "The idea: a word is linked to its sounds by connections in your brain. Common words, like 'chair,' are linked by lots of strong pathways.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "brainmap",
+          "mode": "chair",
+          "at": "w17",
+          "sfx": "hum"
+        }
+      ],
+      "highlight": [
+        "strong pathways"
+      ]
+    },
+    {
+      "text": "But a name like 'Jessica' connects to one person through a single, thin thread.",
+      "bg": "navy",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "brainmap",
+          "mode": "both",
+          "at": 0,
+          "pop": "none",
+          "sfx_at": [
+            [
+              "w4",
+              "buzz"
+            ]
+          ]
+        }
+      ],
+      "highlight": [
+        "single",
+        "thin thread"
+      ]
+    },
+    {
+      "text": "If you haven't used it recently, the signal is too weak to reach the sounds. So you get the first letter… maybe the number of syllables… but not the word.",
+      "bg": "navy",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "brainmap",
+          "mode": "both",
+          "at": 0,
+          "pop": "none",
+          "pulse": "w7",
+          "sfx_at": [
+            [
+              "w10",
+              "err"
+            ]
+          ]
+        }
+      ],
+      "highlight": [
+        "first letter"
+      ]
+    },
+    {
+      "text": "The good news? About half the time, the name pops back while you're still searching.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "pause": 0.7,
+      "els": [
+        {
+          "type": "letters",
+          "word": "JESSICA",
+          "x": 0.5,
+          "y": 0.36,
+          "at": 0,
+          "snap": "w9",
+          "sfx_at": [
+            [
+              "w9",
+              "ding"
+            ],
+            [
+              "w9",
+              "shimmer"
+            ]
+          ]
+        },
+        {
+          "type": "pill",
+          "text": "~50% COME BACK",
+          "x": 0.5,
+          "y": 0.62,
+          "at": "w4",
+          "color": "yellow",
+          "size": 52,
+          "sfx": "pop"
+        }
+      ],
+      "highlight": [
+        "half the time"
+      ]
+    },
+    {
+      "text": "So how do you beat your own brain? Here's a four-step method based on everything we just covered.",
+      "bg": "navy",
+      "tr": "zap",
+      "chapter": "The 4-step fix",
+      "els": [
+        {
+          "type": "text",
+          "text": "THE FIX",
+          "x": 0.5,
+          "y": 0.3,
+          "size": 150,
+          "color": "yellow",
+          "at": "w10",
+          "glow": "yellow",
+          "sfx": "thud"
+        },
+        {
+          "type": "icon",
+          "emoji": "🔧",
+          "x": 0.72,
+          "y": 0.3,
+          "at": "w10+0.3",
+          "size": 120,
+          "sfx": "pop",
+          "ring": "yellow"
+        },
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.64,
+          "size": 170,
+          "at": 0.4,
+          "sfx": "pop",
+          "hat": true,
+          "pose": "wave"
+        }
+      ],
+      "highlight": [
+        "four-step method"
+      ]
+    },
+    {
+      "text": "Step one: hear it. When someone introduces themselves, stop rehearsing your own line for three seconds.",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "pill",
+          "text": "1 — HEAR IT",
+          "x": 0.17,
+          "y": 0.1,
+          "at": 0,
+          "color": "yellow",
+          "size": 40,
+          "sfx": "pop"
+        },
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.3,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "pose": "hand"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.6,
+          "h": 460,
+          "at": 0,
+          "flip": true,
+          "pose": "hand"
+        },
+        {
+          "type": "bubble",
+          "kind": "thought",
+          "text": "I'm… uh…",
+          "x": 0.14,
+          "y": 0.24,
+          "w": 280,
+          "h": 160,
+          "size": 40,
+          "at": 0.3,
+          "until": "w8"
+        },
+        {
+          "type": "ring",
+          "x": 0.3,
+          "y": 0.3,
+          "r": 120,
+          "at": "w14",
+          "len": 3.0,
+          "color": "cyan",
+          "count": 3,
+          "ticks": true
+        }
+      ],
+      "highlight": [
+        "three seconds"
+      ]
+    },
+    {
+      "text": "That beats the next-in-line effect.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "pause": 0.5,
+      "els": [
+        {
+          "type": "pill",
+          "text": "1 — HEAR IT",
+          "x": 0.17,
+          "y": 0.1,
+          "at": 0,
+          "color": "yellow",
+          "size": 40,
+          "sfx": "",
+          "pop": "none"
+        },
+        {
+          "type": "notebook",
+          "x": 0.5,
+          "y": 0.52,
+          "at": 0,
+          "write": 0.3,
+          "name": "Jessica"
+        }
+      ]
+    },
+    {
+      "text": "Step two: say it back. 'Nice to meet you, Jessica.' Saying it out loud gives your brain a second copy.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "pill",
+          "text": "2 — SAY IT BACK",
+          "x": 0.19,
+          "y": 0.1,
+          "at": 0,
+          "color": "yellow",
+          "size": 40,
+          "sfx": "pop"
+        },
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.26,
+          "y": 0.62,
+          "h": 460,
+          "at": 0,
+          "pose": "hand"
+        },
+        {
+          "type": "bubble",
+          "kind": "speech",
+          "text": "Nice to meet you, Jessica.",
+          "x": 0.3,
+          "y": 0.2,
+          "w": 520,
+          "h": 150,
+          "size": 42,
+          "tail": "left",
+          "at": "w5"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 0.62,
+          "y": 0.5,
+          "at": "w10",
+          "size": 150
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 0.8,
+          "y": 0.5,
+          "at": "w18",
+          "size": 150,
+          "rot": 4,
+          "sfx": "shing"
+        }
+      ],
+      "highlight": [
+        "second copy"
+      ]
+    },
+    {
+      "text": "Step three: make it mean something. Turn the Baker into a baker. Jessica? Picture her juggling jelly beans. Silly is fine — weird images stick. You're giving an empty label something to hold on to.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "pill",
+          "text": "3 — MAKE IT MEAN SOMETHING",
+          "x": 0.27,
+          "y": 0.1,
+          "at": 0,
+          "color": "yellow",
+          "size": 40,
+          "sfx": "pop"
+        },
+        {
+          "type": "pill",
+          "text": "BAKER",
+          "x": 0.2,
+          "y": 0.32,
+          "at": "w6",
+          "color": "cyan",
+          "size": 48,
+          "sfx": "pop",
+          "icon": "🧑‍🍳",
+          "until": "w12"
+        },
+        {
+          "type": "icon",
+          "emoji": "🍞",
+          "x": 0.2,
+          "y": 0.56,
+          "at": "w8",
+          "size": 110,
+          "sfx": "pop",
+          "until": "w12"
+        },
+        {
+          "type": "line",
+          "pts": [
+            0.2,
+            0.38,
+            0.2,
+            0.5
+          ],
+          "at": "w8",
+          "until": "w12"
+        },
+        {
+          "type": "juggler",
+          "who": "jessica",
+          "pose": "juggle",
+          "x": 0.5,
+          "y": 0.62,
+          "h": 470,
+          "at": "w15"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 0.8,
+          "y": 0.32,
+          "at": "w28",
+          "size": 130,
+          "sfx": "shimmer"
+        },
+        {
+          "type": "line",
+          "pts": [
+            0.8,
+            0.42,
+            0.6,
+            0.5
+          ],
+          "at": "w32"
+        },
+        {
+          "type": "line",
+          "pts": [
+            0.8,
+            0.42,
+            0.74,
+            0.62
+          ],
+          "at": "w32+0.2"
+        },
+        {
+          "type": "line",
+          "pts": [
+            0.8,
+            0.42,
+            0.9,
+            0.6
+          ],
+          "at": "w32+0.4"
+        }
+      ],
+      "highlight": [
+        "juggling jelly beans",
+        "hold on to"
+      ]
+    },
+    {
+      "text": "Step four: test yourself later. A few minutes into the conversation, quietly recall her name. Do it again when you leave.",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "pill",
+          "text": "4 — TEST YOURSELF LATER",
+          "x": 0.25,
+          "y": 0.1,
+          "at": 0,
+          "color": "yellow",
+          "size": 40,
+          "sfx": "pop"
+        },
+        {
+          "type": "person",
+          "who": "everyman",
+          "x": 0.38,
+          "y": 0.62,
+          "h": 460,
+          "at": 0,
+          "pose": "glance"
+        },
+        {
+          "type": "person",
+          "who": "jessica",
+          "x": 0.7,
+          "y": 0.62,
+          "h": 460,
+          "at": 0,
+          "flip": true
+        },
+        {
+          "type": "clock",
+          "x": 0.13,
+          "y": 0.38,
+          "r": 70,
+          "at": "w6",
+          "until": "w20",
+          "spin": 2,
+          "label": "+5 MIN",
+          "sfx": "tick"
+        },
+        {
+          "type": "clock",
+          "x": 0.13,
+          "y": 0.38,
+          "r": 70,
+          "at": "w20",
+          "spin": 2,
+          "label": "LEAVING",
+          "sfx": "tick"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 0.7,
+          "y": 0.26,
+          "at": "w12",
+          "size": 80
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.82,
+          "y": 0.24,
+          "size": 80,
+          "at": "w12+0.4",
+          "sfx": "ding"
+        },
+        {
+          "type": "mark",
+          "kind": "check",
+          "x": 0.88,
+          "y": 0.3,
+          "size": 80,
+          "at": "w20+0.5",
+          "sfx": "ding"
+        }
+      ]
+    },
+    {
+      "text": "Every time you pull a memory back out, you flatten that forgetting curve.",
+      "bg": "graph",
+      "tr": "dissolve",
+      "pause": 0.8,
+      "els": [
+        {
+          "type": "graph",
+          "x": 0.52,
+          "y": 0.52,
+          "h": 0.44,
+          "at": 0,
+          "draw": 1.0,
+          "bumps": [
+            "w3",
+            "w9"
+          ],
+          "sfx_at": [
+            [
+              "w3",
+              "ding"
+            ],
+            [
+              "w9",
+              "chime"
+            ]
+          ]
+        },
+        {
+          "type": "pill",
+          "text": "1 HEAR IT",
+          "x": 0.17,
+          "y": 0.08,
+          "at": 0,
+          "color": "yellow",
+          "size": 30,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "2 SAY IT",
+          "x": 0.39,
+          "y": 0.08,
+          "at": 0.1,
+          "color": "yellow",
+          "size": 30,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "3 MEANING",
+          "x": 0.61,
+          "y": 0.08,
+          "at": 0.2,
+          "color": "yellow",
+          "size": 30,
+          "sfx": ""
+        },
+        {
+          "type": "pill",
+          "text": "4 TEST LATER",
+          "x": 0.83,
+          "y": 0.08,
+          "at": 0.3,
+          "color": "yellow",
+          "size": 30,
+          "sfx": ""
+        }
+      ],
+      "highlight": [
+        "flatten that"
+      ]
+    },
+    {
+      "text": "Okay. Time for the test I promised.",
+      "bg": "backyard_blur",
+      "tr": "zap",
+      "sfx": [
+        [
+          0,
+          "riser"
+        ]
+      ],
+      "chapter": "The memory test",
+      "els": [
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.66,
+          "size": 270,
+          "at": 0.2,
+          "sfx": "ding",
+          "pose": "sign",
+          "sign": "QUIZ TIME"
+        }
+      ]
+    },
+    {
+      "text": "At the very start of this video, a woman introduced herself at a backyard barbecue. What was her name?",
+      "bg": "backyard_blur",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 0.5,
+          "y": 0.6,
+          "h": 520,
+          "at": "w8",
+          "silhouette": true,
+          "sfx": "pop"
+        },
+        {
+          "type": "sticker",
+          "name": "",
+          "x": 0.5,
+          "y": 0.58,
+          "at": "w15",
+          "size": 80,
+          "blank": true,
+          "q": true,
+          "sfx": "pop"
+        }
+      ],
+      "highlight": [
+        "What was her name?"
+      ]
+    },
+    {
+      "text": "Say it out loud…",
+      "bg": "backyard_blur",
+      "tr": "cut",
+      "pause": 3.2,
+      "els": [
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 0.5,
+          "y": 0.6,
+          "h": 520,
+          "at": 0,
+          "silhouette": true,
+          "pop": "none"
+        },
+        {
+          "type": "sticker",
+          "name": "",
+          "x": 0.5,
+          "y": 0.58,
+          "at": 0,
+          "size": 80,
+          "blank": true,
+          "q": true,
+          "pop": "none"
+        },
+        {
+          "type": "ring",
+          "x": 0.5,
+          "y": 0.46,
+          "r": 300,
+          "at": "e-3.1",
+          "len": 3.0,
+          "count": 3,
+          "ticks": true,
+          "color": "yellow"
+        }
+      ]
+    },
+    {
+      "text": "If you said Megan — nice. Your brain caught it.",
+      "bg": "backyard_blur",
+      "tr": "cut",
+      "els": [
+        {
+          "type": "person",
+          "who": "megan",
+          "x": 0.5,
+          "y": 0.6,
+          "h": 520,
+          "at": 0,
+          "pop": "none"
+        },
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.5,
+          "y": 0.58,
+          "at": 0,
+          "size": 80,
+          "pop": "none",
+          "write": "w3",
+          "sfx_at": [
+            [
+              "w3",
+              "ding"
+            ]
+          ]
+        },
+        {
+          "type": "confetti",
+          "x": 0.5,
+          "y": 0.5,
+          "at": "w3",
+          "sfx": "confetti"
+        }
+      ],
+      "highlight": [
+        "Megan"
+      ]
+    },
+    {
+      "text": "If you said Jessica, that's no accident. You've heard 'Jessica' over and over since then, and the newer name pushed out the older one. Psychologists call that interference.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "sticker",
+          "name": "Megan",
+          "x": 0.4,
+          "y": 0.5,
+          "at": 0,
+          "size": 160,
+          "path": [
+            [
+              "w19",
+              0.4,
+              0.5
+            ],
+            [
+              "w19+0.8",
+              -0.3,
+              0.5
+            ]
+          ]
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+0.00",
+          "size": 150,
+          "rot": -7,
+          "pop": "none",
+          "path": [
+            [
+              "w8+0.35",
+              0.58,
+              0.5
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+0.35",
+          "size": 150,
+          "rot": 0,
+          "pop": "none",
+          "path": [
+            [
+              "w8+0.70",
+              0.595,
+              0.46499999999999997
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+0.70",
+          "size": 150,
+          "rot": 7,
+          "pop": "none",
+          "path": [
+            [
+              "w8+1.05",
+              0.61,
+              0.43
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+1.05",
+          "size": 150,
+          "rot": -7,
+          "pop": "none",
+          "path": [
+            [
+              "w8+1.40",
+              0.625,
+              0.395
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+1.40",
+          "size": 150,
+          "rot": 0,
+          "pop": "none",
+          "path": [
+            [
+              "w8+1.75",
+              0.6399999999999999,
+              0.36
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "sticker",
+          "name": "Jessica",
+          "x": 1.25,
+          "y": 0.45,
+          "at": "w8+1.75",
+          "size": 150,
+          "rot": 7,
+          "pop": "none",
+          "path": [
+            [
+              "w8+2.10",
+              0.6549999999999999,
+              0.32499999999999996
+            ]
+          ],
+          "sfx": "thup"
+        },
+        {
+          "type": "text",
+          "text": "INTERFERENCE",
+          "x": 0.5,
+          "y": 0.16,
+          "size": 100,
+          "color": "yellow",
+          "at": "w27",
+          "glow": "yellow",
+          "sfx": "thud"
+        }
+      ],
+      "highlight": [
+        "said Jessica",
+        "interference"
+      ]
+    },
+    {
+      "text": "And if your mind went totally blank? Now you know exactly why.",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "blip",
+          "x": 0.5,
+          "y": 0.6,
+          "size": 190,
+          "at": 0.2,
+          "sfx": "pop",
+          "pose": "shrug"
+        },
+        {
+          "type": "text",
+          "text": "NOW YOU KNOW WHY",
+          "x": 0.5,
+          "y": 0.2,
+          "size": 80,
+          "color": "white",
+          "at": "w9",
+          "glow": ""
+        }
+      ]
+    },
+    {
+      "text": "Tell me in the comments: whose name do you always forget?",
+      "bg": "brain",
+      "tr": "dissolve",
+      "els": [
+        {
+          "type": "icon",
+          "emoji": "💬",
+          "x": 0.5,
+          "y": 0.3,
+          "at": 0.2,
+          "size": 200,
+          "sfx": "pop"
+        },
+        {
+          "type": "text",
+          "text": "WHOSE NAME DO YOU ALWAYS FORGET?",
+          "x": 0.55,
+          "y": 0.58,
+          "size": 64,
+          "color": "yellow",
+          "at": "w5",
+          "glow": "yellow",
+          "max_w": 1300
+        },
+        {
+          "type": "blip",
+          "x": 0.14,
+          "y": 0.64,
+          "size": 150,
+          "at": 0.4,
+          "sfx": "pop",
+          "pose": "point"
+        }
+      ],
+      "highlight": [
+        "always"
+      ]
+    },
+    {
+      "text": "And subscribe to MindBlip for more weird things your brain does every single day.",
+      "bg": "navy",
+      "tr": "dissolve",
+      "pause": 5.0,
+      "els": [
+        {
+          "type": "endscreen",
+          "at": "w1",
+          "sfx": "whoosh"
+        }
+      ],
+      "highlight": [
+        "MindBlip"
+      ]
+    }
+  ],
+  "result": {
+    "uploaded_at": "2026-11-24T14:00:32Z",
+    "video_id": "0vnLTNpIm30",
+    "video_url": "https://youtu.be/0vnLTNpIm30"
+  }
+}

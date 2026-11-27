@@ -1,0 +1,74 @@
+{
+  "title": "Napoleon Wasn't Actually Short",
+  "format": "short",
+  "description": "The idea that Napoleon was tiny is a myth that came from a measurement mix up and wartime cartoons.",
+  "tags": [
+    "napoleon",
+    "history facts",
+    "myths busted",
+    "france",
+    "weird facts",
+    "history myths",
+    "europe",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "history",
+    "facts"
+  ],
+  "thumbnail_text": "Not short at all",
+  "scenes": [
+    {
+      "on_screen": "Was Napoleon short?",
+      "visual": "napoleon painting",
+      "text": "Napoleon is famous for being short. But he probably wasn't.",
+      "highlight": [
+        "he probably wasn't"
+      ],
+      "subject": "napoleon",
+      "say": "Napoleon is famous for being short. [chuckles] But he probably wasn't.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "About 1.7 meters",
+      "visual": "napoleon statue",
+      "text": "Most historians think he was around one point seven meters tall, roughly average for a Frenchman of his time.",
+      "highlight": [
+        "roughly average"
+      ],
+      "subject": "napoleon",
+      "say": "Most historians think he was around one point seven meters tall, roughly average for a Frenchman of his time."
+    },
+    {
+      "on_screen": "Inches got mixed up",
+      "visual": "old ruler measurement",
+      "text": "Part of the confusion came from measurements. French inches were longer than British inches, so his height sounded smaller than it was.",
+      "highlight": [
+        "French inches"
+      ],
+      "say": "[curious] Part of the confusion came from measurements. French inches were longer than British inches, so his height sounded smaller than it was."
+    },
+    {
+      "on_screen": "Cartoons did the rest",
+      "visual": "napoleon",
+      "text": "British cartoonists also loved drawing him as a tiny, angry man, and the image stuck.",
+      "highlight": [
+        "tiny, angry man"
+      ],
+      "subject": "napoleon",
+      "say": "[laughs] British cartoonists also loved drawing him as a tiny, ANGRY man, and the image stuck.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "napoleon monument",
+      "text": "Sometimes history remembers the joke, not the truth. Follow for more weird facts.",
+      "highlight": [
+        "the joke"
+      ],
+      "subject": "napoleon",
+      "say": "[sighs] Sometimes history remembers the joke, not the truth. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "quirky"
+}

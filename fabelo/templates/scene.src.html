@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fabelo Studio — new scene</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="../lib/scribble.js"></script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   Fabelo Studio starter scene (20 s).  Copy to work/<slug>.src.html.
+   Safe area = square [-500, 500] → fits 16:9, 9:16, 1:1 and any ratio.
+   The whole scene fades/scales in at the start and fades out at the end.
+   Keep LINES in sync with the audio spec (speaker, start, end, text).
+   ===================================================================== */
+const DUR = 20;
+const LINES = [
+  ['narrator', 1.6, 4.6, "This is Scribble."],
+  ['narrator', 6.0, 9.4, "He has one red scarf, and a lot of questions."],
+];
+
+const sc = Scribble.createScene(document.body, { duration: DUR, ground: 300, fadeIn: 0.8, fadeOut: 1.0 });
+const s = sc.character({ x: 0, scale: 2.3 });          // THE main character — never redesign him
+
+s.drawOn(0.6, 1.4);
+s.pose(2.2, 'wave', { expr: 'happy' }).wave(2.2, 4.4);
+sc.text('Fabelo Studio', { y: -400, size: 90, at: 1.0, until: 5.0 });
+
+s.pose(6.0, 'think', { expr: 'thinking' });
+sc.prop('question', { x: 150, y: -260, scale: 0.8, at: 6.4, draw: 0.5, out: 9.6 });
+s.pose(10.0, 'cheer', { expr: 'excited' });
+sc.prop('lightbulb', { x: 150, y: -260, scale: 0.7, at: 10.0, draw: 0, out: 13.5 });
+
+s.walk(13.6, 16.4, 220);
+s.face(16.6, -1).pose(16.6, 'wave', { expr: 'happy' }).wave(16.6, 18.6);
+
+window.__LINES = LINES;
+sc.exposeForRecording();
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+}
+</script>
+</body>
+</html>

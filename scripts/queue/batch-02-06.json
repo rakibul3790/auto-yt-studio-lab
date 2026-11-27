@@ -1,0 +1,73 @@
+{
+  "title": "Saturn Would Float in a Giant Bathtub",
+  "format": "short",
+  "description": "Saturn is the only planet in our solar system less dense than water.",
+  "tags": [
+    "saturn",
+    "planets",
+    "space facts",
+    "solar system",
+    "density",
+    "weird facts",
+    "astronomy",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "space",
+    "facts"
+  ],
+  "thumbnail_text": "Saturn floats",
+  "scenes": [
+    {
+      "on_screen": "A floating planet",
+      "visual": "planet saturn",
+      "text": "If you could find a bathtub big enough, Saturn would float in it.",
+      "highlight": [
+        "Saturn would float"
+      ],
+      "subject": "saturn",
+      "say": "[curious] If you could find a bathtub big enough... Saturn would FLOAT in it.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Huge but light",
+      "visual": "saturn rings",
+      "text": "Saturn is enormous. More than seven hundred Earths could fit inside it. But it is mostly hydrogen and helium gas.",
+      "highlight": [
+        "seven hundred Earths"
+      ],
+      "subject": "saturn",
+      "say": "[excited] Saturn is enormous. More than seven hundred Earths could fit inside it. But it is mostly hydrogen and helium gas.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Less dense than water",
+      "visual": "water surface",
+      "text": "That makes it the only planet in our solar system that is less dense than water, on average.",
+      "highlight": [
+        "less dense than water"
+      ],
+      "say": "That makes it the only planet in our solar system that is less dense than water, on average."
+    },
+    {
+      "on_screen": "Just a thought experiment",
+      "visual": "solar system planets",
+      "text": "Of course, no such bathtub exists, and the planet would not stay in one piece. But on paper, it floats.",
+      "highlight": [
+        "it floats"
+      ],
+      "say": "[laughs] Of course, no such bathtub exists, and the planet would not stay in one piece. But on paper, it floats."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "planet saturn",
+      "text": "A giant that weighs less than it looks. Follow for more weird facts.",
+      "highlight": [
+        "weighs less"
+      ],
+      "subject": "saturn",
+      "say": "A giant that weighs less than it looks. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic"
+}

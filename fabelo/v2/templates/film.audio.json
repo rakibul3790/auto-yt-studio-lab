@@ -1,0 +1,14 @@
+{
+ "duration": 12,
+ "voices": {"narrator": {"voice": "af_heart", "speed": 0.92, "semitones": 0, "fx": "clean", "space": "studio", "gain": 0.9}},
+ "lines": [
+  ["narrator", 0.8, null, "Every big idea starts as a tiny doodle."],
+  ["narrator", 6.4, null, "Keep drawing. It gets bigger."]
+ ],
+ "sfx": [["scribble", 0.2, 0.25, {"d": 1.0, "pan": -0.2}], ["pop", 9.85, 0.3]],
+ "beds": [["roomtone", 0, 12, 0.08]],
+ "music": {"level": 0.085, "bpm": 90, "reverb": 0.28, "final_chord": true,
+  "sections": [[0, 6.0, ["C", "G", "Am", "F"], 4, 90, "sparse", 0.8], [6.0, 12, ["F", "G", "C", "C"], 4, 90, "warm", 0.9]],
+  "hits": [[6.0, "riser", 0.2]]},
+ "mix": {"duck_db": 9, "bed_duck_db": 4}
+}

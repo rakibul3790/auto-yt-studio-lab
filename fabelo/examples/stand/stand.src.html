@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stand On Your Mistakes</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="scribble.js"></script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   "Stand On Your Mistakes" — emotional animated short (137 s)
+   Scribble never speaks. A dark ink shadow (his inner critic) talks
+   him down; Grandpa turns his crumpled failures into a staircase.
+   Safe area = square [-500, 500] → works at 16:9, 9:16, 1:1.
+   ===================================================================== */
+const S = Scribble, C = S.palette, sv = S.svg;
+const DUR = 137, G = 300;
+const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = S.EASE.inOut, out3 = S.EASE.out;
+const TXT = (x, y, size, fill, op, str, anchor = 'middle') =>
+  `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" font-family="Caveat, cursive" font-weight="700" font-size="${size}" fill="${fill}" opacity="${op.toFixed(2)}">${str}</text>`;
+
+/* ---------- dialogue (speaker, start, end, text) ---------- */
+const LINES = [
+  ['narrator', 1.4, 5.0, "Every time he failed, he crumpled it up."],
+  ['critic', 7.6, 10.0, "Another mistake."],
+  ['judge', 15.0, 17.0, "Sorry. Not this time."],
+  ['critic', 18.2, 21.0, "Nobody wants your scribbles."],
+  ['coach', 29.5, 31.6, "Sorry. Not this year."],
+  ['critic', 32.5, 35.4, "You'll never make it."],
+  ['critic', 39.5, 42.2, "Look at this pile."],
+  ['critic', 43.2, 46.8, "That's all you are. Mistakes."],
+  ['critic', 47.6, 50.6, "And mistakes get thrown away."],
+  ['grandpa', 55.0, 57.6, "You're throwing these away?"],
+  ['grandpa', 60.0, 64.0, "Every one of these taught you something."],
+  ['grandpa', 66.8, 70.6, "They're not mistakes, kid."],
+  ['grandpa', 71.2, 74.0, "They're steps."],
+  ['grandpa', 75.0, 77.4, "Go on. Climb."],
+  ['narrator', 78.4, 81.0, "So he started climbing."],
+  ['critic', 84.4, 86.4, "Stay down."],
+  ['critic', 87.0, 89.6, "You'll fall again."],
+  ['narrator', 94.0, 98.6, "Every mistake he kept lifted him a little higher."],
+  ['grandpa', 103.0, 106.8, "See, kid? You weren't failing. You were climbing."],
+  ['narrator', 122.5, 126.0, "Don't throw your mistakes away."],
+  ['narrator', 126.8, 129.6, "Stand on them."]
+];
+window.LINES = LINES;
+
+/* ---------- poses & costumes for this film ---------- */
+S.registerPose('crumple', { lean: 4, head: 14, aL: [-30, 135], aR: [30, -135], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('throwWind', { lean: -8, head: -4, aL: [-40, -70], aR: [150, 205], lL: [-16, -20], lR: [14, 16] });
+S.registerPose('throwRelease', { lean: 10, head: 6, aL: [-30, -20], aR: [80, 60], lL: [-12, -14], lR: [18, 22] });
+S.registerPose('oldIdle', { lean: 7, head: 6, aL: [-18, -8], aR: [22, 12], lL: [-10, -12], lR: [10, 12] });
+S.registerPose('slouch', { lean: 8, head: 22, aL: [25, 40], aR: [30, 45], lL: [90, 92], lR: [88, 90] });
+S.registerCostume('grandpa', {
+  hideHair: true,
+  body: sv.path('M-15 -3 L15 -3 L18 52 L-18 52 Z', { fill: '#9C6B4E', w: 4 }) + sv.line(0, 0, 0, 50, 3) + sv.dot(-4, 16, 2.5) + sv.dot(-4, 30, 2.5),
+  head: sv.path('M-31 -2 Q-35 -16 -27 -22', { stroke: '#8E8E8E', w: 6 }) + sv.path('M31 -2 Q35 -16 27 -22', { stroke: '#8E8E8E', w: 6 }) +
+    sv.path('M-22 8 Q-26 36 0 46 Q26 36 22 8 Q12 18 0 17 Q-12 18 -22 8 Z', { fill: '#F4F4F4', w: 3.5 }) +
+    sv.path('M-12 10 Q0 4 12 10', { stroke: '#BDBDBD', w: 5 }),
+  face: sv.circle(-10, -2, 8.5, { w: 3 }) + sv.circle(10, -2, 8.5, { w: 3 }) + sv.line(-1.5, -3, 1.5, -3, 3)
+});
+S.registerCostume('coach', {
+  hideHair: true,
+  head: sv.path('M-29 -10 Q-30 -38 0 -38 Q30 -38 29 -10 Z', { fill: '#2B4C7E', w: 4 }) + sv.path('M10 -12 L46 -8 L44 -2 L8 -4 Z', { fill: '#2B4C7E', w: 3 }),
+  body: sv.path('M-12 -3 Q0 22 12 -3', { stroke: '#8E8E8E', w: 2.5 }) + sv.circle(0, 22, 4, { fill: C.grey, w: 2 })
+});
+S.registerCostume('judge', {
+  face: sv.circle(-10, -2, 8.5, { w: 3 }) + sv.circle(10, -2, 8.5, { w: 3 }) + sv.line(-1.5, -3, 1.5, -3, 3),
+  body: sv.path('M-9 2 L0 6 L9 2 L9 12 L0 8 L-9 12 Z', { fill: C.ink, w: 2 })
+});
+
+/* ---------- paper & set props ---------- */
+S.registerProp('candle', (t) => {
+  const fl = 1 + 0.12 * Math.sin(t * 15) + 0.06 * Math.sin(t * 6.1);
+  return sv.dot(0, -70, 46 + 3 * Math.sin(t * 9), C.ochre).replace('class="f"', 'class="f" opacity="0.18"') +
+    sv.path('M-26 0 L26 0 Q22 -10 0 -10 Q-22 -10 -26 0 Z', { fill: C.paperDark, w: 4 }) +
+    sv.path('M-10 -8 L-10 -62 L10 -62 L10 -8', { fill: '#F6EFD9', w: 4 }) + sv.line(0, -62, 0, -70, 3) +
+    sv.g(sv.path('M0 -66 C-8 -74 -6 -86 0 -96 C6 -86 8 -74 0 -66 Z', { fill: C.ochre, w: 3 }), `translate(0 ${(-66 * (1 - fl)).toFixed(2)}) scale(1 ${fl.toFixed(3)})`);
+}, { s: 0.55, dx: 0, dy: 20, rot: 0 });
+const paperBall = () =>
+  sv.path('M-20 -4 L-24 -20 L-14 -34 L2 -38 L18 -32 L24 -18 L20 -4 L6 1 L-8 0 Z', { fill: C.white, w: 4 }) +
+  sv.path('M-14 -30 L-4 -20 L-10 -8 M4 -34 L0 -22 L12 -14 L8 -4 M-22 -16 L-10 -20', { w: 2.5 });
+S.registerProp('paperball', paperBall, { s: 0.7, dx: 0, dy: 18, rot: 0 });
+S.registerProp('paperflat', () => sv.path('M-34 0 L34 0 L34 -84 L-34 -84 Z', { fill: C.white, w: 4 }) +
+  sv.path('M-34 -40 L-10 -30 L12 -48 L34 -36 M-6 0 L-10 -30 L-4 -84', { w: 2, stroke: '#9A9A9A' }), { s: 0.7, dx: 0, dy: 40, rot: 0 });
+S.registerProp('testpaper', () => sv.path('M-34 0 L34 0 L34 -90 L-34 -90 Z', { fill: C.white, w: 4 }) +
+  sv.line(-24, -74, 10, -74, 3) + sv.line(-24, -62, 20, -62, 3) +
+  sv.path('M-10 -18 L-10 -46 L8 -46 M-10 -32 L4 -32', { stroke: C.red, w: 5 }) + `<text x="20" y="-16" font-family="Caveat, cursive" font-weight="700" font-size="16" fill="${C.red}" text-anchor="middle">12/50</text>`,
+  { s: 0.75, dx: 0, dy: 44, rot: 0 });
+S.registerProp('signup', () => sv.path('M-34 0 L34 0 L34 -90 L-34 -90 Z', { fill: C.white, w: 4 }) +
+  `<text x="0" y="-68" font-family="Caveat, cursive" font-weight="700" font-size="17" fill="${C.ink}" text-anchor="middle">TRYOUTS</text>` +
+  sv.line(-24, -52, 24, -52, 2.5) + sv.line(-24, -40, 24, -40, 2.5) + sv.line(-24, -28, 24, -28, 2.5) + sv.line(-24, -16, 24, -16, 2.5),
+  { s: 0.75, dx: 0, dy: 44, rot: 0 });
+S.registerProp('chalkboard', () => sv.path('M-170 0 L170 0 L170 -190 L-170 -190 Z', { fill: '#2E4A3E', w: 6 }) +
+  sv.line(-150, 4, 150, 4, 8, C.brown) +
+  `<text x="0" y="-120" font-family="Caveat, cursive" font-weight="700" font-size="46" fill="#F1F0E8" text-anchor="middle">TEST RESULTS</text>` +
+  sv.line(-110, -80, 40, -80, 3, '#F1F0E8') + sv.line(-110, -50, 90, -50, 3, '#F1F0E8'));
+S.registerProp('easel', () => sv.line(-50, 0, -20, -200, 6, C.darkBrown) + sv.line(50, 0, 20, -200, 6, C.darkBrown) + sv.line(0, -60, 0, 0, 5, C.darkBrown) + sv.line(-44, -60, 44, -60, 6, C.darkBrown));
+S.registerProp('drawing', () => sv.path('M-62 0 L62 0 L62 -120 L-62 -120 Z', { fill: C.white, w: 4 }) +
+  sv.path('M-30 -20 L-32 -62 L2 -86 L34 -60 L30 -22 Z', { w: 3 }) + sv.path('M-8 -20 L-6 -44 L10 -44 L12 -22', { w: 3 }) + sv.path('M-50 -96 q8 -10 16 0 q8 -10 16 0', { w: 2.5 }));
+S.registerProp('finish', () => sv.line(-80, 0, -80, -150, 6) + sv.line(80, 0, 80, -150, 6) + sv.path('M-80 -110 Q0 -96 80 -110', { stroke: C.red, w: 5 }) +
+  sv.path('M-80 -150 L-50 -142 L-80 -134 Z', { fill: C.white, w: 3 }));
+S.registerProp('bin', () => sv.path('M-40 0 L-50 -90 L50 -90 L40 0 Z', { fill: '#B8BCC2', w: 5 }) + sv.line(-56, -92, 56, -92, 7) + sv.line(-20, -76, -16, -12, 3) + sv.line(0, -76, 0, -12, 3) + sv.line(20, -76, 16, -12, 3));
+S.registerProp('window', (t) => {
+  let s = sv.path('M-90 0 L90 0 L90 -200 L-90 -200 Z', { fill: '#2C3A5C', w: 6 }) +
+    sv.path('M-62 -170 A24 24 0 1 0 -38 -142 A18 18 0 1 1 -62 -170 Z', { fill: '#FFFDF2', w: 3 });
+  for (let i = 0; i < 14; i++) {
+    const x = -80 + ((i * 53) % 160), y = -190 + ((t * 420 + i * 97) % 180);
+    s += `<path d="M${x} ${y.toFixed(1)} l-6 18" stroke="#A9C1E8" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>`;
+  }
+  return s + sv.line(0, 0, 0, -200, 5) + sv.line(-90, -100, 90, -100, 5);
+});
+S.registerProp('step', (t, o = {}) =>
+  sv.path(`M0 0 L60 0 L60 ${-o.h} L0 ${-o.h} Z`, { fill: C.white, w: 4 }) +
+  sv.path(`M0 ${-o.h + 14} L22 ${-o.h + 24} L40 ${-o.h + 10} L60 ${-o.h + 20} M18 ${-o.h} L22 ${-o.h + 24} L16 0`, { stroke: '#B0A890', w: 2 }) +
+  (o.word ? `<text x="30" y="${-o.h + 44}" font-family="Caveat, cursive" font-weight="700" font-size="20" fill="${o.wc || '#9A9A9A'}" text-anchor="middle" opacity="0.9">${o.word}</text>` : ''));
+S.registerProp('star', (t) => {
+  const p = 1 + 0.05 * Math.sin(t * 3);
+  let rays = '';
+  for (let i = 0; i < 12; i++) {
+    const a = i * 30 + t * 8, r1 = 70, r2 = 104 + 8 * Math.sin(t * 4 + i);
+    rays += `<line x1="${(Math.sin(a * Math.PI / 180) * r1).toFixed(1)}" y1="${(-Math.cos(a * Math.PI / 180) * r1).toFixed(1)}" x2="${(Math.sin(a * Math.PI / 180) * r2).toFixed(1)}" y2="${(-Math.cos(a * Math.PI / 180) * r2).toFixed(1)}" stroke="${C.ochre}" stroke-width="4" stroke-linecap="round" opacity="0.8"/>`;
+  }
+  const pts = []; for (let i = 0; i < 10; i++) { const r = i % 2 ? 26 : 60, a = i * 36 * Math.PI / 180; pts.push(`${(Math.sin(a) * r).toFixed(1)} ${(-Math.cos(a) * r).toFixed(1)}`); }
+  return `<g transform="scale(${p.toFixed(3)})">` + sv.dot(0, 0, 92, C.ochre).replace('class="f"', 'class="f" opacity="0.2"') + rays +
+    sv.path('M' + pts.join(' L') + ' Z', { fill: '#F7D154', w: 5 }) + '</g>';
+});
+
+/* ---------- scene ---------- */
+const sc = S.createScene(document.body, { duration: DUR, ground: G, fadeIn: 1.0, fadeOut: 1.4 });
+
+// lighting: gloom → night → warm dawn → day
+const tint = (t) => {
+  if (t < 37.3) return { c: '#B9BFCC', o: 0.75 };
+  if (t < 92.5) return { c: '#7E93C2', o: 0.9 };
+  if (t < 101) { const k = ease((t - 92.5) / 8.5); return { c: k < 0.5 ? '#7E93C2' : '#F3C98B', o: k < 0.5 ? lerp(0.9, 0, k * 2) : lerp(0, 0.6, (k - 0.5) * 2) }; }
+  if (t < 111.6) return { c: '#F3C98B', o: 0.6 };
+  return { c: '#F3C98B', o: Math.max(0, 0.6 - (t - 111.6) * 1.2) };
+};
+sc.custom((t, scn) => {
+  const v = scn.view || { x: -889, y: -500, w: 1778, h: 1000 }, k = tint(t);
+  if (k.o <= 0.005) return '';
+  return `<rect x="${v.x - 10}" y="${v.y - 10}" width="${v.w + 20}" height="${v.h + 20}" fill="${k.c}" style="mix-blend-mode:multiply" opacity="${k.o.toFixed(3)}"/>`;
+}, 'back');
+
+/* the inner critic: a smoky ink shadow with red eyes */
+function trackFn(keys) { // keys: [[t, value], ...] linear-eased in between
+  return (t) => {
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) {
+      const [t0, v0] = keys[i - 1], [t1, v1] = keys[i];
+      return t1 === t0 ? v1 : lerp(v0, v1, ease((t - t0) / (t1 - t0)));
+    }
+    return keys[keys.length - 1][1];
+  };
+}
+const CX = trackFn([[0, 160], [12.4, 160], [12.5, -250], [24.9, -250], [25, -210], [37.0, -210], [37.2, 150], [69.5, 150], [71.5, 430], [137, 430]]);
+const CO = trackFn([[0, 0], [6.6, 0], [7.4, 0.95], [11.6, 0.95], [12.3, 0], [17.4, 0], [18.1, 0.95], [24.2, 0.95], [24.9, 0], [32.0, 0], [32.7, 0.95], [36.6, 0.95], [37.2, 0],
+  [38.0, 0], [38.9, 1], [52.8, 1], [53.6, 0.55], [69.5, 0.5], [71.0, 0.25], [83.6, 0.25], [84.3, 1], [91.0, 1], [92.6, 0], [137, 0]]);
+const CS = trackFn([[0, 0.9], [6.6, 0.7], [7.6, 1], [37.9, 0.9], [39.2, 1.25], [52.8, 1.25], [53.6, 1.0], [70, 0.85], [83.6, 0.85], [84.4, 1.2], [91, 1.2]]);
+function criticSVG(t) {
+  let op = CO(t); if (op <= 0.01 && !(t > 91 && t < 92.8)) return '';
+  const x = CX(t), s = CS(t);
+  const dis = clamp((t - 91.05) / 1.5); // dissolve 0..1
+  let out = '';
+  if (dis > 0) { // ink particles flying apart
+    for (let i = 0; i < 40; i++) {
+      const a = i * 2.4, r = dis * (120 + (i * 37) % 160), py = -150 - (i * 23) % 140;
+      out += `<circle cx="${(x + Math.cos(a) * r * s).toFixed(1)}" cy="${(G + (py + Math.sin(a) * r) * s).toFixed(1)}" r="${(6 * (1 - dis) + 1).toFixed(1)}" fill="#151515" opacity="${(0.9 * (1 - dis)).toFixed(2)}"/>`;
+    }
+    op *= 1 - dis;
+  }
+  const pts = [];
+  for (let i = 0; i < 48; i++) {
+    const th = (i / 48) * Math.PI * 2;
+    const r = 1 + 0.07 * Math.sin(3 * th + t * 2.1) + 0.05 * Math.sin(5 * th - t * 3.3) + 0.03 * Math.sin(9 * th + t * 5);
+    let px = Math.sin(th) * 92 * r, py = -Math.cos(th) * 165 * r - 165;
+    if (py > -40) px *= 0.75 + 0.25 * Math.sin(t * 3 + i); // wispy base
+    pts.push(`${px.toFixed(1)} ${py.toFixed(1)}`);
+  }
+  const eye = 0.75 + 0.25 * Math.sin(t * 2.7);
+  const blob = `<path d="M${pts.join(' L')} Z" fill="#151515" opacity="0.92"/>`;
+  out += `<g transform="translate(${x.toFixed(1)} ${G}) scale(${(s * (1 - dis * 0.4)).toFixed(3)})" opacity="${op.toFixed(3)}">` +
+    `<g filter="url(#blurC)" opacity="0.6">${blob}</g>${blob}` +
+    `<ellipse cx="-26" cy="-238" rx="14" ry="7" fill="${C.red}" opacity="${eye.toFixed(2)}"/><ellipse cx="26" cy="-238" rx="14" ry="7" fill="${C.red}" opacity="${eye.toFixed(2)}"/>` +
+    `<ellipse cx="-26" cy="-238" rx="24" ry="14" fill="${C.red}" opacity="${(0.25 * eye).toFixed(2)}"/><ellipse cx="26" cy="-238" rx="24" ry="14" fill="${C.red}" opacity="${(0.25 * eye).toFixed(2)}"/>` +
+    `</g>`;
+  return out;
+}
+sc.custom((t) => `<defs><filter id="blurC" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="14"/></filter></defs>` + criticSVG(t), 'back');
+
+/* ---------- characters ---------- */
+const s = sc.character({ x: -60, scale: 2.0, expr: 'sad', pose: 'hold', hold: 'testpaper' });   // Scribble
+const sf = sc.character({ x: -150, y: 290, scale: 2.0, anchor: 'hip', pose: 'slouch', facing: -1, opacity: 0, expr: 'sad' }); // Scribble sitting on the floor
+const gp = sc.character({ x: -560, scale: 2.1, scarf: false, hair: 'none', costume: 'grandpa', pose: 'oldIdle', opacity: 0, hold: 'candle', expr: 'neutral' });
+const judge = sc.character({ x: 340, scale: 2.0, scarf: false, hair: 'bun', costume: 'judge', facing: -1, opacity: 0, expr: 'neutral' });
+const coach = sc.character({ x: 320, scale: 2.05, scarf: false, costume: 'coach', facing: -1, opacity: 0, expr: 'neutral' });
+const kid = sc.character({ x: 190, scale: 1.35, scarf: false, hair: 'spiky', opacity: 0, facing: -1, expr: 'sad', pose: 'hold', hold: 'paperflat' });
+
+/* ---------- dialogue on screen ---------- */
+const COLORS = { narrator: C.ink, critic: C.red, grandpa: C.ink, judge: C.ink, coach: C.ink };
+function say(who, t0, t1, str, x, y) {
+  const words = str.split(' '), chunks = []; let cur = '';
+  for (const w of words) { if ((cur + ' ' + w).trim().length > 22 && cur) { chunks.push(cur); cur = w; } else cur = (cur + ' ' + w).trim(); }
+  if (cur) chunks.push(cur);
+  const tot = chunks.reduce((n, c) => n + c.length, 0); let t = t0;
+  for (const c of chunks) {
+    const d = (t1 - t0) * c.length / tot, half = c.length * (who === 'narrator' ? 11 : 13.5);
+    const xx = Math.max(-480 + half, Math.min(480 - half, x));
+    sc.text(who === 'narrator' ? c : c.toLowerCase(), { x: xx, y, size: who === 'narrator' ? 46 : 58, at: t, until: t + d - 0.05, write: 0.25, color: COLORS[who] });
+    t += d;
+  }
+}
+const POS = { // where each line appears
+  0: [0, 446], 1: [-160, -110], 2: [340, -170], 3: [-250, -80], 4: [320, -170], 5: [-210, -80], 6: [20, -200], 7: [20, -200], 8: [20, -200],
+  9: [-230, -170], 10: [-230, -170], 11: [-300, -160], 12: [-300, -160], 13: [-300, -160], 14: [0, 446], 15: [330, -160], 16: [330, -160], 17: [0, 446], 18: [-300, -160],
+  19: [0, 446], 20: [0, 446]
+};
+LINES.forEach(([who, a, b, str], i) => say(who, a, b, str, POS[i][0], POS[i][1]));
+
+/* flying paper balls */
+const FLY = [];
+const fly = (t0, x0, y0, x1, y1, dur = 0.6, sc_ = 1) => FLY.push({ t0, x0, y0, x1, y1, dur, sc_ });
+sc.custom((t) => {
+  let s_ = '';
+  for (const f of FLY) {
+    if (t < f.t0 || t > f.t0 + f.dur) continue;
+    const k = (t - f.t0) / f.dur, x = lerp(f.x0, f.x1, k), y = lerp(f.y0, f.y1, k) - Math.sin(k * Math.PI) * 140;
+    s_ += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(k * 540).toFixed(0)}) scale(${f.sc_})">${paperBall()}</g>`;
+  }
+  return s_;
+}, 'front');
+const PILE = []; // pile balls: [x, y, t_in]
+const ball = (x, y, at, out) => { const p = sc.prop('paperball', { x, y, scale: 1.35, at, draw: 0, out, outDur: 0.15 }); PILE.push(p); return p; };
+
+/* ===== Scene 1 — the test (0–12.5) ===== */
+sc.prop('chalkboard', { x: 230, y: -40, scale: 1, at: 0.6, draw: 1.0, out: 12.3 });
+s.drawOn(0.8, 1.4);
+s.pose(4.4, 'crumple', { dur: 0.25 }).hold(4.4, 'paperball');
+s.face(5.15, -1).pose(5.15, 'throwWind', { dur: 0.2 });
+s.pose(5.5, 'throwRelease', { dur: 0.12 }).hold(5.55, null);
+fly(5.55, -120, 40, -380, 300, 0.6);
+const b1 = ball(-380, 300, 6.15, 69.0);
+s.face(7.0, 1).pose(7.0, 'sad', { expr: 'sad', dur: 0.6 });
+
+/* ===== Scene 2 — the art contest (12.5–25) ===== */
+s.moveTo(12.5, 0, -90).pose(12.5, 'explain', { expr: 'happy', dur: 0 });
+sc.text('ART CONTEST', { x: 0, y: -420, size: 40, at: 12.6, until: 24.6, color: '#555' });
+sc.prop('easel', { x: 120, scale: 1.1, at: 12.5, draw: 0.5, out: 24.8 });
+sc.prop('drawing', { x: 120, y: G - 60 * 1.1, scale: 1.05, at: 12.7, draw: 0.6, out: 22.3 });
+judge.fade(12.6, 0.4, 1).talk(15.0, 16.6).look(15.0, [2, 0]).look(15.8, [-2, 0]).look(16.4, null);
+s.pose(16.8, 'sad', { expr: 'sad' });
+s.walk(21.3, 22.1, 30).pose(22.2, 'crumple', { dur: 0.25 }).hold(22.3, 'paperball');
+s.face(23.0, -1).pose(23.0, 'throwWind', { dur: 0.2 });
+s.pose(23.3, 'throwRelease', { dur: 0.12 }).hold(23.35, null);
+fly(23.35, -20, 40, -330, 300, 0.6);
+ball(-330, 300, 23.95, 66.8); ball(-355, 252, 24.2, 66.25);
+judge.fade(23.5, 0.4, 0);
+
+/* ===== Scene 3 — tryouts (25–37.5) ===== */
+s.moveTo(25.0, 0, -250).face(25.0, 1).pose(25.0, 'idle', { expr: 'neutral', dur: 0 });
+sc.text('TEAM TRYOUTS', { x: 0, y: -420, size: 40, at: 25.1, until: 37.2, color: '#555' });
+sc.prop('finish', { x: 400, scale: 1.1, at: 25.0, draw: 0.6, out: 37.3 });
+coach.fade(25.2, 0.4, 1);
+s.expr(25.6, 'excited').run(25.8, 27.6, -20);
+s.rotateTo(27.65, 0.3, 78).pose(27.65, 'shocked', { expr: 'shocked', dur: 0.2 });
+coach.talk(29.5, 31.2);
+s.rotateTo(31.8, 0.6, 0).pose(31.8, 'sad', { expr: 'sad', dur: 0.6 }).hold(32.0, 'signup').pose(32.0, 'hold', { expr: 'sad' });
+s.pose(35.6, 'crumple', { dur: 0.25 }).hold(35.6, 'paperball');
+s.face(36.2, -1).pose(36.2, 'throwWind', { dur: 0.2 });
+s.pose(36.5, 'throwRelease', { dur: 0.12 }).hold(36.55, null);
+fly(36.55, -70, 40, -420, 270, 0.55);
+ball(-420, 252, 37.1, 65.7); ball(-290, 300, 37.2, 67.35);
+coach.fade(36.4, 0.4, 0);
+
+/* ===== Scene 4 — 3 a.m. (37.5–52.6) ===== */
+s.fade(37.3, 0.2, 0);
+sc.prop('window', { x: 330, y: -40, scale: 1, at: 37.6, draw: 0.6, out: 74.6 });
+sc.prop('bin', { x: 420, scale: 1, at: 37.7, draw: 0.5, out: 64.0 });
+sc.text('3:12 AM', { x: 330, y: -5, size: 34, at: 38.2, until: 52.0, color: '#333' });
+const pileSpots = [[-455, 300], [-395, 300], [-335, 300], [-430, 252], [-370, 252], [-308, 255], [-455, 205], [-395, 205], [-340, 208], [-420, 160]];
+pileSpots.forEach(([x, y], i) => ball(x, y, 37.6 + i * 0.1, 69.0 - (i % 7) * 0.55 + 0.01 * i));
+sf.fade(37.5, 0.5, 1);
+sf.fade(50.8, 0.25, 0);
+s.moveTo(50.8, 0, -150).face(50.8, 1).pose(50.8, 'hold', { expr: 'sad', dur: 0 }).hold(50.8, 'paperball').fade(50.85, 0.25, 1);
+s.walk(51.2, 52.4, 300);
+s.pose(52.45, 'throwWind', { dur: 0.2 });
+
+/* ===== Scene 5 — Grandpa (52.6–78) ===== */
+// warm candle light that follows Grandpa, then stays at the candle
+sc.custom((t) => {
+  if (t < 52.6 || t > 77.8) return '';
+  const op = Math.min(clamp((t - 52.6) / 0.8), clamp((77.8 - t) / 0.8));
+  const x = t < 57.9 ? gp.x.at(t) + 40 : -320, y = t < 57.9 ? 150 : 250;
+  return `<defs><radialGradient id="warmG"><stop offset="0%" stop-color="#FFC56B" stop-opacity="0.75"/><stop offset="45%" stop-color="#FFC56B" stop-opacity="0.32"/><stop offset="100%" stop-color="#FFC56B" stop-opacity="0"/></radialGradient></defs><circle cx="${x.toFixed(1)}" cy="${y}" r="330" fill="url(#warmG)" opacity="${op.toFixed(3)}"/>`;
+}, 'back');
+s.face(52.9, -1).pose(52.9, 'hold', { expr: 'shocked', dur: 0.3 });
+gp.fade(52.7, 0.5, 1).walk(53.0, 55.6, -230).pose(55.7, 'oldIdle', { expr: 'neutral' });
+gp.talk(55.0, 57.4);
+s.expr(55.8, 'sad').hold(56.4, null).pose(56.4, 'sad', { expr: 'sad' });
+sc.prop('candle', { x: -320, scale: 0.9, at: 57.9, draw: 0, out: 77.6 });
+gp.hold(57.9, null).pose(57.8, 'crouch', { dur: 0.4 }).hold(58.3, 'paperball');
+gp.pose(59.0, 'hold', { dur: 0.4 }).hold(59.5, 'paperflat').talk(60.0, 63.8).expr(60.0, 'happy');
+gp.pose(64.0, 'crouch', { dur: 0.3 }).hold(64.3, null);
+const STEP_W = 60, STEP_R = 42, STEP_X0 = -250;
+const WORDS = ['F', 'NO', 'TRY', 'AGAIN', 'LEARN', 'FAIL', 'GROW', 'AGAIN'];
+for (let i = 0; i < 8; i++) {
+  const at = i === 0 ? 64.4 : 65.1 + i * 0.55;
+  sc.prop('step', { x: STEP_X0 + i * STEP_W, y: G, scale: 1, at, draw: 0, out: 111.4, opts: { h: (i + 1) * STEP_R, word: WORDS[i], wc: i < 2 ? '#C9666F' : '#9A9A9A' } });
+}
+gp.pose(64.7, 'oldIdle', { dur: 0.4 }).walk(64.9, 66.3, -420).face(66.4, 1).expr(66.4, 'happy');
+gp.talk(66.8, 70.4).talk(71.2, 73.8).talk(75.0, 77.2);
+s.expr(70.0, 'neutral').look(70.0, [-4, -4]);
+sc.prop('star', { x: 340, y: -330, scale: 0.95, at: 74.6, draw: 1.0, out: 111.4 });
+gp.pose(75.0, 'point', { expr: 'happy', dur: 0.4 }).pose(77.3, 'oldIdle', { expr: 'happy' });
+s.look(75.6, null).expr(75.6, 'neutral').pose(75.6, 'idle').walk(75.8, 77.9, -310);
+
+/* ===== Scene 6 — the climb (78–98.6) ===== */
+s.face(78.0, 1);
+const stepCx = (i) => STEP_X0 + i * STEP_W + STEP_W / 2, stepTop = (i) => G - (i + 1) * STEP_R;
+let tt = 79.0;
+for (let i = 0; i < 4; i++) { s.walk(tt, tt + 0.45, stepCx(i)); s.y.to(tt, 0.45, stepTop(i), 'out'); tt += 1.0; }
+s.expr(79.0, 'neutral');
+// the shadow grabs his foot
+sc.custom((t) => {
+  if (t < 84.0 || t > 91.3) return '';
+  const k = clamp((t - 84.0) / 0.4), snap = clamp((t - 91.0) / 0.3);
+  const x0 = 400, y0 = G - 60, x1 = stepCx(3) + 8, y1 = stepTop(3) - 6;
+  const xm = lerp(x0, x1, k), ym = lerp(y0, y1, k), w = Math.sin(t * 9) * 12;
+  return `<path d="M${x0} ${y0} Q${((x0 + xm) / 2).toFixed(1)} ${(Math.max(y0, ym) + 40 + w).toFixed(1)} ${xm.toFixed(1)} ${ym.toFixed(1)}" stroke="#151515" stroke-width="${(14 * (1 - snap)).toFixed(1)}" fill="none" stroke-linecap="round" opacity="${(0.92 * (1 - snap)).toFixed(2)}"/>`;
+}, 'front');
+s.pose(84.2, 'scared', { expr: 'scared', dur: 0.25 });
+s.face(89.6, -1).expr(89.6, 'angry').pose(89.6, 'idle', { dur: 0.3 });
+s.face(90.5, 1).pose(90.5, 'victory', { expr: 'angry', dur: 0.3 });
+// light burst
+sc.custom((t) => {
+  if (t < 91.0 || t > 93.2) return '';
+  const k = (t - 91.0) / 2.2, x = stepCx(3), y = stepTop(3) - 200;
+  let o = '';
+  for (let i = 0; i < 3; i++) {
+    const kk = clamp(k * 1.4 - i * 0.12);
+    o += `<circle cx="${x}" cy="${y}" r="${(40 + kk * 520).toFixed(1)}" fill="none" stroke="${C.ochre}" stroke-width="${(18 * (1 - kk)).toFixed(1)}" opacity="${(0.8 * (1 - kk)).toFixed(2)}"/>`;
+  }
+  return o + `<circle cx="${x}" cy="${y}" r="${(60 + k * 200).toFixed(1)}" fill="#F7D154" opacity="${(0.55 * (1 - k)).toFixed(2)}"/>`;
+}, 'front');
+s.expr(91.4, 'proud');
+tt = 92.8;
+for (let i = 4; i < 8; i++) { s.walk(tt, tt + 0.42, stepCx(i)); s.y.to(tt, 0.42, stepTop(i), 'out'); tt += 0.75; }
+
+/* ===== Scene 7 — the top (98.6–111.6) ===== */
+s.pose(96.2, 'pointUp', { expr: 'excited', dur: 0.4 });
+s.pose(99.5, 'cheer', { expr: 'happy', dur: 0.3 });
+gp.look(100.0, [0, -5]).expr(100.0, 'happy').talk(103.0, 106.6);
+s.pose(103.0, 'idle', { expr: 'happy' }).look(103.0, [3, 4]);
+s.pose(107.2, 'cheer', { expr: 'excited', dur: 0.3 }).pose(108.6, 'victory', { expr: 'proud' });
+gp.pose(107.2, 'wave', { expr: 'happy' }).wave(107.2, 109.4);
+s.fade(111.2, 0.4, 0); gp.fade(111.2, 0.4, 0);
+
+/* ===== Scene 8 — passing it on (112–137) ===== */
+sc.prop('tree', { x: -400, scale: 1.35, at: 112.2, draw: 0.8 });
+sc.prop('sun', { x: 380, y: -300, scale: 0.85, at: 112.4, draw: 0.6 });
+s.moveTo(112.0, 0, -330, G).face(112.0, 1).pose(112.0, 'idle', { expr: 'neutral', dur: 0 }).fade(112.3, 0.4, 1);
+kid.fade(112.3, 0.4, 1);
+kid.pose(113.0, 'crumple', { dur: 0.25 }).hold(113.0, 'paperball');
+kid.pose(113.8, 'throwRelease', { dur: 0.15 }).hold(114.0, null);
+fly(114.0, 160, 160, 20, 300, 0.5, 0.7);
+const kb = sc.prop('paperball', { x: 20, scale: 0.7, at: 114.5, draw: 0, out: 117.1, outDur: 0.1 });
+kid.pose(114.3, 'sad', { expr: 'sad', dur: 0.4 });
+// tears
+sc.custom((t) => {
+  if (t < 114.6 || t > 120.8) return '';
+  let o = '';
+  for (let i = 0; i < 2; i++) {
+    const k = ((t - 114.6) * 0.9 + i * 0.5) % 1;
+    o += `<path d="M${(178 + i * 26)} ${(98 + k * 40).toFixed(1)} q-4 7 0 10 q4 -3 0 -10 Z" fill="#6FA8DC" opacity="${(1 - k).toFixed(2)}"/>`;
+  }
+  return o;
+}, 'front');
+s.walk(114.6, 116.6, -70).pose(116.8, 'crouch', { expr: 'neutral', dur: 0.3 }).hold(117.1, 'paperball');
+s.pose(117.8, 'hold', { dur: 0.3 }).hold(118.4, 'paperflat');
+s.pose(119.4, 'crouch', { dur: 0.3 }).hold(119.6, null);
+sc.prop('step', { x: 30, y: G, scale: 1, at: 119.7, draw: 0, opts: { h: 26 } });
+s.pose(120.4, 'explain', { expr: 'happy', dur: 0.3 });
+kid.look(120.4, [-3, 3]).expr(120.6, 'neutral');
+kid.walk(121.4, 122.1, 60); kid.y.to(121.4, 0.6, G - 26, 'out');
+kid.face(122.0, -1).expr(122.0, 'happy').pose(122.4, 'cheer', { expr: 'excited', dur: 0.3 });
+s.pose(122.6, 'idle', { expr: 'happy' });
+sc.text('Stand on them.', { y: -380, size: 86, at: 126.9, until: 130.5 });
+sc.text('If this hit you, subscribe.', { y: -380, size: 60, at: 130.8, until: 135.6, color: C.red });
+s.pose(131.0, 'wave', { expr: 'happy' }).wave(131.0, 135.0);
+kid.pose(131.2, 'wave', { expr: 'happy' }).wave(131.2, 135.0);
+s.pose(135.1, 'idle'); kid.pose(135.1, 'idle');
+
+sc.exposeForRecording();
+window.__extra = { stepCx: [0,1,2,3,4,5,6,7].map(stepCx), stepTop: [0,1,2,3,4,5,6,7].map(stepTop) };
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+}
+</script>
+</body>
+</html>

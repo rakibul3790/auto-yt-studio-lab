@@ -1,0 +1,75 @@
+{
+  "title": "Scotland's National Animal Is the Unicorn",
+  "format": "short",
+  "description": "Scotland chose a mythical creature as its national animal, and it has been a symbol there for centuries.",
+  "tags": [
+    "scotland",
+    "unicorn",
+    "history facts",
+    "national animal",
+    "myths",
+    "weird facts",
+    "uk",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "history",
+    "facts"
+  ],
+  "thumbnail_text": "A unicorn nation",
+  "scenes": [
+    {
+      "on_screen": "A unicorn nation",
+      "visual": "unicorn statue",
+      "text": "The national animal of Scotland is the unicorn.",
+      "highlight": [
+        "the unicorn"
+      ],
+      "subject": "unicorn",
+      "say": "[laughs] The national animal of Scotland is... the UNICORN.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Centuries old",
+      "visual": "castle scotland",
+      "text": "It has been a Scottish symbol for hundreds of years, and it appeared on the royal coat of arms.",
+      "highlight": [
+        "hundreds of years"
+      ],
+      "subject": "castle",
+      "say": "It has been a Scottish symbol for hundreds of years, and it appeared on the royal coat of arms."
+    },
+    {
+      "on_screen": "Pure and powerful",
+      "visual": "unicorn",
+      "text": "In old stories, the unicorn stood for purity, strength and pride, and it was said that only a king could tame one.",
+      "highlight": [
+        "only a king"
+      ],
+      "subject": "unicorn",
+      "say": "[whispers] In old stories, the unicorn stood for purity, strength and pride, and it was said that only a king could tame one.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Look for the chains",
+      "visual": "unicorn carving",
+      "text": "Many old carvings show the unicorn in chains, a sign of how wild and powerful it was believed to be.",
+      "highlight": [
+        "in chains"
+      ],
+      "subject": "unicorn",
+      "say": "[serious] Many old carvings show the unicorn in chains, a sign of how wild and powerful it was believed to be.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "scotland landscape",
+      "text": "A real country, with an imaginary animal. Follow for more weird facts.",
+      "highlight": [
+        "imaginary animal"
+      ],
+      "say": "[chuckles] A real country, with an imaginary animal. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic"
+}

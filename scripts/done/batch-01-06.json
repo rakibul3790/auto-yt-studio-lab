@@ -1,0 +1,80 @@
+{
+  "title": "Wombats Make Cube-Shaped Poop",
+  "format": "short",
+  "description": "Wombats are the only animals known to produce cube-shaped droppings. Scientists worked out how.",
+  "tags": [
+    "wombat",
+    "australia animals",
+    "animal facts",
+    "weird animals",
+    "weird facts",
+    "nature facts",
+    "funny facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "animals",
+    "facts"
+  ],
+  "thumbnail_text": "Cube poop?!",
+  "scenes": [
+    {
+      "on_screen": "Square poop",
+      "visual": "wombat",
+      "text": "There is an animal in Australia that makes poop shaped like little cubes. It is the wombat.",
+      "highlight": [
+        "little cubes"
+      ],
+      "subject": "wombat",
+      "say": "[curious] There is an animal in Australia that makes poop shaped like... little cubes. [laughs] It is the wombat.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "How is that possible?",
+      "visual": "wombat grass",
+      "text": "For years, nobody knew how it worked. A round tube making square shapes seemed impossible.",
+      "highlight": [
+        "seemed impossible"
+      ],
+      "subject": "wombat",
+      "say": "For years, nobody knew how it worked. [sighs] A round tube making SQUARE shapes seemed impossible."
+    },
+    {
+      "on_screen": "Stretchy and stiff",
+      "visual": "wombat walking",
+      "text": "Scientists found the answer in the gut. The walls of the wombat's intestine have stiff parts and stretchy parts, which press the waste into flat sides and corners.",
+      "highlight": [
+        "stiff parts"
+      ],
+      "subject": "wombat",
+      "say": "[excited] Scientists found the answer in the gut. The walls of the wombat's intestine have stiff parts and stretchy parts, which press the waste into flat sides and corners.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Why cubes help",
+      "visual": "wombat on rock",
+      "text": "Wombats leave their droppings on rocks and logs to mark territory. Cubes are less likely to roll away.",
+      "highlight": [
+        "less likely to roll"
+      ],
+      "subject": "wombat",
+      "say": "Wombats leave their droppings on rocks and logs to mark territory. [chuckles] Cubes are less likely to roll away."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "wombat close up",
+      "text": "Nature really does think outside the box. Follow for more weird facts.",
+      "highlight": [
+        "outside the box"
+      ],
+      "subject": "wombat",
+      "say": "[laughs] Nature really does think outside the box. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "quirky",
+  "result": {
+    "uploaded_at": "2026-11-25T22:48:16Z",
+    "short_id": "YU_BDkVeMlY",
+    "short_url": "https://youtube.com/shorts/YU_BDkVeMlY"
+  }
+}

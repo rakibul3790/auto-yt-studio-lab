@@ -1,0 +1,26 @@
+{
+  "duration": 14,
+  "voices": {
+    "narrator": { "voice": "af_heart", "speed": 0.92, "semitones": 0, "space": "room", "gain": 0.95 }
+  },
+  "lines": [
+    { "speaker": "narrator", "start": 2.0, "emotion": "happy", "breath": true,
+      "phrases": [ { "text": "This is Scribble.", "speed": 0.95, "semis": 0.3 } ] },
+    { "speaker": "narrator", "start": 7.6, "emotion": "sad", "breath": true,
+      "phrases": [ { "text": "Some nights feel longer than others.", "speed": 0.84, "semis": -0.7, "trail": true } ] },
+    { "speaker": "narrator", "start": 12.0, "emotion": "hopeful",
+      "phrases": [ { "text": "Then he looks up.", "speed": 0.9, "semis": 0.4 } ] }
+  ],
+  "sfx": [
+    ["step", 0.5, 0.35, {"every": 0.5, "until": 3.2, "pan": -0.2}],
+    ["swish", 4.0, 0.25],
+    ["tick", 7.2, 0.15, {"every": 1.0, "until": 11.2, "pan": -0.3}],
+    ["click", 11.6, 0.18]
+  ],
+  "beds": [["roomtone", 0, 6.9, 0.05], ["birds", 0.5, 6.6, 0.02], ["crickets", 6.8, 14, 0.04]],
+  "music": {
+    "level": 0.07, "bpm": 70, "reverb": 0.3, "final_chord": true,
+    "sections": [[0, 6.8, ["C", "G", "Am", "F"], 4, 72, "sparse", 0.6], [6.8, 14, ["Am", "F", "C", "G"], 4, 62, "tender", 0.55]]
+  },
+  "mix": { "duck_db": 9, "bed_duck_db": 4, "auto_sfx": false }
+}

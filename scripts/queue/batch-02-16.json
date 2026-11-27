@@ -1,0 +1,75 @@
+{
+  "title": "This Frog Turns See-Through When It Sleeps",
+  "format": "short",
+  "description": "Glass frogs hide almost all their red blood cells in their liver while sleeping, becoming nearly invisible.",
+  "tags": [
+    "glass frog",
+    "frogs",
+    "animal facts",
+    "rainforest",
+    "camouflage",
+    "weird facts",
+    "nature facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "animals",
+    "facts"
+  ],
+  "thumbnail_text": "Invisible frog",
+  "scenes": [
+    {
+      "on_screen": "A see-through frog",
+      "visual": "glass frog",
+      "text": "There is a frog that can make itself almost see-through. It is called the glass frog.",
+      "highlight": [
+        "see-through"
+      ],
+      "subject": "frog",
+      "say": "[whispers] There is a frog that can make itself almost see-through. It is called the glass frog.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Clear skin",
+      "visual": "frog on leaf",
+      "text": "Glass frogs live in rainforests in Central and South America, and the skin on their bellies is clear.",
+      "highlight": [
+        "clear"
+      ],
+      "subject": "frog",
+      "say": "Glass frogs live in rainforests in Central and South America, and the skin on their bellies is clear."
+    },
+    {
+      "on_screen": "Hiding its blood",
+      "visual": "glass frog",
+      "text": "Scientists found that when they sleep, these frogs pack most of their red blood cells into their liver.",
+      "highlight": [
+        "into their liver"
+      ],
+      "subject": "frog",
+      "say": "[curious] Scientists found that when they sleep, these frogs pack most of their red blood cells into their liver."
+    },
+    {
+      "on_screen": "Nearly invisible",
+      "visual": "frog rainforest",
+      "text": "With their red blood tucked away, they become two to three times more transparent, and much harder for predators to spot.",
+      "highlight": [
+        "more transparent"
+      ],
+      "subject": "frog",
+      "say": "[excited] With their red blood tucked away, they become two to three times more transparent, and much harder for predators to spot.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "tree frog",
+      "text": "Its own built in invisibility trick. Follow for more weird facts.",
+      "highlight": [
+        "invisibility trick"
+      ],
+      "subject": "frog",
+      "say": "[laughs] Its own built in invisibility trick. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "mysterious"
+}

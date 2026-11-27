@@ -1,0 +1,79 @@
+{
+  "title": "A Single Cloud Can Weigh Over a Million Pounds",
+  "format": "short",
+  "description": "That fluffy cloud floating above you holds an astonishing amount of water. Here is how it stays up.",
+  "tags": [
+    "clouds",
+    "weather facts",
+    "science facts",
+    "nature",
+    "weird facts",
+    "physics",
+    "sky",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "science",
+    "facts"
+  ],
+  "thumbnail_text": "Clouds are heavy",
+  "scenes": [
+    {
+      "on_screen": "How heavy is a cloud?",
+      "visual": "white fluffy clouds blue sky",
+      "text": "That soft little cloud floating above you could weigh more than a million pounds.",
+      "highlight": [
+        "a million pounds"
+      ],
+      "subject": "cloud",
+      "say": "[whispers] That soft little cloud floating above you... [excited] could weigh more than a MILLION pounds.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Tiny droplets",
+      "visual": "cloud close up",
+      "text": "Clouds are made of countless tiny water droplets. A typical puffy cloud can hold around five hundred tons of water.",
+      "highlight": [
+        "five hundred tons"
+      ],
+      "subject": "cloud",
+      "say": "Clouds are made of countless tiny water droplets. A typical puffy cloud can hold around five hundred tons of water."
+    },
+    {
+      "on_screen": "Then why don't they fall?",
+      "visual": "clouds over mountains",
+      "text": "So why doesn't it crash down? Because that weight is spread across a huge space, and each droplet is incredibly small.",
+      "highlight": [
+        "incredibly small"
+      ],
+      "subject": "cloud",
+      "say": "[curious] So why doesn't it crash down? Because that weight is spread across a huge space, and each droplet is incredibly small."
+    },
+    {
+      "on_screen": "Held up by air",
+      "visual": "sunlight through clouds",
+      "text": "The droplets are so light that rising warm air keeps them floating, until they join together and fall as rain.",
+      "highlight": [
+        "fall as rain"
+      ],
+      "subject": "cloud",
+      "say": "The droplets are so light that rising warm air keeps them floating, until they join together and fall as rain."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "rain clouds",
+      "text": "So the next time you look up, remember there are elephants worth of water up there. Follow for more weird facts.",
+      "highlight": [
+        "elephants"
+      ],
+      "subject": "cloud",
+      "say": "[chuckles] So the next time you look up, remember there are elephants worth of water up there. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "calm",
+  "result": {
+    "uploaded_at": "2026-11-27T00:46:24Z",
+    "short_id": "-cs-7-81HMY",
+    "short_url": "https://youtube.com/shorts/-cs-7-81HMY"
+  }
+}

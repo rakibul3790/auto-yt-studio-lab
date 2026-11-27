@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Scribble2 walk + run</title>
+<style>html,body{margin:0;background:#F6EEDF}</style>
+<script src="../lib/scribble2.js"></script></head>
+<body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const K = Scribble2;
+const T = (x, y, t, size = 22, c = '#4A3F33', a = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${a}" fill="${c}" font-family="'Segoe Print','Comic Sans MS',cursive" font-weight="700">${t}</text>`;
+let s = K.defs();
+s += `<defs><radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0%" stop-color="#FBF5E9"/><stop offset="100%" stop-color="#EADCC3"/></radialGradient></defs>`;
+s += `<rect width="1920" height="1080" fill="url(#paper)"/>`;
+s += T(960, 58, 'Scribble · walk cycle & run cycle (side, 8 keys each)', 36, '#2A231C');
+const SC = 0.56, names = ['contact', 'down', 'passing', 'up', 'contact', 'down', 'passing', 'up'];
+const G1 = 520, G2 = 1000;
+for (const G of [G1, G2]) s += `<path d="M40 ${G + 2} L1880 ${G + 2}" stroke="#CDBB9C" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>`;
+s += T(60, G1 - 400, 'WALK', 26, '#7A6A55', 'start');
+s += T(60, G2 - 400, 'RUN', 26, '#7A6A55', 'start');
+K.WALK.forEach((p, i) => {
+  const x = 190 + i * 222;
+  s += K.draw({ view: 'side', f: 1, pose: p, face: 'neutral', x, y: G1, scale: SC, wind: 0.3, phase: i / 8 });
+  s += T(x, G1 + 34, `${i + 1} · ${names[i]}`);
+});
+const rn = ['contact', 'down', 'push-off', 'flight', 'contact', 'down', 'push-off', 'flight'];
+K.RUN.forEach((p, i) => {
+  const x = 190 + i * 222;
+  s += K.draw({ view: 'side', f: 1, pose: p, face: 'focused', x, y: G2, scale: SC, wind: 0.85, phase: i / 8 });
+  s += T(x, G2 + 34, `${i + 1} · ${rn[i]}`);
+});
+document.getElementById('s').innerHTML = s;
+</script>
+</body></html>

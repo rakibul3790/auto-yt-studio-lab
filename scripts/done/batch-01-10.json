@@ -1,0 +1,81 @@
+{
+  "title": "Butterflies Taste With Their Feet",
+  "format": "short",
+  "description": "A butterfly can tell if a leaf is right for its eggs just by standing on it.",
+  "tags": [
+    "butterflies",
+    "insects",
+    "animal facts",
+    "nature facts",
+    "weird facts",
+    "bugs",
+    "science facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "nature",
+    "facts"
+  ],
+  "thumbnail_text": "Tasting with feet",
+  "scenes": [
+    {
+      "on_screen": "Tasting with feet",
+      "visual": "butterfly on flower",
+      "text": "Butterflies can taste with their feet.",
+      "highlight": [
+        "with their feet"
+      ],
+      "subject": "butterfly",
+      "say": "[excited] Butterflies can taste... with their FEET.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Sensors on their legs",
+      "visual": "butterfly macro",
+      "text": "They have special taste sensors on their legs. The moment they land on something, they can tell what it is made of.",
+      "highlight": [
+        "taste sensors"
+      ],
+      "subject": "butterfly",
+      "say": "They have special taste sensors on their legs. The moment they land on something, they can tell what it is made of."
+    },
+    {
+      "on_screen": "Finding the right leaf",
+      "visual": "butterfly on leaf",
+      "text": "This matters most for mothers. A female butterfly drums her feet on a leaf to check if it is the right plant for her caterpillars to eat.",
+      "highlight": [
+        "drums her feet"
+      ],
+      "subject": "butterfly",
+      "say": "[softly] This matters most for mothers. A female butterfly drums her feet on a leaf to check if it is the right plant for her caterpillars to eat.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "Wrong leaf, fly away",
+      "visual": "butterfly flying",
+      "text": "If the taste is wrong, she flies off and keeps searching. Her babies depend on that tiny foot test.",
+      "highlight": [
+        "tiny foot test"
+      ],
+      "subject": "butterfly",
+      "say": "[sighs] If the taste is wrong, she flies off and keeps searching. Her babies depend on that tiny foot test.",
+      "look": "sad"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "butterfly garden",
+      "text": "Imagine tasting your dinner by stepping on it. Follow for more weird facts.",
+      "highlight": [
+        "stepping on it"
+      ],
+      "subject": "butterfly",
+      "say": "[laughs] Imagine tasting your dinner by stepping on it. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "quirky",
+  "result": {
+    "uploaded_at": "2026-11-26T23:46:17Z",
+    "short_id": "xpXR2jMYMpM",
+    "short_url": "https://youtube.com/shorts/xpXR2jMYMpM"
+  }
+}

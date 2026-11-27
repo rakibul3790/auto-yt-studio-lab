@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Meet Scribble (Smooth) - 40 s example</title>
+<style>@font-face{font-family:'Caveat';src:url(data:font/woff2;base64,__CAVEAT__) format('woff2');font-weight:700}
+html,body{margin:0;background:#000;overflow:hidden}svg{display:block}</style>
+<script src="../../lib/scribble2.js"></script>
+<script src="../../lib/sets2.js"></script></head>
+<body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const K = Scribble2, DUR = 40, GY = 900, SC = 0.92;
+const svg = document.getElementById('s');
+// ---------- helpers
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, u) => a + (b - a) * u;
+const ease = (u) => { u = clamp(u); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
+const prog = (t, a, b) => ease((t - a) / (b - a));
+const DEF = { a1: [8, -3], a2: [8, -3], l1: [2.5, 0], l2: [2.5, 0], lean: 0, tilt: 0, ft1: 0, ft2: 0, lift: 0 };
+function lp(A, B, u) {
+  const o = {};
+  const keys = new Set([...Object.keys(A), ...Object.keys(B)]);
+  for (const k of keys) {
+    const a = A[k] !== undefined ? A[k] : DEF[k], b = B[k] !== undefined ? B[k] : DEF[k];
+    if (Array.isArray(a)) o[k] = a.map((v, i) => lerp(v, b[i] !== undefined ? b[i] : v, u));
+    else if (typeof a === 'number' && typeof b === 'number') o[k] = lerp(a, b, u);
+    else o[k] = u < 0.5 ? a : b;
+  }
+  return o;
+}
+function walkAt(ph) { const n = K.WALK.length, x = ((ph % 1) + 1) % 1 * n, k = Math.floor(x); return lp(K.WALK[k], K.WALK[(k + 1) % n], x - k); }
+const blinkAt = (t, off = 0) => ((t + off) % 3.4) < 0.11;
+const T = (x, y, txt, size, c, extra = '') => `<text x="${x}" y="${y}" font-size="${size}" fill="${c}" font-family="Caveat,'Segoe Print',cursive" font-weight="700" ${extra}>${txt}</text>`;
+
+// ---------- sets
+function room(night, dawn = 0) {
+  let s = `<rect width="1920" height="1080" fill="#F6EDDB"/>`;
+  s += `<radialGradient id="wl" cx="17%" cy="35%" r="60%"><stop offset="0%" stop-color="#FFF8EA"/><stop offset="100%" stop-color="#F6EDDB" stop-opacity="0"/></radialGradient><rect width="1920" height="1080" fill="url(#wl)"/>`;
+  s += `<rect y="${GY}" width="1920" height="${1080 - GY}" fill="#E7D7BA"/><path d="M0 ${GY} L1920 ${GY}" stroke="#BFA984" stroke-width="4"/>`;
+  s += `<path d="M0 ${GY + 60} L1920 ${GY + 60} M0 ${GY + 130} L1920 ${GY + 130}" stroke="#D9C6A4" stroke-width="2" opacity="0.6"/>`;
+  // window
+  const sky = night ? `<linearGradient id="${night ? 'skyN' : 'skyD'}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18213D"/><stop offset="100%" stop-color="#2E3B63"/></linearGradient>`
+    : `<linearGradient id="${night ? 'skyN' : 'skyD'}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BFE0F4"/><stop offset="100%" stop-color="#EAF5FB"/></linearGradient>`;
+  s += sky + `<rect x="190" y="210" width="300" height="350" rx="8" fill="url(#${night ? 'skyN' : 'skyD'})"/>`;
+  if (night) {
+    s += `<circle cx="400" cy="290" r="34" fill="#F4F1DE"/><circle cx="414" cy="282" r="30" fill="url(#${night ? 'skyN' : 'skyD'})"/>`;
+    for (const [x, y] of [[240, 260], [300, 330], [260, 420], [440, 400], [350, 250], [460, 480]]) s += `<circle cx="${x}" cy="${y}" r="2.4" fill="#F4F1DE" opacity="0.85"/>`;
+  } else {
+    s += `<path d="M230 420 Q260 395 300 415 Q330 392 370 418 L370 430 L230 430 Z" fill="#FFFFFF" opacity="0.9"/>`;
+  }
+  s += `<rect x="190" y="210" width="300" height="350" rx="8" fill="none" stroke="#2A231C" stroke-width="7"/><path d="M340 214 L340 556 M194 385 L486 385" stroke="#2A231C" stroke-width="6"/>`;
+  s += `<rect x="170" y="560" width="340" height="18" rx="6" fill="#D8C4A2" stroke="#2A231C" stroke-width="4"/>`;
+  s += `<path d="M160 190 Q150 400 175 600 L205 600 Q190 400 200 190 Z M520 190 Q530 400 505 600 L475 600 Q490 400 480 190 Z" fill="#E9DDC6" stroke="#2A231C" stroke-width="3.5"/>`;
+  s += `<path d="M150 190 L530 190" stroke="#2A231C" stroke-width="6" stroke-linecap="round"/>`;
+  // picture frame
+  s += `<rect x="1380" y="280" width="220" height="160" rx="6" fill="#FBF6EA" stroke="#2A231C" stroke-width="6"/><path d="M1400 420 L1450 350 L1490 395 L1525 360 L1580 420 Z" fill="#9FB7A0" stroke="#2A231C" stroke-width="3"/><circle cx="1550" cy="320" r="14" fill="#F2C46B"/>`;
+  // plant
+  s += `<path d="M1700 ${GY} L1688 ${GY - 120} L1812 ${GY - 120} L1800 ${GY} Z" fill="#C98F62" stroke="#2A231C" stroke-width="4"/>`;
+  for (const [a, l] of [[-40, 150], [-15, 190], [12, 175], [38, 140], [-60, 110], [60, 105]]) {
+    const r = (a * Math.PI) / 180, x2 = 1750 + Math.sin(r) * l, y2 = GY - 120 - Math.cos(r) * l;
+    s += `<path d="M1750 ${GY - 120} Q${1750 + Math.sin(r) * l * 0.3} ${GY - 120 - Math.cos(r) * l * 0.6} ${x2} ${y2}" stroke="#2A231C" stroke-width="3" fill="none"/>`;
+    s += `<ellipse cx="${x2}" cy="${y2}" rx="16" ry="34" transform="rotate(${a} ${x2} ${y2})" fill="#7FA071" stroke="#2A231C" stroke-width="3"/>`;
+  }
+  return s;
+}
+function bed(x) {
+  return `<g transform="translate(${x} ${GY}) scale(${-SC} ${SC})">
+    <rect x="-300" y="-150" width="380" height="150" rx="12" fill="#566684" stroke="#1E2433" stroke-width="4"/>
+    <rect x="-302" y="-162" width="386" height="36" rx="16" fill="#8C9CB8" stroke="#1E2433" stroke-width="4"/>
+    <path d="M-290 -150 Q-120 -120 60 -150 L66 -100 Q-120 -80 -296 -96 Z" fill="#6E7FA0" opacity="0.8"/>
+    <rect x="-312" y="-330" width="26" height="330" rx="7" fill="#6B5240" stroke="#1E2433" stroke-width="4"/>
+    <rect x="-285" y="-206" width="110" height="48" rx="20" fill="#E9E4D8" stroke="#1E2433" stroke-width="4"/></g>`;
+}
+function nightLayer(alpha, light) {
+  let s = `<rect width="1920" height="1080" fill="#22305E" opacity="${alpha}" style="mix-blend-mode:multiply"/>`;
+  s += `<rect width="1920" height="1080" fill="#0A0F24" opacity="${alpha * 0.22}"/>`;
+  if (light && K.LAST.phone) {
+    const [px, py] = K.LAST.phone;
+    s += `<radialGradient id="pg2"><stop offset="0%" stop-color="#A9D4FF" stop-opacity="${0.6 * light}"/><stop offset="100%" stop-color="#A9D4FF" stop-opacity="0"/></radialGradient>`;
+    s += `<circle cx="${px}" cy="${py}" r="190" fill="url(#pg2)" style="mix-blend-mode:screen" opacity="0.6"/>`;
+    const [hx, hy, hr] = K.LAST.head;
+    s += `<clipPath id="hcl"><circle cx="${hx}" cy="${hy}" r="${hr * 0.96}"/></clipPath>`;
+    s += `<radialGradient id="fg2"><stop offset="0%" stop-color="#CFE6FF" stop-opacity="${0.55 * light}"/><stop offset="100%" stop-color="#CFE6FF" stop-opacity="0"/></radialGradient>`;
+    s += `<g clip-path="url(#hcl)"><ellipse cx="${hx - hr * 0.2}" cy="${hy + hr * 0.75}" rx="${hr * 1.2}" ry="${hr * 1.0}" fill="url(#fg2)" style="mix-blend-mode:screen"/></g>`;
+  }
+  return s;
+}
+// ---------- the film
+function frame(t) {
+  let s = K.defs();
+  let cam = { z: 1, cx: 960, cy: 540 }, world = '', over = '', fade = 0;
+  if (t < 17.8) {
+    // SHOT A: day room — walk in, wave, shy, phone
+    world += room(false);
+    let o = { f: 1, scale: SC, y: GY, wind: 0.3 };
+    const w0 = 0.6, w1 = 3.1, sp = 460;
+    if (t < w1) {
+      const ph = Math.max(0, (t - w0)) / 1.0;
+      o = Object.assign(o, { view: 'side', x: -270 + sp * Math.max(0, t - w0), pose: walkAt(ph), face: 'neutral', phase: ph });
+    } else if (t < 3.9) {
+      const u = prog(t, 3.1, 3.5);
+      o = Object.assign(o, { view: 'side', x: 880, pose: lp(walkAt(2.5), K.POSES.idleSide, u), face: 'neutral', wind: 0.3 * (1 - u) });
+    } else if (t < 4.06) {
+      o = Object.assign(o, { view: 'q', x: 880, pose: K.POSES.idleQ, face: 'neutral', wind: 0 });
+    } else if (t < 9.9) {
+      // front: smile, wave, shy, buzz
+      let p = Object.assign({}, K.POSES.idleFront), face = 'smile', look = [0, 0], hands = ['relax', 'relax'];
+      p.lean = Math.sin(t * 1.7) * 0.8;
+      if (t > 5.0 && t < 7.8) {
+        const up = prog(t, 5.0, 5.35) * (1 - prog(t, 7.3, 7.75));
+        const osc = t > 5.35 && t < 7.3 ? Math.sin((t - 5.35) * Math.PI * 2 * 2.1) * 15 : 0;
+        p.a2 = [lerp(8, 100, up), lerp(-3, 48 + osc, up)];
+        hands = ['relax', up > 0.4 ? 'open' : 'relax'];
+        if (t > 5.1 && t < 7.4) face = 'happy';
+      }
+      if (t > 7.6 && t < 9.3) { const u = prog(t, 7.6, 8.1); look = [-0.6 * u, 0.4 * u]; p.tilt = -4 * u; }
+      if (t > 9.3) { face = 'surprised'; look = [0.3, 0.6]; p.tilt = lerp(-4, 0, prog(t, 9.3, 9.5)); }
+      o = Object.assign(o, { view: 'front', x: 880, pose: p, face, look, hands, wind: 0, blink: face !== 'happy' && blinkAt(t) });
+    } else {
+      // q: phone
+      const u = prog(t, 10.1, 10.7);
+      const PH = { a1: [10, 102], a2: [16, 96], l1: [-3, 1], l2: [5, 2], tilt: 10 };
+      const p = lp(K.POSES.idleQ, PH, u);
+      p.lean = Math.sin(t * 1.5) * 0.6;
+      const scrolling = t > 10.7;
+      o = Object.assign(o, { view: 'q', x: 880, pose: p, face: t > 10.5 ? 'focused' : 'surprised', look: t > 10.5 ? [0.3, 0.9] : [0.3, 0.6],
+        hands: [u > 0.5 ? 'phone' : 'relax', u > 0.5 ? 'fist' : 'relax'], phone: { ang: -18 + (scrolling ? Math.sin(t * 2.3) * 4 : 0), dx: 6, dy: -24 },
+        glow: u > 0.7, wind: 0, blink: blinkAt(t, 1.3) });
+      // slow push-in
+      const z = prog(t, 11, 17.6);
+      cam = { z: lerp(1, 1.28, z), cx: lerp(960, 900, z), cy: lerp(540, 470, z) };
+    }
+    world += K.draw(o);
+    fade = clamp(1 - t / 0.8) + prog(t, 17.2, 17.8);
+  } else if (t < 29.8) {
+    // SHOT B: night, bed, sad
+    world += room(true);
+    const dawn0 = prog(t, 28.0, 29.6);
+    if (dawn0 > 0) world += `<g opacity="${dawn0}">${room(false)}</g>`;
+    world += bed(1080);
+    const SIT = { seat: 166, l1: [84, 86], l2: [80, 84], lean: 16, a1: [6, 72], a2: [2, 74], tilt: 14 };
+    let p = Object.assign({}, SIT), face = 'sad', look = [0.2, 0.8], glowOn = 1;
+    p.lean = 16 + Math.sin(t * 1.3) * 1.0;
+    if (t > 21.6) face = 'cry';
+    const down = prog(t, 26.2, 27.1);
+    p.a1 = [lerp(6, 14, down), lerp(72, 30, down)];
+    p.a2 = [lerp(2, 10, down), lerp(74, 34, down)];
+    glowOn = 1 - prog(t, 26.6, 27.1);
+    const upU = prog(t, 27.3, 28.4);
+    p.tilt = lerp(14, -6, upU); p.lean = lerp(p.lean, 6, upU);
+    if (t > 27.3) { look = [lerp(0.2, 0.35, upU), lerp(0.8, -0.5, upU)]; face = t > 28.5 ? 'smile' : 'neutral'; }
+    const o = { view: 'q', f: -1, x: 1080, y: GY, scale: SC, pose: p, face, look, hands: ['phone', 'fist'], phone: { ang: lerp(-30, -70, down), dx: 6, dy: -18 },
+      glow: glowOn > 0.05, blink: blinkAt(t, 0.6) };
+    world += K.draw(o);
+    const dawn = prog(t, 28.0, 29.6);
+    over += nightLayer(0.85 * (1 - dawn), glowOn);
+    if (dawn > 0) over += `<rect width="1920" height="1080" fill="#FFE2B0" opacity="${0.18 * Math.sin(Math.PI * dawn)}"/>`;
+    const z = prog(t, 18.2, 27.5);
+    cam = { z: lerp(1.08, 1.3, z), cx: lerp(1000, 1060, z), cy: lerp(560, 520, z) };
+    fade = clamp(1 - (t - 17.8) / 0.6) + prog(t, 29.2, 29.8) * 0.9;
+  } else if (t < 35.7) {
+    // SHOT C: morning, front, jump + wave
+    world += room(false);
+    let p = Object.assign({}, K.POSES.idleFront), face = 'smile', hands = ['relax', 'relax'];
+    p.lean = Math.sin(t * 1.7) * 0.8;
+    const jU = prog(t, 31.0, 31.35), jD = prog(t, 31.75, 32.1);
+    const air = jU * (1 - jD);
+    if (t > 30.9 && t < 32.4) {
+      face = 'happy';
+      const arms = prog(t, 30.9, 31.2) * (1 - prog(t, 32.1, 32.4));
+      p.a1 = [lerp(8, 118, arms), lerp(-3, 30, arms)]; p.a2 = [lerp(8, 118, arms), lerp(-3, 30, arms)];
+      p.lift = -95 * Math.sin(Math.PI * clamp((t - 31.0) / 1.1)); p.ft1 = -22 * air; p.ft2 = -22 * air;
+      hands = ['fist', 'fist'];
+    }
+    if (t > 32.8) {
+      const up = prog(t, 32.8, 33.15) * (1 - prog(t, 35.0, 35.5));
+      const osc = Math.sin((t - 33.15) * Math.PI * 2 * 2.1) * 15 * (t > 33.15 ? 1 : 0);
+      p.a2 = [lerp(8, 100, up), lerp(-3, 48 + osc, up)]; hands = ['relax', up > 0.4 ? 'open' : 'relax']; face = 'happy';
+    }
+    world += K.draw({ view: 'front', x: 960, y: GY, scale: SC, pose: p, face, hands, blink: face !== 'happy' && blinkAt(t, 2) });
+    const z = prog(t, 29.8, 35.6);
+    cam = { z: lerp(1.12, 1.0, z), cx: 960, cy: lerp(520, 540, z) };
+    fade = clamp(1 - (t - 29.8) / 0.6) * 0.9 + prog(t, 35.2, 35.7);
+  } else {
+    // END CARD
+    world += `<rect width="1920" height="1080" fill="#FBF5E9"/>`;
+    world += `<radialGradient id="ec" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#FFFBF2"/><stop offset="100%" stop-color="#EADCC3"/></radialGradient><rect width="1920" height="1080" fill="url(#ec)"/>`;
+    const tIn = prog(t, 35.8, 36.4);
+    world += `<g opacity="${tIn}" transform="translate(0 ${lerp(16, 0, tIn)})">` + T(330, 560, 'Scribble', 150, '#1B1817') + `</g>`;
+    const ul = prog(t, 36.2, 37.0);
+    world += `<path d="M340 600 Q620 585 960 598" stroke="#E63946" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="640" stroke-dashoffset="${640 * (1 - ul)}"/>`;
+    world += `<g opacity="${prog(t, 36.8, 37.4)}">` + T(345, 680, 'a Fabelo Studio character', 46, '#6A5A47') + `</g>`;
+    const up = prog(t, 36.5, 36.85);
+    const osc = t > 36.85 ? Math.sin((t - 36.85) * Math.PI * 2 * 1.8) * 15 : 0;
+    const p = Object.assign({}, K.POSES.idleFront, { a2: [lerp(8, 100, up), lerp(-3, 48 + osc, up)], lean: Math.sin(t * 1.7) * 0.8 });
+    world += K.draw({ view: 'front', x: 1440, y: 960, scale: 0.8, pose: p, face: 'happy', hands: ['relax', up > 0.4 ? 'open' : 'relax'] });
+    fade = clamp(1 - (t - 35.7) / 0.5) + prog(t, 39.2, 40);
+  }
+  s += `<g transform="translate(960 540) scale(${cam.z}) translate(${-cam.cx} ${-cam.cy})">${world}${over}</g>`;
+  if (fade > 0) s += `<rect width="1920" height="1080" fill="#0B0D14" opacity="${clamp(fade)}"/>`;
+  svg.innerHTML = s;
+}
+window.__duration = DUR;
+window.__seek = (t) => frame(t);
+const q = new URLSearchParams(location.search);
+frame(q.has('t') ? +q.get('t') : 2);
+</script>
+</body></html>

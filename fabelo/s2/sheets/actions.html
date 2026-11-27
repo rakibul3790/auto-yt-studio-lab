@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Scribble2 actions</title>
+<style>html,body{margin:0;background:#F6EEDF}</style>
+<script src="../lib/scribble2.js"></script></head>
+<body>
+<svg id="s" xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+<script>
+const K = Scribble2;
+const T = (x, y, t, size = 22, c = '#4A3F33', a = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${a}" fill="${c}" font-family="'Segoe Print','Comic Sans MS',cursive" font-weight="700">${t}</text>`;
+let s = K.defs();
+s += `<defs><radialGradient id="paper" cx="50%" cy="45%" r="75%"><stop offset="0%" stop-color="#FBF5E9"/><stop offset="100%" stop-color="#EADCC3"/></radialGradient></defs>`;
+s += `<rect width="1920" height="1080" fill="url(#paper)"/>`;
+s += T(960, 58, 'Scribble · action poses', 36, '#2A231C');
+const SC = 0.56, G1 = 520, G2 = 1000;
+for (const G of [G1, G2]) s += `<path d="M40 ${G + 2} L1880 ${G + 2}" stroke="#CDBB9C" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>`;
+// simple props in the figure's local units
+const chair = (x, G) => `<g transform="translate(${x} ${G}) scale(${SC})">
+  <path d="M-78 -330 Q-84 -230 -74 -140" stroke="#3A332C" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <rect x="-92" y="-146" width="150" height="16" rx="6" fill="#5C4A3A" stroke="#2A221B" stroke-width="3"/>
+  <path d="M-80 -130 L-84 0 M44 -130 L48 0" stroke="#3A332C" stroke-width="10" stroke-linecap="round"/></g>`;
+const bed = (x, G) => `<g transform="translate(${x} ${G}) scale(${SC})">
+  <rect x="-260" y="-150" width="330" height="150" rx="10" fill="#566684" stroke="#2A3142" stroke-width="3"/>
+  <rect x="-262" y="-160" width="334" height="34" rx="14" fill="#8C9CB8" stroke="#2A3142" stroke-width="3"/>
+  <rect x="-268" y="-300" width="22" height="300" rx="6" fill="#6B5240" stroke="#2A221B" stroke-width="3"/></g>`;
+const W = K.WALK[0];
+const items = [
+  // row 1
+  ['wave', { view: 'front', face: 'happy', pose: { a1: [8, -3], a2: [105, 62], l1: [3, 0], l2: [3, 0] }, hands: ['relax', 'open'] }],
+  ['phone scroll', { view: 'q', face: 'focused', look: [0.3, 0.9], glow: true, pose: { a1: [10, 102], a2: [16, 96], l1: [-3, 1], l2: [5, 2], tilt: 10 }, hands: ['phone', 'fist'], phone: { ang: -18, dx: 6, dy: -24 } }],
+  ['sit · chair + phone', { view: 'side', face: 'focused', look: [0.5, 0.9], glow: true, pose: { seat: 150, l1: [88, 92], l2: [84, 86], lean: 8, a1: [24, 90], a2: [18, 94], tilt: 14 }, hands: ['phone', 'fist'], phone: { ang: -40, dx: 8, dy: -20 } }, 'chair'],
+  ['sit · bed, sad', { view: 'q', face: 'sad', look: [0.2, 0.8], glow: true, pose: { seat: 166, l1: [84, 86], l2: [80, 84], lean: 16, a1: [6, 72], a2: [2, 74], tilt: 14 }, hands: ['phone', 'fist'], phone: { ang: -30, dx: 6, dy: -18 } }, 'bed'],
+  ['shocked', { view: 'front', face: 'surprised', pose: { a1: [55, 75], a2: [55, 75], l1: [6, 0], l2: [6, 0] }, hands: ['open', 'open'] }],
+  ['cheer jump', { view: 'front', face: 'happy', pose: { a1: [118, 30], a2: [118, 30], l1: [12, 8], l2: [12, 8], ft1: -25, ft2: -25, lift: -70 }, hands: ['fist', 'fist'] }],
+  // row 2
+  ['think', { view: 'q', face: 'neutral', look: [0.4, -0.7], over: [1], pose: { a1: [40, 150, 1, 1.18], a2: [20, 85], l1: [-3, 1], l2: [5, 2], tilt: -4 }, hands: ['fist', 'relax'] }],
+  ['facepalm', { view: 'front', face: 'closed', over: [2], pose: { a1: [8, -3], a2: [120, 121, 1, 1.06], l1: [3, 0], l2: [3, 0] }, hands: ['relax', 'open'] }],
+  ['shrug', { view: 'front', face: 'worried', pose: { a1: [30, 70], a2: [30, 70], l1: [3, 0], l2: [3, 0] }, hands: ['open', 'open'] }],
+  ['point', { view: 'q', face: 'surprised', look: [0.6, 0], pose: { a1: [92, -6], a2: [6, 8], l1: [-3, 1], l2: [6, 2] }, hands: ['point', 'relax'] }],
+  ['cry', { view: 'front', face: 'cry', over: [1, 2], pose: { a1: [125, 112, 1, 0.95], a2: [125, 112, 1, 0.95], l1: [3, 0], l2: [3, 0], tilt: 0 }, hands: ['open', 'open'] }],
+  ['sad walk', { view: 'side', face: 'sad', look: [0.2, 0.8], wind: 0.15, pose: { a1: [-8, 6], a2: [8, 8], l1: [16, 4], l2: [-14, 14], ft1: 10, ft2: -20, lean: 10, tilt: 18 } }],
+];
+items.forEach(([label, o, prop], i) => {
+  const row = i < 6 ? 0 : 1, G = row ? G2 : G1, x = 175 + (i % 6) * 314;
+  if (prop === 'chair') s += chair(x, G);
+  if (prop === 'bed') s += bed(x, G);
+  s += K.draw(Object.assign({ f: 1, x, y: G, scale: SC }, o));
+  s += T(x, G + 34, label);
+});
+document.getElementById('s').innerHTML = s;
+</script>
+</body></html>

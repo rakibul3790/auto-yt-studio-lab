@@ -1,0 +1,159 @@
+# Makes the next video from scripts/queue/ and uploads it to YouTube (privacy from config.yaml).
+# Started by cron-job.org 3 times a day; you can also run it any time from the Actions tab.
+name: Daily video
+
+on:
+  # GitHub-এর নিজের টাইমার বন্ধ: ওটা অনেক দেরিতে চলত বা চলতই না। এখন cron-job.org
+  # প্রতিদিন ৩ বার এই workflow চালায় (প্রতিবার ১টা ভিডিও)। config.yaml-এর
+  # max_uploads_per_day দিনে ৩টার বেশি হতে দেয় না।
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many videos to make now"
+        default: "1"
+      upload:
+        description: "Upload to YouTube? (no = test only, download from Artifacts)"
+        type: choice
+        options: ["yes", "no"]
+        default: "no"
+      voice:
+        description: "Voice for this run only, e.g. Ava or Guy (empty = normal voice test)"
+        default: ""
+      file:
+        description: "Make only this script, e.g. scripts/queue/_sample.json (empty = next in queue)"
+        default: ""
+
+permissions:
+  contents: write                # to move finished scripts to scripts/done/
+
+concurrency:
+  group: daily-video
+  cancel-in-progress: false
+
+jobs:
+  make-video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # always the newest queue of the branch it was started on (main for the daily runs),
+          # so a queued second run never redoes a video; a test branch can be dry-run the same way
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install ffmpeg and fonts (English + Bengali)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg fonts-noto-core fonts-noto-color-emoji libraqm0 fontconfig espeak-ng
+          fc-list | grep -E "NotoSans(Bengali)?-Bold" | head -2
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+
+      - name: Keep downloaded voice models between runs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: voice-models-v1
+
+      - name: Install open-source voices (only when one is used)
+        env:
+          VOICE: ${{ inputs.voice }}
+        run: |
+          if grep -q "kokoro:" config.yaml || [[ "$VOICE" == *kokoro* ]]; then
+            pip install torch --index-url https://download.pytorch.org/whl/cpu
+            pip install "kokoro>=0.9.4" soundfile
+          fi
+          if grep -q "chatterbox:" config.yaml || [[ "$VOICE" == *chatterbox* ]]; then
+            pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+            pip install chatterbox-tts soundfile
+          fi
+
+      - name: Install the AI shot picker (CLIP, free and open source)
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install open_clip_torch faster-whisper
+
+      - name: Keep the shot picker model between runs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--laion--CLIP-ViT-B-32-laion2B-s34B-b79K
+          key: clip-models-v1
+
+      - name: Keep the word timing model between runs (free whisper, for the v3 voice)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--Systran--faster-whisper-small.en
+          key: whisper-small-en-v1
+
+      - name: Load the shot picker model once
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import open_clip
+          open_clip.create_model_and_transforms("ViT-B-32", pretrained="laion2b_s34b_b79k")
+          print("CLIP ready")
+          PY
+
+      - name: Make and upload video
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          COUNT: ${{ inputs.count }}
+          UPLOAD: ${{ inputs.upload }}
+          VOICE: ${{ inputs.voice }}
+          FILE: ${{ inputs.file }}
+        run: |
+          args=()
+          if [[ "$VOICE" =~ ^[A-Za-z0-9\ ():_-]+$ ]]; then args+=(--voice "$VOICE"); fi
+          if [[ "$FILE" =~ ^scripts/queue/[A-Za-z0-9._-]+\.json$ ]]; then args+=(--file "$FILE"); fi
+          if [[ "$COUNT" =~ ^[0-9]+$ ]]; then args+=(--count "$COUNT"); fi
+          if [[ "$UPLOAD" == "no" ]]; then args+=(--no-upload); fi
+          python -m studio.main "${args[@]}"
+
+      - name: Save the video files (Actions → this run → Artifacts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ github.run_number }}
+          path: output/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Save a test render for viewing (branch previews, only when upload = no)
+        if: ${{ always() && inputs.upload == 'no' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(output/*.mp4 output/*.qc.json)
+          [ ${#files[@]} -eq 0 ] && { echo "Nothing rendered"; exit 0; }
+          mkdir -p /tmp/prev && cp "${files[@]}" /tmp/prev/
+          for d in work/*/; do [ -f "$d/plan.json" ] && cp "$d/plan.json" "/tmp/prev/$(basename "$d").plan.json"; done
+          cd /tmp/prev
+          git init -q -b previews
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "Test render from run ${GITHUB_RUN_ID}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" previews
+          ls -la
+
+      - name: Move finished scripts to scripts/done
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A scripts logs
+          if git diff --cached --quiet; then echo "Nothing to save"; exit 0; fi
+          git commit -m "Uploaded video(s) from the queue"
+          git pull --rebase --autostash
+          git push

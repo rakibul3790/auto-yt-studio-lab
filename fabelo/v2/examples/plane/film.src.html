@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn the Wind — Fabelo Studio</title>
+<style>
+  @font-face { font-family: 'Caveat'; font-weight: 700; font-style: normal; src: url(data:font/woff2;base64,__CAVEAT__) format('woff2'); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="../../../lib/scribble.js"></script>
+<script src="../../lib/fabelo2.js"></script>
+<script>window.__TIMING = __TIMING_JSON__;</script>
+</head>
+<body>
+<script>
+{
+/* =====================================================================
+   "Learn the Wind" — Fabelo Studio v2 test Short (44 s, Shorts-first, works at every ratio)
+   Scribble never speaks. He folds paper planes all week; every one crashes.
+   One night he notices each crash flew a little farther. In the morning it soars.
+   v2: shots + cuts on the beat, aspect-aware camera, parallax, pro motion, transitions, captions.
+   ===================================================================== */
+const S = Scribble, C = S.palette, sv = S.svg, F2 = Fabelo2, E = F2.EASE;
+const DUR = 44, G = 300;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k, f1 = (v) => v.toFixed(1);
+
+const LINES = [
+  ['narrator', 1.0, 3.36, "He folded his first paper plane on a Monday."],
+  ['narrator', 4.6, 6.52, "It flew for exactly one second."],
+  ['narrator', 8.4, 10.48, "So he folded another. And another."],
+  ['narrator', 12.6, 15.71, "By Friday, the floor was covered in tiny crashes."],
+  ['narrator', 17.4, 18.95, "That night, he almost stopped."],
+  ['narrator', 21.6, 22.99, "Then he noticed something."],
+  ['narrator', 24.4, 27.34, "Every crash had flown a little farther than the one before."],
+  ['narrator', 29.6, 32.22, "So in the morning... he tried one more time."],
+  ['narrator', 37.2, 39.99, "Falling isn't failing. It's how you learn the wind."],
+];
+
+/* ---------- new props, poses (registered here; the library file is untouched) ---------- */
+S.registerProp('plane', () =>
+  sv.path('M-62 2 L64 -6 L-30 -34 Z', { fill: '#FFFFFF', w: 5 }) +
+  sv.path('M-62 2 L64 -6 L-40 18 Z', { fill: C.paperDark, w: 5 }) +
+  sv.path('M-62 2 L64 -6', { w: 4 }), { s: 0.45, dx: 18, dy: -6, rot: -8 });
+S.registerProp('crashed', () =>
+  sv.g(sv.path('M-62 2 L64 -6 L-30 -34 Z', { fill: '#FFFFFF', w: 5 }) + sv.path('M-62 2 L50 -2 L-40 18 Z', { fill: C.paperDark, w: 5 }) +
+    sv.path('M40 -8 L64 -6 L52 4', { w: 4 }), 'rotate(28) translate(-40 -12)') +
+  sv.path('M-24 -14 l-10 -10 M-6 -22 l0 -14 M14 -14 l10 -10', { w: 3.5, op: 0.6 }));
+S.registerProp('paper', () => sv.path('M-46 -6 L46 -10 L50 6 L-42 10 Z', { fill: '#FFFFFF', w: 4 }));
+S.registerPose('fold',     { lean: 12, head: 14, aL: [70, 108], aR: [80, 112], lL: [85, 0], lR: [95, 8] });
+S.registerPose('foldB',    { lean: 14, head: 18, aL: [62, 126], aR: [88, 96], lL: [85, 0], lR: [95, 8] });
+S.registerPose('holdUp',   { lean: -2, head: -6, aL: [-28, -20], aR: [70, 150], lL: [-12, -14], lR: [12, 14] });
+S.registerPose('windup',   { lean: -12, head: -4, aL: [40, 70], aR: [-150, -95], lL: [-22, -10], lR: [18, 24] });
+S.registerPose('throw',    { lean: 16, head: 4, aL: [-40, -30], aR: [100, 92], lL: [-24, -26], lR: [28, 10] });
+S.registerPose('floorSit', { lean: -4, head: 6, aL: [30, 60], aR: [-30, -60], lL: [90, 92], lR: [86, 90] });
+S.registerPose('floorHug', { lean: 14, head: 22, aL: [55, 150], aR: [62, 160], lL: [70, -25], lR: [76, -20] });
+S.registerPose('lookUp',   { lean: -6, head: -18, aL: [40, 120], aR: [48, 128], lL: [70, -25], lR: [76, -20] });
+S.registerPose('sitBack',  { lean: -16, head: -12, aL: [-38, -26], aR: [-48, -34], lL: [88, 90], lR: [80, 86] });
+
+const film = F2.film(document.body, { duration: DUR, bpm: 72, fadeIn: 1.0, fadeOut: 1.6 });
+const B = (n) => film.beat(n);                       // cut points sit on the music grid (72 bpm)
+const plane = (x, y, rot, sc = 1, op = 1) => sv.g(S.propSVG('plane'), `translate(${f1(x)} ${f1(y)}) rotate(${f1(rot)}) scale(${sc})`, op < 1 ? ` opacity="${op.toFixed(2)}"` : '');
+const crashed = (x, sc = 1, flip = false, y = G) => sv.g(S.propSVG('crashed'), `translate(${f1(x)} ${f1(y)}) scale(${flip ? -sc : sc} ${sc})`);
+// ballistic paper-plane flight: launched at (x0,y0) with velocity (vx,vy), glides, noses down, crashes on the floor
+function flight(t, t0, x0, y0, vx, vy, g = 520, lift = 0.0) {
+  if (t < t0) return null;
+  let tau = t - t0, x = x0 + vx * tau, y = y0 - vy * tau + 0.5 * g * (1 - lift) * tau * tau;
+  let dx = vx, dy = -vy + g * (1 - lift) * tau, landed = false;
+  // time to hit the floor
+  const A = 0.5 * g * (1 - lift), Bq = -vy, Cq = y0 - (G - 8);
+  const tHit = (-Bq + Math.sqrt(Bq * Bq - 4 * A * Cq)) / (2 * A);
+  if (tau >= tHit) { tau = tHit; x = x0 + vx * tau; y = G - 8; landed = true; }
+  return { x, y, rot: (Math.atan2(dy, dx) * 180) / Math.PI, landed, tHit: t0 + tHit, xHit: x0 + vx * tHit };
+}
+const flightSVG = (t, fl, sc = 0.9) => {
+  if (!fl) return '';
+  if (fl.landed) return crashed(fl.x, sc);
+  return plane(fl.x, fl.y, fl.rot, sc);
+};
+const label = (t, str, at, until, x, y, size = 64, rot = -4) => {
+  if (t < at || t > until) return '';
+  const k = E.backOut(clamp((t - at) / 0.35)), op = Math.min(clamp((t - at) / 0.2), clamp((until - t) / 0.3));
+  return `<text x="${x}" y="${y}" text-anchor="middle" font-family="Caveat, cursive" font-weight="700" font-size="${size}" fill="${C.ink}" opacity="${op.toFixed(2)}" transform="rotate(${rot} ${x} ${y}) translate(${x} ${y}) scale(${k.toFixed(3)}) translate(${-x} ${-y})">${str}</text>`;
+};
+// a simple ink desk and a window (room set pieces)
+const desk = (x, top = 112) => sv.path(`M${x - 150} ${top} L${x + 150} ${top} L${x + 150} ${top + 14} L${x - 150} ${top + 14} Z`, { fill: C.brown, w: 5 }) +
+  sv.line(x - 130, top + 14, x - 136, G, 6) + sv.line(x + 130, top + 14, x + 136, G, 6);
+function windowFrame(x, y, w, h, inside) {
+  return `<clipPath id="win${x}"><rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}"/></clipPath><g clip-path="url(#win${x})">${inside}</g>` +
+    sv.path(`M${x - w / 2} ${y - h / 2} H${x + w / 2} V${y + h / 2} H${x - w / 2} Z M${x} ${y - h / 2} V${y + h / 2} M${x - w / 2} ${y} H${x + w / 2}`, { w: 7 }) +
+    sv.path(`M${x - w / 2 - 20} ${y + h / 2 + 10} H${x + w / 2 + 20}`, { w: 8 });
+}
+
+/* =========================== SHOT 1 · Monday: folding (0 → B5) =========================== */
+const s1 = film.shot(0, B(5), { name: 'fold', frame: [20, 110, 700, 700] });
+s1.layer(0.5, (t, v) => windowFrame(-260, -150, 300, 260, F2.bg.sky({ x: -420, y: -290, w: 320, h: 290 }, '#EAF1F6') + sv.g(S.propSVG('sun', t), 'translate(-190 -200) scale(0.7)') + F2.bg.clouds(t, { x: -500, y: -300, w: 400, h: 200 }, { n: 2, y: -230, speed: 6 })));
+s1.custom(() => desk(150), 'back');
+s1.prop('stool', { x: -10, scale: 1.08, draw: 0 });
+const k1 = s1.character({ x: -10, scale: 2.4, pose: 'fold', expr: 'thinking' });
+k1.drawOn(0.25, 1.3);
+k1.pose(1.6, 'foldB', { dur: 0.3 }).pose(2.1, 'fold', { dur: 0.3 }).pose(2.6, 'foldB', { dur: 0.25 }).expr(3.0, 'happy').pose(3.1, 'holdUp', { dur: 0.45 }).look(3.2, [3, -4]);
+s1.custom((t) => {
+  // paper on the desk → folded plane lifted up in his hand
+  if (t < 3.15) {
+    const k = clamp((t - 1.2) / 1.8);
+    const w = lerp(1, 0.55, E.inOut(k));
+    return t < 2.85 ? sv.g(S.propSVG('paper'), `translate(150 104) scale(${w.toFixed(2)} 1) rotate(${(-6 * k).toFixed(1)})`) : plane(150, 96, -4, 0.75);
+  }
+  return '';
+}, 'front');
+k1.hold(3.15, 'plane');
+s1.cam.push(0.4, 3.9, 1.16, [60, 80]);
+film.cut(B(5), 'cut');
+
+/* =========================== SHOT 2 · first flight (B5 → B9) =========================== */
+const s2 = film.shot(B(5), B(9), { name: 'first', frame: [-240, 90, 700, 700], handheld: 0.6 });
+s2.layer(0.35, (t, v) => F2.bg.hills(v, { y: 210, h: 90, seed: 2, op: 0.25 }));
+s2.layer(0.6, (t, v) => F2.bg.clouds(t, v, { n: 3, y: -320, speed: 10 }));
+const k2 = s2.character({ x: -330, scale: 2.3, pose: 'holdUp', expr: 'excited', hold: 'plane' });
+k2.pose(4.75, 'windup', { dur: 0.4, expr: 'excited' }).pose(5.25, 'throw', { dur: 0.16 }).hold(5.3, null);
+const fl2 = (t) => flight(t, 5.3, -230, 20, 520, 120, 700);
+s2.custom((t) => flightSVG(t, fl2(t)), 'front');
+const hit2 = fl2(10).tHit;  // ≈ 6.1 s: "exactly one second"
+k2.pose(hit2 + 0.05, 'shocked', { dur: 0.2, expr: 'shocked' }).pose(hit2 + 0.9, 'sad', { dur: 0.5, expr: 'sad' });
+s2.cam.frame(5.3, 0.9, [-20, 120, 860, 860], 'quintOut').shake(hit2, 0.35, 9);
+film.cue('sfx', 5.28, { name: 'swish', gain: 0.35 });
+film.cue('sfx', 5.35, { name: 'plane_fly', gain: 0.22, d: 0.8 });
+film.cue('sfx', hit2, { name: 'thump_soft', gain: 0.45, pan: 0.3 });
+film.cut(B(9), 'whip', { dir: 1 });
+
+/* =========================== SHOT 3 · and another (B9 → B14.5) =========================== */
+const s3 = film.shot(B(9), B(14.5), { name: 'montage', frame: [-160, 110, 760, 760], handheld: 0.8 });
+s3.custom(() => desk(-330, 150), 'back');
+const k3 = s3.character({ x: -330, scale: 2.2, pose: 'holdUp', expr: 'calm', hold: 'plane' });
+const throws = [8.75, 10.2, 11.45];
+const fl3 = throws.map((t0, i) => (t) => flight(t, t0, -240, 30, 420 + i * 60, 90 + i * 15, 760));
+throws.forEach((t0, i) => {
+  k3.pose(t0 - 0.45, 'windup', { dur: 0.3, expr: i === 2 ? 'angry' : 'excited' }).pose(t0 - 0.05, 'throw', { dur: 0.14 }).hold(t0, null);
+  if (i < 2) k3.pose(t0 + 0.75, 'holdUp', { dur: 0.35, expr: 'calm' }).hold(t0 + 0.75, 'plane');
+  film.cue('sfx', t0 - 0.02, { name: 'swish', gain: 0.3 });
+  film.cue('sfx', fl3[i](30).tHit, { name: 'thump_soft', gain: 0.38, pan: 0.2 + i * 0.1 });
+});
+k3.pose(12.0, 'sad', { dur: 0.5, expr: 'sad' });
+s3.custom((t) => fl3.map((fl) => flightSVG(t, fl(t), 0.85)).join(''), 'front');
+s3.custom((t) => label(t, 'Tue', 8.4, 9.9, 150, -300, 70) + label(t, 'Wed', 9.9, 11.2, 150, -300, 70) + label(t, 'Thu', 11.2, 12.5, 150, -300, 70), 'front');
+s3.cam.frame(B(9), 1.2, [-90, 120, 800, 800], 'expoOut');
+film.cut(B(14.5), 'page', { dir: 1 });
+
+/* =========================== SHOT 4 · Friday: the floor of crashes (B14.5 → B20) =========================== */
+const s4 = film.shot(B(14.5), B(20), { name: 'floor', frame: [-250, 250, 380, 380] });
+const crashSpots = [[-380, 0.8, false], [-250, 0.7, true], [-140, 0.85, false], [-30, 0.7, true], [90, 0.8, false], [200, 0.75, true],
+  [320, 0.85, false], [420, 0.7, true], [-440, 0.65, true], [-200, 0.6, false], [150, 0.62, true], [380, 0.6, false]];
+s4.custom(() => crashSpots.map(([x, sc, fl], i) => crashed(x, sc, fl, G + (i % 3) * 18 - 10)).join(''), 'back');
+s4.custom(() => sv.g(sv.path('M-50 0 C-60 -30 -20 -50 0 -40 C20 -55 60 -30 45 0 Z', { fill: '#FFFFFF', w: 5 }) + sv.path('M-30 -20 l20 6 l10 -12 l15 10', { w: 3 }), `translate(-300 ${G + 20}) scale(0.6)`), 'back');
+const k4 = s4.character({ x: 170, scale: 2.2, pose: 'sad', expr: 'sad' });
+k4.look(12.2, [-4, 3]).pose(14.6, 'facepalm', { dur: 0.5, expr: 'sad' });
+s4.cam.frame(12.5, 2.6, [30, 110, 920, 920], 'quintInOut');
+s4.custom((t) => label(t, 'Fri', 13.3, 16.4, 330, -360, 70), 'front');
+film.cut(B(20), 'ink', { center: [60, -80] });
+
+/* =========================== SHOT 5 · that night (B20 → B28) =========================== */
+const night = '#4A5A80';
+const s5 = film.shot(B(20), B(28), { name: 'night', frame: [-60, 80, 820, 820], handheld: 0.4 });
+s5.layer(0.25, (t, v) => windowFrame(-200, -190, 320, 280, F2.bg.sky({ x: -400, y: -400, w: 500, h: 500 }, '#2E3A5C') + F2.bg.stars(t, { x: -360, y: -330, w: 320, h: 300 }, { n: 16 }) +
+  `<circle cx="-120" cy="-260" r="34" fill="#FFF6D8" stroke="${C.ink}" stroke-width="5"/>` + F2.bg.rain(t, { x: -370, y: -340, w: 340, h: 300 }, { n: 26, color: '#C8D3EE', op: 0.5 })));
+s5.custom(() => crashSpots.slice(0, 7).map(([x, sc, fl], i) => crashed(x * 0.9 + 60, sc * 0.9, fl, G + (i % 3) * 14 - 6)).join(''), 'back');
+const k5 = s5.character({ x: -120, scale: 2.3, pose: 'floorHug', expr: 'sad' });
+k5.look(17.0, [-2, 4]).pose(21.75, 'lookUp', { dur: 0.6, expr: 'confused' }).look(21.8, [5, 1]).expr(22.6, 'thinking');
+s5.tint(16.6, 0, night, 0.42);
+s5.cam.push(17.0, 4.4, 1.4, [-120, 140]).frame(21.7, 1.2, [60, 150, 780, 780], 'quintInOut');
+film.cue('sfx', 21.75, { name: 'pluck', gain: 0.18, note: 76 });
+film.cut(B(28), 'cut');
+
+/* =========================== SHOT 6 · every crash flew farther (B28 → B34.5) =========================== */
+const s6 = film.shot(B(28), B(34.5), { name: 'insight', frame: [-280, 130, 640, 640] });
+const arcs = [[-200, 24.3], [-80, 24.9], [50, 25.5], [190, 26.1], [350, 26.7]];
+s6.custom((t) => {
+  let s = '';
+  arcs.forEach(([xe, t0], i) => {
+    const x0 = -300, y0 = 60, k = E.quintOut(clamp((t - t0) / 0.7));
+    if (k > 0) {
+      const xm = (x0 + xe) / 2, ym = y0 - 90 - i * 22;
+      const d = `M${x0} ${y0} Q${xm} ${ym} ${xe} ${G - 14}`;
+      s += `<g class="sb-draw" style="--o:${(1 - k).toFixed(3)};--fo:1">` + sv.path(d, { w: i === arcs.length - 1 ? 5 : 3.5, op: 0.75 }) + '</g>';
+      s += sv.g(S.propSVG('crashed'), `translate(${xe} ${G}) scale(${(0.7 * E.backOut(clamp((t - t0 - 0.55) / 0.3))).toFixed(3)})`);
+      s += label(t, ['1', '2', '3', '4', '5'][i], t0 + 0.6, 28.5, xe, G + 55, 50, 0);
+    }
+  });
+  return s;
+}, 'back');
+const k6 = s6.character({ x: -370, scale: 1.7, pose: 'floorSit', expr: 'thinking' });
+k6.look(23.4, [4, -2]).expr(27.0, 'excited').look(27.0, [3, -5]);
+s6.prop('lightbulb', { x: -370, y: G - 290, scale: 0.7, at: 27.0, draw: 0, out: 28.6 });
+s6.tint(23.0, 0, night, 0.28).tint(26.6, 1.6, null, 0.12);
+s6.cam.frame(24.2, 2.6, [-40, 120, 860, 860], 'sineInOut').frame(27.0, 1.2, [-70, 80, 1000, 1000], 'inOut');
+film.cue('sfx', 27.0, { name: 'chime', gain: 0.2 });
+arcs.forEach(([xe, t0], i) => film.cue('sfx', t0, { name: 'pluck', gain: 0.12, note: 67 + i * 2 + (i > 2 ? 1 : 0) }));
+film.cut(B(34.5), 'dip');
+
+/* =========================== SHOT 7 · the morning throw (B34.5 → B39) =========================== */
+const hill = (v) => sv.path(`M${v.x - 80} ${G + 2400} L${v.x - 80} ${G - 10} Q-120 ${G - 60} 160 ${G - 10} T${v.x + v.w + 80} ${G + 30} L${v.x + v.w + 80} ${G + 2400} Z`, { fill: '#F3ECDD', w: 5 });
+const s7 = film.shot(B(34.5), B(39), { name: 'throw', frame: [-120, 90, 760, 760], groundLine: false });
+s7.layer(0.2, (t, v) => sv.g(S.propSVG('sun', t), `translate(260 ${f1(80 - 60 * E.sineInOut(clamp((t - 28.7) / 4)))}) scale(1.3)`));
+s7.layer(0.4, (t, v) => F2.bg.hills(v, { y: 220, h: 120, seed: 5, op: 0.3 }));
+s7.layer(0.65, (t, v) => F2.bg.clouds(t, v, { n: 3, y: -300, speed: 12 }));
+s7.custom((t, sc) => hill(sc.view), 'back');
+s7.layer(1.4, (t, v) => { let d = ''; for (let i = 0; i < 30; i++) { const x = -760 + i * 52 + F2.hash(i) * 22, h = 34 + 26 * Math.abs(F2.hash(i * 3)), sw = Math.sin(t * 1.6 + i) * 5; d += `M${x} ${G + 340} q${sw - 6} ${-h * 0.6} ${sw - 14} ${-h} M${x + 6} ${G + 340} q${sw + 4} ${-h * 0.7} ${sw + 12} ${-h * 1.2}`; } return sv.path(d, { w: 5, op: 0.45 }); }, { blur: 5 });
+const k7 = s7.character({ x: -120, y: G - 48, scale: 2.4, pose: 'holdUp', expr: 'calm', hold: 'plane' });
+k7.look(29.0, [4, -3]).expr(30.6, 'proud').pose(30.9, 'windup', { dur: 0.55, expr: 'proud' }).pose(31.62, 'throw', { dur: 0.15, expr: 'excited' }).hold(31.66, null);
+const fl7 = (t) => { if (t < 31.66) return null; const tau = t - 31.66; return { x: -30 + 560 * tau, y: -60 - 240 * tau + 60 * tau * tau, rot: -24 + 14 * tau }; };
+s7.custom((t) => { const p = fl7(t); return p ? plane(p.x, p.y, p.rot, 0.9) : ''; }, 'front');
+s7.cam.frame(31.3, 0.6, [-60, 20, 820, 820], 'quintOut').frame(31.75, 0.75, [160, -70, 820, 820], 'quintOut');
+film.cue('sfx', 31.62, { name: 'swish', gain: 0.4 });
+film.cue('sfx', 31.66, { name: 'plane_fly', gain: 0.3, d: 1.6 });
+film.cut(B(39), 'match', { from: [-30 + 560 * (B(39) - 31.66), -60 - 240 * (B(39) - 31.66) + 60 * (B(39) - 31.66) ** 2], to: [-200, -60] });
+
+/* =========================== SHOT 8 · it soars (B39 → B44) =========================== */
+const s8 = film.shot(B(39), B(44), { name: 'soar', frame: [-180, -10, 760, 760], groundLine: false });
+s8.layer(0.15, (t, v) => sv.g(S.propSVG('sun', t), 'translate(330 -180) scale(1.5)'));
+s8.layer(0.5, (t, v) => F2.bg.clouds(t, v, { n: 5, y: -150, speed: 30 }));
+s8.layer(0.8, (t, v) => F2.bg.clouds(t + 7, v, { n: 3, y: 120, speed: 50 }));
+const loop8 = (t) => {
+  const k = clamp((t - 32.5) / 4.1);
+  const a = E.sineInOut(k);
+  // glide right, one loop-the-loop, then off into the sun
+  const x = lerp(-200, 380, a) + 120 * Math.sin(Math.PI * 2 * clamp((k - 0.35) / 0.35)) * (k > 0.35 && k < 0.7 ? 1 : 0);
+  const y = -60 - 120 * Math.sin(Math.PI * k) - 110 * (1 - Math.cos(Math.PI * 2 * clamp((k - 0.35) / 0.35))) * 0.5;
+  return { x, y };
+};
+s8.custom((t) => {
+  const p = loop8(t), q = loop8(t + 0.03), rot = (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI;
+  let trail = '';
+  for (let i = 1; i < 14; i++) { const a = loop8(t - i * 0.05), b = loop8(t - i * 0.05 - 0.05); trail += `M${f1(a.x - 30)} ${f1(a.y + 4)}L${f1(b.x - 30)} ${f1(b.y + 4)}`; }
+  return sv.path(trail, { w: 4, op: 0.35 }) + plane(p.x, p.y, rot, 1.3);
+}, 'front');
+const k8 = s8.character({ x: -150, y: G + 40, scale: 1.5, pose: 'cheer', expr: 'excited' });
+k8.pose(34.8, 'victory', { dur: 0.4 }).pose(35.6, 'cheer', { dur: 0.4 });
+s8.custom((t, sc) => sv.path(`M${sc.view.x - 60} ${G + 60} Q-150 ${G - 10} ${sc.view.x + sc.view.w + 60} ${G + 140} L${sc.view.x + sc.view.w + 60} ${G + 2600} L${sc.view.x - 60} ${G + 2600} Z`, { fill: '#F3ECDD', w: 5 }), 'back');
+s8.cam.frame(32.6, 1.6, [60, -20, 860, 860], 'sineInOut').frame(34.3, 1.6, [0, 0, 1060, 1060], 'quintInOut');
+film.cut(B(44), 'dissolve', { dur: 0.8 });
+
+/* =========================== SHOT 9 · learn the wind (B44 → end) =========================== */
+const s9 = film.shot(B(44), DUR, { name: 'end', frame: [-20, 100, 800, 800], groundLine: false });
+s9.layer(0.2, (t, v) => sv.g(S.propSVG('sun', t), `translate(300 ${f1(-120 + 30 * clamp((t - 36.6) / 7))}) scale(1.2)`));
+s9.custom((t, sc) => hill(sc.view), 'back');
+const k9 = s9.character({ x: -60, y: G - 40, scale: 2.3, pose: 'sitBack', expr: 'happy' });
+k9.look(36.8, [3, -4]).expr(39.6, 'calm');
+s9.custom(() => crashed(140, 0.7, true, G - 22), 'back');
+s9.tint(36.6, 0, C.ochre, 0.0).tint(37.0, 5, C.ochre, 0.16);
+s9.cam.push(36.8, 6.6, 1.1, [-20, 110]);
+film.title('Learn the wind.', { at: 40.25, until: 43.4, y: -380, size: 96, write: 0.9 });
+
+/* =========================== captions (Shorts) =========================== */
+film.captions(LINES, { speakers: ['narrator'], y: 400, size: 76 });
+film.ready(LINES);
+}
+</script>
+</body>
+</html>

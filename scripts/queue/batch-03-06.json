@@ -1,0 +1,75 @@
+{
+  "title": "Some Bamboo Grows Almost a Meter a Day",
+  "format": "short",
+  "description": "Some kinds of bamboo can grow close to a meter in a single day, making them among the fastest growing plants on Earth.",
+  "tags": [
+    "bamboo",
+    "plants",
+    "nature facts",
+    "fastest growing plant",
+    "forest",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "bamboo",
+    "facts"
+  ],
+  "thumbnail_text": "A meter a day",
+  "scenes": [
+    {
+      "on_screen": "Fastest plant",
+      "visual": "bamboo forest",
+      "text": "Some kinds of bamboo can grow almost a meter in a single day.",
+      "highlight": [
+        "almost a meter"
+      ],
+      "subject": "bamboo",
+      "say": "[excited] Some kinds of bamboo can grow almost a METER in a single day.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Watch it grow",
+      "visual": "green bamboo",
+      "text": "At that speed, you could almost see it moving if you watched closely for an hour.",
+      "highlight": [
+        "for an hour"
+      ],
+      "subject": "bamboo",
+      "say": "[whispers] At that speed, you could almost see it moving if you watched closely for an hour.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "A grass",
+      "visual": "bamboo stalks",
+      "text": "Bamboo is not a tree. It is actually a giant kind of grass.",
+      "highlight": [
+        "giant kind of grass"
+      ],
+      "subject": "bamboo",
+      "say": "[gasps] Bamboo is not a tree. It is actually a giant kind of grass.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Stretching",
+      "visual": "bamboo sky",
+      "text": "A new shoot does not add new sections as it grows. The sections it already has just stretch out, very fast.",
+      "highlight": [
+        "stretch out"
+      ],
+      "subject": "bamboo",
+      "say": "A new shoot does not add new sections as it grows. The sections it already has just stretch out, very fast."
+    },
+    {
+      "on_screen": "Grass power",
+      "visual": "bamboo path",
+      "text": "The world's fastest growing plant is a grass. Follow for more weird facts.",
+      "highlight": [
+        "fastest growing plant"
+      ],
+      "subject": "bamboo",
+      "say": "[laughs] The world's fastest growing plant is a grass. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "upbeat"
+}

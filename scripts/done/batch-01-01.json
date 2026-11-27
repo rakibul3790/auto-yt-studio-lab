@@ -1,0 +1,52 @@
+{
+  "title": "A Day on Venus Is Longer Than Its Year",
+  "format": "short",
+  "description": "On Venus, one full spin takes longer than one trip around the Sun. Here is how that works.",
+  "tags": [
+    "venus",
+    "space facts",
+    "planets",
+    "solar system",
+    "weird facts",
+    "astronomy",
+    "science facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "space",
+    "facts"
+  ],
+  "thumbnail_text": "Day longer than a year",
+  "scenes": [
+    {
+      "on_screen": "Day longer than a year?",
+      "visual": "planet venus",
+      "text": "There is a planet where a single day lasts longer than a whole year. And it is our closest neighbor."
+    },
+    {
+      "on_screen": "Venus spins very slowly",
+      "visual": "venus planet surface",
+      "text": "Venus turns on its axis incredibly slowly. One full spin takes about two hundred and forty three Earth days."
+    },
+    {
+      "on_screen": "One year: 225 days",
+      "visual": "solar system orbit",
+      "text": "But it only needs about two hundred and twenty five Earth days to go all the way around the Sun."
+    },
+    {
+      "on_screen": "And it spins backwards",
+      "visual": "sunrise sky",
+      "text": "It gets stranger. Venus spins the opposite way to most planets, so there the Sun rises in the west and sets in the east."
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "night sky stars",
+      "text": "So on Venus, your birthday would come around before the day was even over. Follow for more weird facts."
+    }
+  ],
+  "result": {
+    "uploaded_at": "2026-11-24T10:25:11Z",
+    "short_id": "rE7zg2gunpQ",
+    "short_url": "https://youtube.com/shorts/rE7zg2gunpQ"
+  }
+}

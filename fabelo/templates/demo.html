@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scribble — character library demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #FBF7EE; }
+</style>
+<script src="../lib/scribble.js"></script>
+</head>
+<body>
+<script>
+/* Demo: shows the whole library in 34 seconds.
+   Safe area = square [-500, 500]; works on 16:9, 9:16, 1:1 and any ratio. */
+const sc = Scribble.createScene(document.body, { duration: 34, ground: 300 });
+const s = sc.character({ x: 0, scale: 2.3 });
+const LABEL = { y: 430, size: 50, weight: 700, write: 0.4 };
+const label = (txt, at, until) => sc.text(txt, Object.assign({}, LABEL, { at, until }));
+
+// 1) Intro — ink draws itself, then a wave
+s.drawOn(0.8, 1.6);
+sc.text('Meet Scribble', { y: -400, size: 92, at: 1.0, until: 4.7 });
+s.pose(2.6, 'wave', { expr: 'happy' });
+s.wave(2.6, 4.6);
+s.talk(2.9, 4.4);
+label("Hi! I'm your guide.", 2.8, 4.7);
+
+// 2) Poses + expressions
+const poses = [
+  ['point', 'neutral', 'POINT'], ['explain', 'happy', 'EXPLAIN'], ['think', 'thinking', 'THINK'],
+  ['shocked', 'shocked', 'SHOCKED'], ['shrug', 'confused', 'SHRUG'], ['sad', 'sad', 'SAD'],
+  ['facepalm', 'angry', 'FACEPALM'], ['cheer', 'excited', 'CHEER']
+];
+poses.forEach(([p, e, name], i) => {
+  const t = 5.0 + i * 1.2;
+  s.pose(t, p, { expr: e, dur: 0.3 });
+  label(name, t, t + 1.15);
+});
+
+// 3) Costumes (one character, any era)
+const outfits = [
+  ['caveman', 'spear', 'hold', 'STONE AGE'], ['knight', null, 'idle', 'MEDIEVAL KNIGHT'],
+  ['egyptian', null, 'explain', 'ANCIENT EGYPT'], ['roman', 'scroll', 'hold', 'ANCIENT ROME'],
+  ['scientist', 'lightbulb', 'hold', 'SCIENTIST'], ['king', null, 'victory', 'KING']
+];
+outfits.forEach(([c, prop, pose, name], i) => {
+  const t = 14.8 + i * 1.2;
+  s.costume(t, c).hold(t, prop).pose(t, pose, { expr: 'proud', dur: 0.25 });
+  label(name, t, t + 1.15);
+});
+s.costume(22.0, null).hold(22.0, null).pose(22.0, 'idle', { expr: 'neutral' });
+
+// 4) Walking through a world that draws itself
+s.walk(22.2, 23.6, -360);
+s.walk(23.8, 27.0, 260);
+label('WALK', 22.4, 27.0);
+sc.prop('tree', { x: -380, scale: 1.5, at: 23.4, draw: 1.0, out: 31.0 });
+sc.prop('cloud', { x: -250, y: -300, scale: 1, at: 24.0, draw: 0.8, out: 31.0 });
+sc.prop('sun', { x: 360, y: -240, scale: 0.9, at: 24.2, draw: 0.8, out: 31.0 });
+sc.prop('hut', { x: 395, scale: 1.15, at: 24.6, draw: 1.0, out: 31.0 });
+sc.prop('campfire', { x: 40, scale: 1.1, at: 25.4, draw: 0.8, out: 31.0 });
+
+// 5) Sit, think, idea!
+sc.prop('stool', { x: 262, scale: 1, at: 27.1, draw: 0, out: 31.0 });
+s.face(27.2, -1).pose(27.2, 'sit', { expr: 'thinking', dur: 0.5 });
+label('IDEA!', 28.6, 30.4);
+sc.prop('lightbulb', { x: 255, y: -80, scale: 0.7, at: 28.6, draw: 0, out: 30.3 });
+s.expr(28.6, 'excited');
+s.pose(29.4, 'cheer', { expr: 'excited', dur: 0.35 });
+
+// 6) Goodbye
+s.face(30.6, 1).pose(30.6, 'wave', { expr: 'happy' });
+s.wave(30.6, 32.8);
+s.talk(30.8, 32.4);
+label('See you in the next video!', 30.8, 32.9);
+s.pose(32.8, 'idle', { expr: 'happy' });
+
+sc.exposeForRecording();
+const q = new URLSearchParams(location.search);
+if (q.has('t')) sc.seek(parseFloat(q.get('t'))); else sc.play();
+</script>
+</body>
+</html>

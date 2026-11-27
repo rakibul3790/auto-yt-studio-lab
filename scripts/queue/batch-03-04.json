@@ -1,0 +1,75 @@
+{
+  "title": "Crows Never Forget a Face",
+  "format": "short",
+  "description": "Crows can recognize individual human faces and remember people who treated them badly for years.",
+  "tags": [
+    "crows",
+    "birds",
+    "animal intelligence",
+    "animal facts",
+    "nature facts",
+    "weird facts",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "crows",
+    "facts"
+  ],
+  "thumbnail_text": "They remember you",
+  "scenes": [
+    {
+      "on_screen": "They remember you",
+      "visual": "black crow",
+      "text": "Crows can recognize your face, and they can remember it for years.",
+      "highlight": [
+        "for years"
+      ],
+      "subject": "crow",
+      "say": "[whispers] Crows can recognize your face... and they can remember it for YEARS.",
+      "look": "whisper"
+    },
+    {
+      "on_screen": "The mask test",
+      "visual": "crow on branch",
+      "text": "In one famous study in Seattle, researchers wore a mask while they caught and tagged crows.",
+      "highlight": [
+        "wore a mask"
+      ],
+      "subject": "crow",
+      "say": "In one famous study in Seattle, researchers wore a mask while they caught and tagged crows."
+    },
+    {
+      "on_screen": "Scolding",
+      "visual": "crows flying sky",
+      "text": "Years later, crows still scolded and dive bombed anyone who wore that same mask.",
+      "highlight": [
+        "dive bombed"
+      ],
+      "subject": "crow",
+      "say": "[angry] Years later, crows still scolded and dive bombed anyone who wore that same mask.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Passing it on",
+      "visual": "flock of crows",
+      "text": "Even crows that were never caught joined in. They seemed to learn who to dislike from the others.",
+      "highlight": [
+        "never caught"
+      ],
+      "subject": "crow",
+      "say": "[gasps] Even crows that were never caught joined in. They seemed to learn who to dislike from the others.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "Be nice",
+      "visual": "crow close up",
+      "text": "So be kind to the crows. They are watching. Follow for more weird facts.",
+      "highlight": [
+        "They are watching"
+      ],
+      "subject": "crow",
+      "say": "[nervous laugh] So be kind to the crows. [whispers] They are watching. Follow for more weird facts."
+    }
+  ],
+  "music_mood": "mysterious"
+}

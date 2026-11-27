@@ -1,0 +1,76 @@
+{
+  "title": "Lightning Is Hotter Than the Surface of the Sun",
+  "format": "short",
+  "description": "A bolt of lightning heats the air around it to about five times the temperature of the Sun's surface.",
+  "tags": [
+    "lightning",
+    "weather facts",
+    "sun",
+    "science facts",
+    "storms",
+    "weird facts",
+    "physics",
+    "mind blowing facts"
+  ],
+  "hashtags": [
+    "science",
+    "facts"
+  ],
+  "thumbnail_text": "Hotter than the Sun",
+  "scenes": [
+    {
+      "on_screen": "Hotter than the Sun",
+      "visual": "lightning storm",
+      "text": "Every bolt of lightning is hotter than the surface of the Sun.",
+      "highlight": [
+        "hotter than"
+      ],
+      "subject": "lightning",
+      "say": "[gasps] Every bolt of lightning is HOTTER than the surface of the Sun.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "About 30,000 degrees",
+      "visual": "lightning strike night",
+      "text": "Lightning can heat the air around it to roughly thirty thousand degrees Celsius, in a fraction of a second.",
+      "highlight": [
+        "thirty thousand degrees"
+      ],
+      "subject": "lightning",
+      "say": "Lightning can heat the air around it to roughly thirty thousand degrees Celsius, in a fraction of a second."
+    },
+    {
+      "on_screen": "The Sun: about 5,500",
+      "visual": "sun surface",
+      "text": "The surface of the Sun is about five and a half thousand degrees. So lightning is around five times hotter.",
+      "highlight": [
+        "five times hotter"
+      ],
+      "subject": "sun",
+      "say": "The surface of the Sun is about five and a half thousand degrees. [excited] So lightning is around FIVE times hotter.",
+      "look": "excited"
+    },
+    {
+      "on_screen": "That's the thunder",
+      "visual": "lightning thunder storm",
+      "text": "That sudden heat makes the air expand explosively. The boom you hear is thunder.",
+      "highlight": [
+        "thunder"
+      ],
+      "subject": "lightning",
+      "say": "That sudden heat makes the air expand explosively. [shouts] The BOOM you hear is thunder.",
+      "look": "angry"
+    },
+    {
+      "on_screen": "Follow for more",
+      "visual": "lightning bolt sky",
+      "text": "A tiny piece of something hotter than the Sun, right outside your window. Follow for more weird facts.",
+      "highlight": [
+        "hotter than the Sun"
+      ],
+      "subject": "lightning",
+      "say": "[whispers] A tiny piece of something hotter than the Sun, right outside your window. [chuckles] Follow for more weird facts."
+    }
+  ],
+  "music_mood": "epic"
+}
