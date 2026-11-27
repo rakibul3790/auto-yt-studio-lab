@@ -314,15 +314,12 @@
    "beats": [
     {
      "at_word": 0,
-     "shot": "clip",
+     "shot": "photo",
      "query": "owl twisting head",
      "subject": "owl",
-     "alt_query": [
-      "owl turning head",
-      "owl head rotating"
-     ],
      "camera": "pan_right",
-     "transition": "cut"
+     "transition": "cut",
+     "src": "assets/gen/owl-head/snowy-owl.jpg"
     },
     {
      "at_word": 5,
@@ -337,7 +334,9 @@
      "card": {
       "style": "rounded",
       "query": "green garden hose coiled",
-      "subject": "hose"
+      "subject": "hose",
+      "y": 0.16,
+      "width": 0.55
      }
     }
    ]
@@ -359,10 +358,6 @@
      "bg": "new",
      "query": "owl perched branch",
      "subject": "owl",
-     "alt_query": [
-      "owl on branch looking",
-      "owl perched staring"
-     ],
      "camera": "drift",
      "transition": "whip_right",
      "card": {
@@ -376,8 +371,10 @@
        0.25,
        0.7,
        0.89
-      ]
-     }
+      ],
+      "y": 0.26
+     },
+     "src": "assets/gen/owl-head/owl-night.jpg"
     },
     {
      "at_word": 10,
