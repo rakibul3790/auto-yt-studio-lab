@@ -55,6 +55,10 @@ jobs:
       - name: Install Python packages
         run: pip install -r requirements.txt
 
+      - name: Get the ElevenLabs library sound effects (lab, only the missing ones)
+        continue-on-error: true
+        run: python tools/fetch_sfx.py
+
       - name: Keep downloaded voice models between runs
         uses: actions/cache@v4
         with:
@@ -178,7 +182,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A scripts logs
+          git add -A scripts logs assets/sfx
           if git diff --cached --quiet; then echo "Nothing to save"; exit 0; fi
           git commit -m "Uploaded video(s) from the queue"
           git pull --rebase --autostash

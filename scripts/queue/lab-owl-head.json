@@ -1,0 +1,136 @@
+{
+  "title": "Owls Can Turn Their Heads 270 Degrees",
+  "format": "short",
+  "style": "pro",
+  "music_mood": "mysterious",
+  "follow": false,
+  "description": "An owl can twist its head about 270 degrees, because its tube-shaped eyes can't move in their sockets.\nFourteen neck bones and tiny blood reservoirs make it possible.",
+  "tags": ["owl", "owl facts", "animal facts", "weird facts", "bird facts", "nature facts", "science facts", "fun facts", "shorts"],
+  "hashtags": ["owl", "animalfacts"],
+  "thumbnail_text": "270 degree head turn",
+  "scenes": [
+    {
+      "text": "An owl can twist its head three quarters of the way around.",
+      "say": "[excited] An owl can twist its head three quarters of the way around.",
+      "look": "excited",
+      "visual": "owl rotating head", "subject": "owl", "on_screen": "Head turns 3/4 around",
+      "highlight": ["three quarters"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl rotating head", "subject": "owl",
+         "alt_query": ["owl turning head", "owl looking back"],
+         "camera": "punch", "sfx": ["impact"]},
+        {"at_word": 6, "shot": "clip", "query": "owl perched branch", "subject": "owl",
+         "camera": "push_in", "transition": "cut",
+         "tag": {"title": "Owl", "sub": "Every continent except Antarctica"}}
+      ]
+    },
+    {
+      "text": "Two hundred and seventy degrees, without a single snap.",
+      "say": "Two hundred and seventy degrees, [laughs] without a single snap.",
+      "visual": "owl perched branch", "subject": "owl", "on_screen": "270 degrees",
+      "highlight": ["seventy degrees"],
+      "beats": [
+        {"at_word": 0, "shot": "number", "bg": "prev", "query": "owl perched branch", "subject": "owl",
+         "camera": "drift", "transition": "zoom", "sfx": ["tick"],
+         "number": {"from": 0, "to": 270, "suffix": "°", "label": "ONE HEAD TURN"}}
+      ]
+    },
+    {
+      "text": "But here's the strange part.",
+      "say": "[whispers] But here's the strange part.",
+      "look": "whisper",
+      "visual": "owl sitting tree", "subject": "owl", "on_screen": "The strange part",
+      "highlight": ["strange part"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl sitting tree", "subject": "owl",
+         "camera": "tilt_up", "transition": "cut", "sfx": ["riser"]}
+      ]
+    },
+    {
+      "text": "Its eyes can't move at all.",
+      "say": "[gasps] Its eyes can't move at all.",
+      "look": "excited",
+      "visual": "owl staring", "subject": "owl", "on_screen": "Eyes can't move",
+      "highlight": ["can't move"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl staring camera", "subject": "owl",
+         "alt_query": ["owl big eyes perched", "owl sitting staring"],
+         "camera": "punch", "transition": "cut", "sfx": ["thud"]}
+      ]
+    },
+    {
+      "text": "They're shaped like tubes, locked inside its skull.",
+      "say": "[curious] They're shaped like tubes, locked inside its skull.",
+      "visual": "owl skull", "subject": "owl", "on_screen": "Tube-shaped eyes",
+      "highlight": ["like tubes"],
+      "beats": [
+        {"at_word": 0, "shot": "card", "bg": "prev", "subject": "owl",
+         "camera": "drift", "transition": "cut",
+         "card": {"style": "polaroid", "query": "owl skull", "subject": "skull", "caption": "Owl skull"}}
+      ]
+    },
+    {
+      "text": "So the whole head has to do the looking.",
+      "say": "[chuckles] So the whole head has to do the looking.",
+      "visual": "owl looking around", "subject": "owl", "on_screen": "The head does the looking",
+      "highlight": ["whole head"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl looking around", "subject": "owl",
+         "alt_query": ["owl perched looking", "owl on log"],
+         "camera": "pan_left", "transition": "slide_up"}
+      ]
+    },
+    {
+      "text": "It has fourteen bones in its neck, twice as many as you.",
+      "say": "[excited] It has fourteen bones in its neck, twice as many as you.",
+      "look": "excited",
+      "visual": "owl on fence post", "subject": "owl", "on_screen": "14 neck bones",
+      "highlight": ["fourteen bones", "twice as many"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl on fence post", "subject": "owl",
+         "alt_query": ["owl perched post", "barn owl perched"],
+         "camera": "push_in", "transition": "cut"},
+        {"at_word": 7, "shot": "compare", "bg": "prev", "query": "owl on fence post", "subject": "owl",
+         "camera": "drift", "transition": "cut", "sfx": ["tick"],
+         "compare": {"left": {"label": "OWL", "value": 14}, "right": {"label": "YOU", "value": 7}, "unit": "neck bones"}}
+      ]
+    },
+    {
+      "text": "And tiny pockets of blood keep its brain fed",
+      "say": "[softly] And tiny pockets of blood keep its brain fed",
+      "look": "whisper",
+      "visual": "owl perched night", "subject": "owl", "on_screen": "Blood pockets feed the brain",
+      "highlight": ["pockets of blood"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "owl perched night", "subject": "owl",
+         "alt_query": ["owl at dusk", "owl in dark forest"],
+         "camera": "pull_out", "transition": "cut"}
+      ]
+    },
+    {
+      "text": "while its neck twists like a garden hose.",
+      "say": "while its neck twists [chuckles] like a garden hose.",
+      "visual": "garden hose", "subject": "owl", "on_screen": "Twists like a hose",
+      "highlight": ["garden hose"],
+      "beats": [
+        {"at_word": 0, "shot": "card", "bg": "prev", "subject": "owl",
+         "camera": "drift", "transition": "cut", "sfx": ["shimmer"],
+         "card": {"style": "rounded", "query": "green garden hose coiled", "subject": "hose"}}
+      ]
+    },
+    {
+      "text": "So the next time you look over your shoulder, remember,",
+      "say": "[curious] So the next time you look over your shoulder, remember,",
+      "visual": "owl turning head", "subject": "owl", "on_screen": "Look over your shoulder",
+      "highlight": ["over your shoulder"],
+      "beats": [
+        {"at_word": 0, "shot": "clip", "query": "snowy owl perched", "subject": "owl",
+         "alt_query": ["white owl perched", "owl on branch snow"],
+         "camera": "pan_right", "transition": "whip_right"},
+        {"at_word": 5, "shot": "clip", "query": "owl turning head", "subject": "owl",
+         "alt_query": ["owl rotating head", "owl looking back"],
+         "camera": "push_in", "transition": "cut"}
+      ]
+    }
+  ]
+}

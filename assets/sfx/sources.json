@@ -1,0 +1,27 @@
+{
+  "_about": "Sound effects from the ElevenLabs Sound Effects library (Explore page), picked 27 Nov 2026 for MindBlip Shorts. Free to download on Rakib's Creator plan, no credits. tools/fetch_sfx.py downloads any missing file; studio/pro.py plays assets/sfx/<kind>/*.mp3 in place of the synthesized sound.",
+  "impact": [
+    {"file": "impact-01-short-punchy.mp3", "id": "YRDxanCBGjZfvy7RQHkx", "note": "short punchy emphasis hit, 1.1 s"},
+    {"file": "impact-02-dramatic-hit.mp3", "id": "tgykG01m9tCqIft1va4a", "note": "short clean dramatic hit, 1.9 s"}
+  ],
+  "thud": [
+    {"file": "thud-01-bass-landing.mp3", "id": "7iVNLpNiottxDFfy7Ai6", "note": "cinematic bass thud, 2 s"},
+    {"file": "thud-02-low-boom.mp3", "id": "2Wd7fB4e9seaACFHhV7o", "note": "low trailer boom, deep thud strike, 5 s (trimmed)"}
+  ],
+  "riser": [
+    {"file": "riser-01-tense.mp3", "id": "oX0lIATL9T1WSfeo4Fii", "note": "tense cinematic riser, 4 s"},
+    {"file": "riser-02-smooth.mp3", "id": "xRMi6uDRgjWzgTFT6fjo", "note": "smooth premium riser, 3.1 s"}
+  ],
+  "tick": [
+    {"file": "tick-01-wooden.mp3", "id": "PVe4lgjO0fk0s1wgRkoV", "note": "soft wooden countdown tick, 0.5 s"},
+    {"file": "tick-02-pocket-watch.mp3", "id": "sVmI2V493TdT10qOXi9S", "note": "tiny soft pocket watch tick, 0.5 s"}
+  ],
+  "ding": [
+    {"file": "ding-01-sparkle.mp3", "id": "rVpV9Y8bT6YcUfehQLK9", "note": "single bright sparkle ding, 0.8 s"},
+    {"file": "ding-02-chime.mp3", "id": "ucPVKeoKZrX3aeKS2Yku", "note": "cheerful notification chime, 1 s"}
+  ],
+  "shimmer": [
+    {"file": "shimmer-01-sparkle.mp3", "id": "Er5KOwrQVZFKL9eRUIPS", "note": "elegant magic sparkle, 1 s"},
+    {"file": "shimmer-02-soft-chime.mp3", "id": "5hQ96N1Yjn4nNYGNwjZK", "note": "soft magical shimmer chime, 2 s"}
+  ]
+}

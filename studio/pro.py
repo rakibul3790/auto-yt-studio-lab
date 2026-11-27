@@ -1505,18 +1505,77 @@ GAIN = {"whoosh": .75, "swish": .6, "pop": .55, "riser": .45, "impact": .95, "di
         "glitch": .45, "shimmer": .4, "thud": .8}
 
 
+# Sound files (lab): assets/sfx/<kind>/*.mp3|wav, taken from the ElevenLabs Sound Effects library.
+# When a kind has files, they are used instead of the synthesized sound; variants rotate so the
+# same file is never heard twice in a row. No files for a kind = the old synthesized sound.
+SFX_DIR = ROOT / "assets" / "sfx"
+SFX_MAX_SEC = {"tick": 0.16, "ding": 1.6, "impact": 2.2, "thud": 2.0, "shimmer": 2.4, "riser": 2.6}
+_SFX_FILES: dict[str, np.ndarray] = {}
+
+
+def _sfx_variants(kind: str) -> list[Path]:
+    d = SFX_DIR / kind
+    if not d.is_dir():
+        return []
+    return sorted(f for f in d.iterdir() if f.suffix.lower() in (".mp3", ".wav", ".ogg", ".opus", ".flac"))
+
+
+def _load_sfx_file(path: Path, kind: str) -> np.ndarray | None:
+    key = str(path)
+    if key not in _SFX_FILES:
+        try:
+            raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-ac", "1", "-ar", str(SR),
+                                  "-f", "s16le", "-"], capture_output=True, check=True).stdout
+        except Exception as e:  # a broken file must never stop a render
+            log(f"sfx file skipped ({path.name}): {e}")
+            return None
+        a = np.frombuffer(raw, np.int16).astype(np.float32) / 32768
+        nz = np.flatnonzero(np.abs(a) > 0.01)        # trim silence at the start
+        a = a[nz[0]:] if len(nz) else a
+        if kind == "riser":                          # end on the loudest point (the cut)
+            blk = max(1, int(SR * 0.02))
+            env = np.abs(a[: len(a) // blk * blk]).reshape(-1, blk).max(1) if len(a) >= blk else np.abs(a)
+            a = a[: (int(env.argmax()) + 1) * blk]
+            a = a[-int(SR * SFX_MAX_SEC["riser"]):]
+        else:
+            a = a[: int(SR * SFX_MAX_SEC.get(kind, 2.5))]
+        fade = min(len(a), int(SR * 0.03))
+        if fade:
+            a[-fade:] *= np.linspace(1, 0, fade)
+        _SFX_FILES[key] = a
+    return _SFX_FILES[key]
+
+
 def _write_sfx(events, total: float, out: Path, voice: Path, volume: float) -> Path:
     from .motion import _speech_rms, make_sfx
     track = np.zeros(int(SR * (total + 2)), np.float32)
+    seen: dict[str, int] = {}
+    last_tick = -9.0
     for n, (kind, at, gain) in enumerate(events):
         rnd = np.random.default_rng(n)
-        try:
-            s = _impact(rnd) if kind == "impact" else _glitch(rnd) if kind == "glitch" else make_sfx(kind, n % 7)
-        except ValueError:
-            continue
+        s = None
+        files = _sfx_variants(kind)
+        if files:
+            if kind == "tick":                       # one file per run of counter ticks
+                if at - last_tick > 0.3:
+                    seen[kind] = seen.get(kind, -1) + 1
+                last_tick = at
+                k = seen[kind]
+            else:
+                k = seen[kind] = seen.get(kind, -1) + 1
+            s = _load_sfx_file(files[k % len(files)], kind)
+            if s is not None and kind == "riser":    # riser events start 1.3 s before the cut
+                at = at + 1.3 - len(s) / SR
+        if s is None:
+            try:
+                s = _impact(rnd) if kind == "impact" else _glitch(rnd) if kind == "glitch" else make_sfx(kind, n % 7)
+            except ValueError:
+                continue
         s = s.astype(np.float32)
         s = s / (np.abs(s).max() + 1e-9) * GAIN.get(kind, .5) * gain
         i = int(at * SR)
+        if i < 0:
+            s, i = s[-i:], 0
         if 0 <= i < len(track):
             j = min(len(track), i + len(s))
             track[i:j] += s[:j - i]

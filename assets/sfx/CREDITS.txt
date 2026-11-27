@@ -1,0 +1,3 @@
+Sound effects in this folder come from the ElevenLabs Sound Effects library (Explore page),
+downloaded on Rakib's ElevenLabs Creator plan (no credits used). The list, with each sound's
+library id, is in sources.json. Used only inside MindBlip videos, never resold as audio files.
