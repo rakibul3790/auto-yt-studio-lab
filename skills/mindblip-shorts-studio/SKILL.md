@@ -1,6 +1,6 @@
 ---
 name: mindblip-shorts-studio
-description: Use when Rakib asks for MindBlip Shorts made with the mindblip-studio editing rules, a "shorts studio" pass, or a script or beat plan for the auto-yt-studio-lab test repo. Turns a Weird Facts Short (70-95 words, looping, 9:16) into a beat-by-beat plan (shot, camera, transition, sound, music mood) that follows his mindblip-studio v5 principles adapted for Shorts. Lab version of mindblip-director; same JSON, stricter sound and cut rules.
+description: Use when Rakib asks for MindBlip Shorts made with the mindblip-studio editing rules, a "shorts studio" pass, or a script or beat plan for the auto-yt-studio-lab test repo. Turns a Weird Facts Short (70-95 words, looping, 9:16) into a beat-by-beat plan (shot, camera, transition, sound, music mood, floating cards, name tag) that keeps the whole subject on screen and follows his mindblip-studio v5 principles adapted for Shorts. Lab version of mindblip-director; same JSON, stricter sound, cut and framing rules.
 ---
 
 # MindBlip Shorts Studio
@@ -31,13 +31,16 @@ Standing rules:
 - A counter never sits idle at 0: a `number` beat starts counting at once.
 - 1-2 showcase graphics (`number` or `compare`) per Short, 3 graphic beats at most in total.
 - Never the same sound twice in a row; vary which sound marks which moment.
+- **Never cut off the subject.** Its head, feet, tail and claws stay on screen in every shot
+  (section 6b). Rakib's rule from the first sloth test, 27 Nov 2026.
+- **2-3 floating showcase cards per Short**, each a different style (section 6c).
 
 ## 1. The script (if you also write it)
 
 Follow `prompts/script-writing-prompt.md` exactly: 70-95 spoken words, hook in the first
 sentence, a new idea every 2-3 seconds (8-12 scenes, one short sentence or phrase each),
 escalate, human comparisons for big numbers, numbers written as spoken words, no call to
-action in the script itself (the renderer adds the follow ending, see section 2b), and a seamless loop (the last scene is an unfinished sentence that the first scene
+action in the script itself (in this lab there is no follow ending at all, see section 2b), and a seamless loop (the last scene is an unfinished sentence that the first scene
 completes). No brands, trademarks or copyrighted names. Accurate facts only.
 
 ## 2. The director pass
@@ -45,6 +48,7 @@ completes). No brands, trademarks or copyrighted names. Accurate facts only.
 Add to the script:
 
 - `"style": "pro"` and `"format": "short"`.
+- `"follow": false` (lab: no FOLLOW card, the Short loops; section 2b).
 - `"music_mood"`: one of `mysterious`, `quirky`, `upbeat`, `calm`, `epic`.
 - In every scene, a `"beats"` list (1 or 2 beats). A beat is one shot. Its `at_word` is the
   index of the word in that scene's `text` where the shot starts (the first beat is always 0).
@@ -55,7 +59,7 @@ Add to the script:
 
 | field | values | notes |
 |---|---|---|
-| `shot` | `clip`, `photo`, `number`, `compare`, `text` | what fills the screen |
+| `shot` | `clip`, `photo`, `number`, `compare`, `text`, `card` | what fills the screen. `card` = a floating picture card over a background (section 6c). |
 | `query` | 2-4 English words | stock search for `clip`/`photo` (Pexels, then Pixabay). Concrete and filmable: "octopus crawling rocks", not "strange animal". |
 | `subject` | 1 word | the thing the footage must be tagged with, e.g. `octopus` |
 | `camera` | `push_in`, `pull_out`, `pan_left`, `pan_right`, `tilt_up`, `tilt_down`, `punch`, `drift`, `static` | move on the footage. `punch` = fast snap zoom, for reveals. |
@@ -64,6 +68,9 @@ Add to the script:
 | `number` | `{"to": 243, "from": 0, "suffix": " days", "prefix": "", "label": "ONE SPIN"}` | for `shot: number`: big animated count-up over blurred footage of `query` |
 | `compare` | `{"left": {"label": "1 SPIN", "value": 243}, "right": {"label": "1 YEAR", "value": 225}, "unit": "days"}` | for `shot: compare`: two bars that grow |
 | `text` | 1-4 words, caps | for `shot: text`: a kinetic title card ("IT GETS WEIRDER") |
+| `card` | `{"style": "polaroid", "query": "dolphin swimming underwater", "subject": "dolphin", "caption": "Dolphin"}` | for `shot: card`: the picture on the card is a Pixabay photo of `query`. Styles: `polaroid`, `print`, `rounded`, `torn`, `letterbox`, `bubble`. `caption` only on `polaroid` (1-2 words, handwritten). |
+| `bg` | `prev` or `new` | for `shot: card`: `prev` keeps the previous shot's footage running (dimmed, blurred) behind the card; `new` uses footage of the beat's own `query`. |
+| `tag` | `{"title": "Sloth", "sub": "Rainforests of Central and South America"}` | a lower-third name tag (yellow bar, name, where it lives). Once per Short, on the 2nd-4th beat, on a clip that shows the subject whole. |
 
 Keep the scene's `visual`, `subject`, `on_screen` and `highlight` fields too: they are the
 fallback when the renderer runs a script without beats. `highlight` (1-3 words copied exactly
@@ -103,7 +110,12 @@ Rules:
 4. Pick `look` from the same feeling as the tag, and choose `music_mood` for the whole Short.
 5. Keep `say` under about 650 characters (credits are billed per character).
 
-### The follow ending (added by the renderer)
+### The follow ending (off in this lab)
+
+Rakib's decision, 27 Nov 2026: no FOLLOW card. Set `"follow": false` and let the last line
+loop into the first (the last scene is an unfinished sentence the first scene completes, e.g.
+"So the next time you call someone slow, remember," then "A sloth can hold its breath for
+forty minutes."). The paragraph below is how the main renderer behaves without the switch.
 
 Do not write it yourself. The renderer appends `[chuckles] Follow for more weird facts!` to the
 last scene's `say`, drops shots that would fall on those words, and puts a `FOLLOW FOR MORE`
@@ -142,6 +154,13 @@ title card (flash, shimmer) under it, with a short pause after.
    outro), so the replay feels continuous.
 9. **Queries that find footage.** Common, filmable subjects and actions ("whale swimming",
    "heart rate monitor"). Avoid what stock sites can't have. Never imply a real, named person.
+   If the action is rare on stock sites (a sloth swimming), use `shot: photo` or show the
+   subject doing something common while the line is spoken; never let the beat fall back to
+   empty scenery with no subject in it (sloth v2 showed plain jungle for "swims faster").
+10. **Whole-body queries.** Ask for the whole animal: "sloth hanging from branch", "sloth
+    climbing tree", not "sloth fur" or "sloth face close up". Graphic beats (`number`,
+    `compare`, `text`) sit over footage too, so their `query` must also show the subject
+    whole (sloth v2's "40 MIN" sat over a fur close-up with no head).
 
 ## 4. Sound
 
@@ -187,6 +206,53 @@ later renderer change, not something a script can set.
 - **Captions:** unchanged MindBlip captions (Montserrat ExtraBold, 1-3 words, active word
   yellow, key words on the yellow pill). Do not add a second word bar.
 
+## 6b. Whole subject on screen (framing)
+
+Rakib's rule: **never crop the subject's head, feet, tail or claws.** The lab renderer
+(`config.yaml` → `video.pro_framing: keep`) does this by itself:
+
+- **Find the subject.** A detector (OWLv2, `studio/framing.py`) finds the box around
+  `subject` in each picture; the shot picker (`studio/shotpick.py`) prefers footage where that
+  box is whole, not touching the frame edges, and not tiny or filling everything. Black bars
+  and flat, empty frames are rejected.
+- **fill:** when the whole box fits a 9:16 window, the window frames the subject with a 6 %
+  margin, and the camera move is clamped so the subject never leaves the frame (zoom at most
+  about 1.08x).
+- **fit:** when it does not fit (a wide photo of a long animal), the whole picture is shown
+  smaller, never cropped, over a blurred, dimmed copy of itself.
+- **Framecheck:** the first and last frame of every clip shot are checked again; a shot whose
+  subject touches the top, the bottom or both sides is re-rendered in fit. The run writes a
+  `*.framecheck.jpg` sheet next to the video. Look at it, and at one frame per second of the
+  video, before showing Rakib anything.
+
+Known limit (sloth v2): the detector sometimes finds only part of an animal (a head, a second
+animal half out of frame, one hidden behind a branch), so framecheck passes a shot that is
+still cut. Check the frames by eye; when a clip is cut, change its `query` or make it a
+`photo`.
+
+To go back to the old crop, set `pro_framing: cover`.
+
+## 6c. Floating showcase cards and the name tag
+
+Rakib saw these in sloth v2 and said they are perfect (27 Nov 2026). Keep them as they are.
+
+- **What:** a picture card (`shot: card`) that floats over the running footage, for a thing
+  the voice compares or mentions (the dolphin the sloth beats, the algae in its fur, the moths
+  that live there). The card's picture is a Pixabay photo; the renderer crops it so the
+  subject inside is never cut.
+- **How many:** 2-3 per Short, each a **different style**, never the same image twice.
+- **Styles:** `polaroid` (white frame, handwritten caption), `print` (thin white border),
+  `rounded` (rounded corners, soft shadow), `torn` (torn paper edge), `letterbox` (wide
+  strip), `bubble` (rounded bubble with a small trail of dots toward the subject).
+- **Motion:** settle and hold: the card drops in, settles with a slight tilt (2-4.5°) over
+  about 9 frames, then holds still long enough to read. No spinning or bouncing.
+- **Background:** `bg: prev` keeps the previous shot running behind the card (dimmed and
+  blurred), so the picture flows; `bg: new` when the previous shot does not fit.
+- **Sound:** a soft `tick` as the card lands (the renderer adds it if the beat has no sfx).
+- **Picture choice:** the card's `query` must find a clear, well-lit photo of the thing (a
+  moth on a dark table reads badly); prefer "moth on leaf" over "small brown moth".
+- **Name tag:** one `tag` per Short (section 2), on a clip where the subject is whole.
+
 ## 7. Lab test switches (Rakib's decision, 27 Nov 2026)
 
 For this test Rakib turned off the pop, glitch and transition sounds that mindblip-studio
@@ -222,7 +288,13 @@ save as `scripts/queue/batch-NN.json`. Before replying, check:
 - word count 70-95, last line completes into the first.
 - every scene has `say`, and `say` with the [tags] removed equals `text` exactly;
 - 1-2 tags per scene, at least three different feelings, `look` matches the tag;
-- no follow line written in the script (the renderer adds it).
+- no follow line written in the script, and `"follow": false` (lab);
+- every `query` (graphics included) asks for the whole subject, and no beat can fall back to
+  scenery without the subject;
+- 2-3 `card` beats, each a different style, different pictures; one `tag`.
+
+After the render, before showing Rakib: look at the framecheck sheet and one frame per second.
+No head, foot, tail or claw may be cut, and no shot may be missing its subject.
 
 ### Example (two scenes)
 
@@ -261,3 +333,13 @@ save as `scripts/queue/batch-NN.json`. Before replying, check:
   ]
 }
 ```
+
+## 10. Working with Rakib on this skill
+
+- Show him the test video first. Only after he says he likes it do the fixes go into this
+  skill.
+- After every round of fixes, say on your own which fixes would be good to add to this skill,
+  and add them only after he says yes (his rule, 27 Nov 2026).
+- Never touch the main repo `rakibul3790/auto-yt-studio`; ask before every GitHub Actions run
+  and before any ElevenLabs use. Reuse a saved voice (`voice_cache`) for re-renders when the
+  text is unchanged, so no new credits are spent.
