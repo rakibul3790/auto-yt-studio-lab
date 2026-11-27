@@ -184,6 +184,14 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", lst.name,
          "-c", "copy", voice.name], cwd=work)
 
+    # ---- lab test switches (config video.pro_banned_*): banned transitions become cuts
+    banned_tr = {str(t) for t in (vcfg.get("pro_banned_transitions") or [])}
+    banned_sfx = {str(k) for k in (vcfg.get("pro_banned_sfx") or [])}
+    for sc in scenes:
+        for b in sc.get("beats") or []:
+            if b.get("transition") in banned_tr:
+                b["transition"] = "cut"
+
     # ---- shots (beats) on the timeline
     shots = _shots(scenes, scene_t, words, total)
     log(f"Pro render: {len(shots)} shots over {total:.1f}s, mood {data['music_mood']}")
@@ -208,7 +216,9 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     ass, boxes, pops = write_captions(words, size, work / f"pro_captions_{tag}.ass", hidden)
 
     # ---- sound: effects + music + voice, loudness-normalised
-    events = _sfx_events(shots, pops)
+    events = [e for e in _sfx_events(shots, pops) if e[0] not in banned_sfx]
+    if banned_sfx:
+        log(f"Lab switches: no {', '.join(sorted(banned_sfx))} sounds; transitions off: {', '.join(sorted(banned_tr)) or 'none'}")
     sfx = _write_sfx(events, total, work / f"pro_sfx_{tag}.wav", voice,
                      float(vcfg.get("pro_sfx_volume", 0.45)))
     track = _pick_music(data)
