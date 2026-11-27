@@ -82,10 +82,12 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     data = director.plan(data)
     data = _feelings(data)
     data["_keep"] = str(vcfg.get("pro_framing", "")).lower() == "keep"
+    data["_fit_style"] = str(vcfg.get("pro_fit_style", "blend")).lower()
     (work / "plan.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
     visuals.reset_clips()
     _USED.clear()
     shotpick._USED.clear()
+    shotpick.BANNED.clear()
 
     # ---- voice, scene by scene, with the time of every word
     whole_cfg = data.get("eleven_whole", vcfg.get("eleven_whole", False))
@@ -509,13 +511,25 @@ def footage(beat: dict, n: int, title: str, size: tuple[int, int], work: Path, k
     query = str(beat.get("query") or "").strip()
     subject = beat.get("subject")
     pick = _seed(title, n, query) % 3 + int(beat.get("alt", 0))
-    chosen = shotpick.pick(query, subject, work / f"pro_ai{n:02d}")
+    stem = work / f"pro_ai{n:02d}{'r' * int(beat.get('_repick', 0))}"
+    chosen = shotpick.pick(query, subject, stem)
+    if keep and subject and framing.available() and not (chosen or {}).get("box"):
+        # the footage doesn't show the subject (a sloth "swimming" came back as plain jungle):
+        # try the beat's other wordings, then the subject alone, before settling for scenery
+        alts = [str(q) for q in (beat.get("alt_query") or []) if str(q).strip()] + [str(subject)]
+        for i, q in enumerate(dict.fromkeys(alts)):
+            got = shotpick.pick(q, subject, stem.with_name(f"{stem.name}_alt{i}"))
+            if got and got.get("box"):
+                log(f"Shot {n}: no {subject} in the footage for '{query}', using '{q}' instead")
+                chosen = got
+                break
     if chosen and chosen["kind"] == "vid":
         return {"kind": "vid", "src": chosen["src"], "start": chosen["start"],
                 "dur": chosen.get("dur") or media_duration(chosen["src"]),
-                "content": chosen.get("content"), "box": chosen.get("box")}
+                "content": chosen.get("content"), "box": chosen.get("box"), "id": chosen.get("id")}
     if chosen and keep:
-        return {"kind": "img", "src": chosen["src"], "content": chosen.get("content"), "box": chosen.get("box")}
+        return {"kind": "img", "src": chosen["src"], "content": chosen.get("content"), "box": chosen.get("box"),
+                "id": chosen.get("id")}
     if chosen:
         img = work / f"pro_img{n:02d}.jpg"
         w, h = size
@@ -699,6 +713,28 @@ def _ensure_framing(src: dict, subject: str | None) -> dict:
     return {**src, "content": fr["content"], "box": fr["box"]}
 
 
+def _wide_framing(src: dict, subject: str | None) -> dict:
+    """Re-find the subject with a wider net (every box close to the best one), so a second
+    animal half in the frame or a partly found body is kept whole too."""
+    if src.get("_wide") or not subject or not framing.available():
+        return src
+    path = Path(src["src"])
+    imgs = []
+    if src["kind"] == "vid":
+        for k in (0.3, 1.8, 3.3):
+            im = shotpick._frame_at(path, float(src.get("start", 0.0)) + k)
+            if im is not None:
+                imgs.append(im)
+    else:
+        im = Image.open(path).convert("RGB")
+        im.thumbnail((960, 960))
+        imgs = [im]
+    content = src.get("content") or (0.0, 0.0, 1.0, 1.0)
+    boxes = [framing.to_content(framing.wide_box(framing.find_boxes(im, str(subject))), content) for im in imgs]
+    wide = framing.union([b for b in boxes if b] + [src.get("box")])
+    return {**src, "box": wide if wide else src.get("box"), "_wide": True}
+
+
 def _even(v: float) -> int:
     return max(int(v) // 2 * 2, 2)
 
@@ -762,6 +798,8 @@ def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, ca
     sw, shh = p["show"]
     top = framing.fit_top(p, size)
     left = (W - sw) // 2
+    if p.get("style", "blend") == "blend":
+        return _framed_blend(src, p, size, fps, frames, z, xe, ye, inputs, work, tag, sw, shh, top, left)
     r = int(min(sw, shh) * 0.035)
     mask = work / f"pro_fitmask_{tag}.png"
     m = Image.new("L", (sw, shh), 0)
@@ -786,6 +824,56 @@ def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, ca
             f"[sb]crop={cw}:{ch}:{x}:{y},scale={_even(sw * up)}:{_even(shh * up)},setsar=1,{fz},format=rgba[fg0];"
             f"[{k}:v]format=gray,scale={sw}:{shh}[mk];[fg0][mk]alphamerge[fg];"
             f"[bgv][{k + 1}:v]overlay=0:0[bs];[bs][fg]overlay={left}:{top}:shortest=0[base]")
+
+
+def _framed_blend(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, z: str, xe: str, ye: str,
+                  inputs: list[str], work: Path, tag: str, sw: int, shh: int, top: int, left: int) -> str:
+    """Fit, blended: the whole picture melts into a soft, bright, blurred extension of
+    itself at its edges, so there is no box and no dark band, only the picture, taller.
+    The extension slowly drifts the other way to the picture (gentle parallax)."""
+    W, H = size
+    x, y, cw, ch = p["crop"]
+    x, y, cw, ch = int(x), int(y), _even(cw), _even(ch)
+    up = 1.5
+    # soft edges only in the room around the subject, never over it
+    wb = p.get("wbox") or (0.0, 0.0, 1.0, 1.0)
+    room_v = min(wb[1], 1 - wb[3]) * shh
+    room_h = min(wb[0], 1 - wb[2]) * sw
+    fv = int(max(40, min(shh * 0.18, 200, room_v * 2.0)))
+    fh = int(max(30, min(sw * 0.10, 120, room_h * 2.0))) if sw < W - 4 else 0
+    mask = work / f"pro_fitblend_{tag}.png"
+    a = np.full((shh, sw), 255.0, dtype=np.float32)
+    if fv > 0:
+        ramp = np.linspace(0.0, 1.0, fv, dtype=np.float32) ** 1.6
+        a[:fv, :] *= ramp[:, None]
+        a[shh - fv:, :] *= ramp[::-1][:, None]
+    if fh > 0:
+        ramp = np.linspace(0.0, 1.0, fh, dtype=np.float32) ** 1.6
+        a[:, :fh] *= ramp[None, :]
+        a[:, sw - fh:] *= ramp[::-1][None, :]
+    Image.fromarray(a.clip(0, 255).astype(np.uint8), "L").save(mask)
+    k = len([q for q in inputs if q == "-i"])
+    inputs += ["-loop", "1", "-i", str(mask)]
+    fz = f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={sw}x{shh}:fps={fps}"
+    # the extension: the picture's own edge colours smeared outwards and blurred into a
+    # smooth glow, so the screen continues the photo instead of showing a box or a band
+    q = 4
+    pw, ph, pl, pt = _even(sw / q), _even(shh / q), _even(left / q), _even(top / q)
+    W4, H4 = _even(W / q), _even(H / q)
+    pt = min(pt, H4 - ph)
+    pl = min(pl, W4 - pw)
+    return (f"[0:v]split=3[sa][sb][sc];"
+            f"[sa]crop={cw}:{ch}:{x}:{y},scale={pw}:{ph},setsar=1,"
+            f"pad={W4}:{H4}:{pl}:{pt},"
+            f"fillborders=left={pl}:right={W4 - pl - pw}:top={pt}:bottom={H4 - pt - ph}:mode=smear,"
+            f"gblur=sigma=26:sigmaV=9,setsar=1[sm];"
+            f"[sc]crop={cw}:{ch}:{x}:{y},scale={W4}:{H4}:force_original_aspect_ratio=increase,"
+            f"crop={W4}:{H4},gblur=sigma=12,setsar=1[cv];"
+            f"[sm][cv]blend=all_mode=normal:all_opacity=0.45,scale={W}:{H}:flags=bicubic,"
+            f"eq=brightness=-0.05:saturation=1.06,vignette=angle=0.5,setsar=1[bgv];"
+            f"[sb]crop={cw}:{ch}:{x}:{y},scale={_even(sw * up)}:{_even(shh * up)},setsar=1,{fz},format=rgba[fg0];"
+            f"[{k}:v]format=gray,scale={sw}:{shh}[mk];[fg0][mk]alphamerge[fg];"
+            f"[bgv][fg]overlay={left}:{top}:shortest=0[base]")
 
 
 def _card_overlay(beat: dict, n: int, size: tuple[int, int], fps: int, work: Path, used: set,
@@ -834,18 +922,24 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     kind = beat.get("shot", "clip")
     frames = max(int(round(length * fps)), 2)
     prev = data.get("_prev_src")
-    if kind == "card" and beat.get("bg", "prev") == "prev" and prev:
+    if prev and ((kind == "card" and beat.get("bg", "prev") == "prev")
+                 or (kind in ("number", "compare", "text") and beat.get("bg") == "prev")):
         src = dict(prev)
         if src["kind"] == "vid":                 # the background carries on from the shot before
             src["start"] = float(src.get("start", 0.0)) + float(data.get("_prev_len", 0.0))
     else:
         src = footage(beat, n, data["title"], size, work, keep=True)
     src = _ensure_framing(src, beat.get("subject"))
+    if kind != "card":
+        src = _wide_framing(src, beat.get("subject"))
     src["_wh"] = _probe_wh(Path(src["src"]))
     sh["src"] = src
     camera = beat.get("camera") or ("drift" if kind in ("number", "compare", "text", "card") else "push_in")
     shake = bool(beat.get("shake")) and camera == "punch"
-    p = framing.plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size, 1.06, force_fit)
+    blend = data.get("_fit_style", "blend") == "blend"
+    p = framing.plan(*src["_wh"], src.get("content") or (0, 0, 1, 1), src.get("box"), size, 1.06, force_fit,
+                     1.22 if blend else 1.0)
+    p["style"] = data.get("_fit_style", "blend")
     sh["plan"] = {k: v for k, v in p.items() if k in ("mode", "zmax")}
     inputs: list[str] = []
     if src["kind"] == "vid":
@@ -900,19 +994,33 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
             log(f"Shot {n} is too dark (brightness {yv:.0f}), brightening it")
             return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, True, force_fit)
     # framecheck: is the whole subject on screen on the first and last frame?
-    fc = _framecheck(out, beat, length, size, work, n) if kind in ("clip", "photo") else None
+    region = (0.0, 0.0, 1.0, 1.0)
+    if p["mode"] == "fit":                       # in fit the picture is the panel, not the screen
+        sw, shh = p["show"]
+        top, left = framing.fit_top(p, size), (w - sw) // 2
+        region = (left / w, top / h, (left + sw) / w, (top + shh) / h)
+    fc = _framecheck(out, beat, length, size, work, n, region) if kind in ("clip", "photo") else None
     if fc is not None:
-        sh["framecheck"] = {**fc, "mode": p["mode"], "refit": force_fit}
+        sh["framecheck"] = {**fc, "mode": p["mode"], "refit": force_fit or bool(beat.get("_repick"))}
         if fc["cut"] and not force_fit and src.get("box"):
             log(f"Framecheck: shot {n} cuts the {beat.get('subject')} ({fc['where']}), showing it whole instead")
             return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, True)
+        if fc["cut"] and not beat.get("_repick") and src.get("id"):
+            # still cut with the whole picture shown: the source itself cuts the subject
+            log(f"Framecheck: shot {n} footage cuts the {beat.get('subject')} itself ({fc['where']}), "
+                f"choosing other footage")
+            shotpick.BANNED.add(src["id"])
+            sh["beat"] = {**beat, "_repick": 1}
+            return _render_keep(sh, n, data, size, fps, length, tr_out, out, work, bright, False)
     data["_prev_src"] = {k: v for k, v in src.items() if k != "_wh"}
     data["_prev_len"] = length
 
 
-def _framecheck(seg: Path, beat: dict, length: float, size: tuple[int, int], work: Path, n: int) -> dict | None:
-    """First and last frame of a shot: the subject must not touch the top or bottom edge
-    (head or feet cut) or both sides. Frames are kept for the framecheck sheet."""
+def _framecheck(seg: Path, beat: dict, length: float, size: tuple[int, int], work: Path, n: int,
+                region: tuple = (0.0, 0.0, 1.0, 1.0)) -> dict | None:
+    """First and last frame of a shot: the subject must not touch any edge of the picture
+    (the screen, or the panel in fit mode), found with the wide net so a partly found or
+    second animal counts too. Frames are kept for the framecheck sheet."""
     subj = beat.get("subject")
     a, b = work / f"pro_fc{n:02d}a.jpg", work / f"pro_fc{n:02d}b.jpg"
     for t, f in ((0.04, a), (max(length - 0.12, 0.05), b)):
@@ -925,10 +1033,10 @@ def _framecheck(seg: Path, beat: dict, length: float, size: tuple[int, int], wor
         if not f.exists():
             continue
         im = Image.open(f).convert("RGB")
-        kb = framing.keep_box(framing.find_boxes(im, str(subj)))
-        t = framing.touching(kb, 0.01)
-        if kb and (t["top"] or t["bottom"] or (t["left"] and t["right"])):
-            where.append(f"{name}: " + "+".join(k for k, v in t.items() if v))
+        kb = framing.wide_box(framing.find_boxes(im, str(subj)))
+        edges = framing.cut_edges(kb, region)
+        if edges:
+            where.append(f"{name}: " + "+".join(edges))
     return {"cut": bool(where), "where": "; ".join(where), "checked": True}
 
 

@@ -249,8 +249,8 @@ Rakib saw these in sloth v2 and said they are perfect (27 Nov 2026). Keep them a
 - **Background:** `bg: prev` keeps the previous shot running behind the card (dimmed and
   blurred), so the picture flows; `bg: new` when the previous shot does not fit.
 - **Sound:** a soft `tick` as the card lands (the renderer adds it if the beat has no sfx).
-- **Picture choice:** the card's `query` must find a clear, well-lit photo of the thing (a
-  moth on a dark table reads badly); prefer "moth on leaf" over "small brown moth".
+- **Picture choice:** the card's `query` names the thing plainly ("dolphin swimming
+  underwater", "green algae close up", "small brown moth"), so Pixabay finds a clear photo.
 - **Name tag:** one `tag` per Short (section 2), on a clip where the subject is whole.
 
 ## 7. Lab test switches (Rakib's decision, 27 Nov 2026)

@@ -122,6 +122,36 @@ def keep_box(boxes: list[tuple]) -> tuple | None:
             max(b[3] for b in group), max(b[4] for b in group))
 
 
+def wide_box(boxes: list[tuple], ratio: float = 0.4) -> tuple | None:
+    """Everything that might be the subject: every box that scored at least `ratio` of the
+    best one (a second animal half in the frame, a head the detector boxed on its own).
+    Used to frame a shot and to check it, so a partly found animal is not cut."""
+    if not boxes:
+        return None
+    best = boxes[0]
+    group = [b for b in boxes if b[0] >= max(best[0] * ratio, MIN_SCORE)][:6]
+    return (min(b[1] for b in group), min(b[2] for b in group),
+            max(b[3] for b in group), max(b[4] for b in group))
+
+
+def cut_edges(box: tuple | None, region: tuple = (0.0, 0.0, 1.0, 1.0), edge: float = 0.012) -> list[str]:
+    """Which edges of `region` (x0, y0, x1, y1 in 0..1 of the frame) the box touches:
+    a subject that touches any edge is cut there."""
+    if not box:
+        return []
+    x0, y0, x1, y1 = region
+    out = []
+    if box[0] <= x0 + edge:
+        out.append("left")
+    if box[1] <= y0 + edge:
+        out.append("top")
+    if box[2] >= x1 - edge:
+        out.append("right")
+    if box[3] >= y1 - edge:
+        out.append("bottom")
+    return out
+
+
 def union(boxes: list[tuple | None]) -> tuple | None:
     bs = [b for b in boxes if b]
     if not bs:
@@ -203,7 +233,7 @@ def _pad(box: tuple, aspect_px: float, pad: float = PAD) -> tuple:
 
 
 def plan(src_w: int, src_h: int, content: tuple, box: tuple | None, size: tuple[int, int],
-         zoom: float = 1.06, force_fit: bool = False) -> dict:
+         zoom: float = 1.06, force_fit: bool = False, grow: float = 1.0) -> dict:
     """How to show a source on the screen.
 
     Returns {"mode": "fill"|"fit", "crop": (x, y, w, h) in source pixels (the window that
@@ -253,6 +283,9 @@ def plan(src_w: int, src_h: int, content: tuple, box: tuple | None, size: tuple[
         ww2, wh2 = cw, cw / a
     if wh2 > ch:
         wh2, ww2 = ch, ch * a
+    if grow > 1.0:                                # room around the subject for soft edges
+        ww2, wh2 = min(ww2 * grow, cw), min(wh2 * grow, ch)
+        a = ww2 / wh2
     x = min(max(bcx - ww2 / 2, 0.0), cw - ww2)
     y = min(max(bcy - wh2 / 2, 0.0), ch - wh2)
     show_w = W

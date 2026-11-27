@@ -28,6 +28,7 @@ PHOTO_PENALTY = 0.04         # a moving clip beats a still of the same quality
 REUSE_PENALTY = 0.06
 WHOLE_WEIGHT = 0.06           # whole subject in the picture beats a cut-off one (framing.wholeness)
 NO_SUBJECT_PENALTY = 0.03     # the detector can't find the subject at all
+BANNED: set = set()           # clips the framecheck threw out in this render (subject cut in the source)
 FLAT_STD = 9                  # a frame this flat (one colour) is not a picture
 UNSAFE = ["a photo of a nude person", "a naked statue", "a photo of underwear", "a bloody wound"]
 
@@ -312,7 +313,7 @@ def pick(query: str, subject: str | None, out_stem: Path, photos_only: bool = Fa
         if src.exists():
             _USED.add(m["id"])
             return {"kind": m["kind"], "src": src, "start": m.get("start", 0.0), "dur": m.get("dur"),
-                    "content": m.get("content"), "box": m.get("box")}
+                    "content": m.get("content"), "box": m.get("box"), "id": m.get("id")}
     if not available():
         return None
     pb, px = os.environ.get("PIXABAY_API_KEY", "").strip(), os.environ.get("PEXELS_API_KEY", "").strip()
@@ -339,7 +340,7 @@ def pick(query: str, subject: str | None, out_stem: Path, photos_only: bool = Fa
                     pass
             pool = list(cands.values())[:60]
             thumbs = list(ex.map(lambda c: _thumb(c["thumb"]), pool))
-        pool = [(c, t) for c, t in zip(pool, thumbs) if t is not None]
+        pool = [(c, t) for c, t in zip(pool, thumbs) if t is not None and c["id"] not in BANNED]
         if not pool:
             log(f"Shot picker: nothing found for '{query}'")
             return None
@@ -390,7 +391,7 @@ def pick(query: str, subject: str | None, out_stem: Path, photos_only: bool = Fa
                 f"(match {rel:.3f}, frame {frame_rel:.3f} at {start:.1f}s, {len(pool)} looked at"
                 f"{', reused' if reused else ''}, subject {'whole ' + str(fr['whole']) if fr['box'] else 'not found'})")
             return {"kind": c["kind"], "src": src, "start": start, "dur": dur, "content": fr["content"],
-                    "box": fr["box"]}
+                    "box": fr["box"], "id": c["id"]}
         log(f"Shot picker: no usable clip for '{query}' after {tries} downloads")
         return None
     except Exception as e:
