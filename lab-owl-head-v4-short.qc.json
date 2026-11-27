@@ -1,0 +1,46 @@
+{
+ "file": "lab-owl-head-v4-short.mp4",
+ "ok": true,
+ "errors": [],
+ "warnings": [
+  "refill: no footage filled the screen at 13.2s, shown full screen centred on the subject",
+  "refill: no footage filled the screen at 24.2s, shown full screen centred on the subject",
+  "framecheck: subject still cut at 13.2s (first: left+top)",
+  "framecheck: subject still cut at 24.2s (first: left+right+bottom; last: left+top+right+bottom)"
+ ],
+ "info": {
+  "duration": 37.87,
+  "size": "1080x1920",
+  "fps": 30.0,
+  "black": [],
+  "lufs": -14.7,
+  "true_peak": -2.3,
+  "caption_boxes": 55,
+  "framecheck": {
+   "checked": 10,
+   "refit": 3,
+   "modes": [
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill"
+   ],
+   "replaced": [
+    "0.8s prepared picture barn-owl-post.jpg (would only fit shrunk)",
+    "7.9s prepared picture snowy-owl.jpg (would only fit shrunk)",
+    "10.4s prepared picture burrowing-owl.jpg (would only fit shrunk)"
+   ]
+  }
+ }
+}
