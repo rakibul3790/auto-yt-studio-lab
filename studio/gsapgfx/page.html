@@ -35,7 +35,9 @@ const blurIn = (tl, els, at, dur = 0.16, stagger = 0.08) => tl.fromTo(els, { opa
 
 function buildNumber(s) {
   const W = s.w, H = s.h, n = s.number || {};
-  const fin = s.final, suf = String(n.suffix || '').toUpperCase(), lab = String(n.label || '').toUpperCase();
+  const suf = String(n.suffix || '').toUpperCase(), lab = String(n.label || '').toUpperCase();
+  // size and box from the widest value the count shows (a count down starts wider than it ends)
+  const fin = [s.final].concat(s.values || []).reduce((a, b) => (textW(b, 100) > textW(a, 100) ? b : a), s.final);
   const dial = !!n.dial;
   const big = fit(fin + suf, W * (dial ? 0.5 : 0.78), dial ? 190 : 260);
   const sufPx = big * 0.42;

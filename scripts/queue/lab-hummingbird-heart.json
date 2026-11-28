@@ -1,0 +1,330 @@
+{
+ "title": "A Hummingbird's Heart Beats 1,200 Times a Minute",
+ "format": "short",
+ "style": "pro",
+ "motion": "v2",
+ "music_mood": "upbeat",
+ "follow": false,
+ "description": "A hummingbird's heart can beat about 1,200 times a minute, while yours beats about 70.\nTo survive the night, it drops into torpor and its heart slows to around 50 beats a minute.",
+ "tags": [
+  "hummingbird",
+  "hummingbird facts",
+  "animal facts",
+  "bird facts",
+  "weird facts",
+  "nature facts",
+  "science facts",
+  "fun facts",
+  "shorts"
+ ],
+ "hashtags": [
+  "hummingbird",
+  "animalfacts"
+ ],
+ "thumbnail_text": "1,200 beats a minute",
+ "scenes": [
+  {
+   "text": "A hummingbird's heart can beat twelve hundred times a minute.",
+   "say": "[excited] A hummingbird's heart can beat twelve hundred times a minute.",
+   "look": "excited",
+   "visual": "hummingbird hovering",
+   "subject": "hummingbird",
+   "on_screen": "1,200 beats a minute",
+   "highlight": [
+    "twelve hundred times"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "hummingbird hovering flower",
+     "subject": "hummingbird",
+     "camera": "punch",
+     "sfx": [
+      "impact"
+     ],
+     "hook": {
+      "angle": -0.38,
+      "seconds": 0.7
+     },
+     "alt_query": [
+      "hummingbird flying",
+      "hummingbird feeding"
+     ]
+    },
+    {
+     "at_word": 5,
+     "shot": "clip",
+     "query": "heart rate monitor screen",
+     "subject": "monitor",
+     "camera": "push_in",
+     "transition": "cut"
+    }
+   ]
+  },
+  {
+   "text": "Yours beats about seventy.",
+   "say": "[laughs] Yours beats about seventy.",
+   "visual": "hummingbird perched",
+   "subject": "hummingbird",
+   "on_screen": "1,200 vs 70",
+   "highlight": [
+    "seventy"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "compare",
+     "bg": "new",
+     "query": "hummingbird perched branch",
+     "subject": "hummingbird",
+     "camera": "drift",
+     "transition": "cut",
+     "sfx": [
+      "tick"
+     ],
+     "compare": {
+      "left": {
+       "label": "HUMMINGBIRD",
+       "value": 1200
+      },
+      "right": {
+       "label": "YOU",
+       "value": 70
+      },
+      "unit": "beats a minute"
+     }
+    }
+   ]
+  },
+  {
+   "text": "Its wings move so fast that they hum.",
+   "say": "[curious] Its wings move so fast that they hum.",
+   "visual": "hummingbird wings",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "hum"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "hummingbird wings slow motion",
+     "subject": "hummingbird",
+     "camera": "tilt_up",
+     "transition": "slide_up",
+     "alt_query": [
+      "hummingbird flying slow motion",
+      "hummingbird hovering"
+     ],
+     "tag": {
+      "title": "Hummingbird",
+      "sub": "The Americas, from Alaska to Chile"
+     }
+    }
+   ]
+  },
+  {
+   "text": "Up to eighty times a second, in a figure eight.",
+   "say": "Up to eighty times a second, in a figure eight.",
+   "visual": "hummingbird wings spread",
+   "subject": "hummingbird",
+   "on_screen": "80 per second",
+   "highlight": [
+    "eighty times a second"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "card",
+     "bg": "prev",
+     "camera": "drift",
+     "transition": "cut",
+     "card": {
+      "style": "rounded",
+      "query": "hummingbird wings spread",
+      "subject": "hummingbird",
+      "y": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "text": "It's the only bird that can fly backwards.",
+   "say": "[excited] It's the only bird that can fly backwards.",
+   "look": "excited",
+   "visual": "hummingbird flying",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "fly backwards"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "hummingbird flying",
+     "subject": "hummingbird",
+     "camera": "pan_left",
+     "transition": "cut",
+     "alt_query": [
+      "hummingbird hovering",
+      "hummingbird in flight"
+     ]
+    }
+   ]
+  },
+  {
+   "text": "But that tiny engine needs a lot of fuel.",
+   "say": "[serious] But that tiny engine needs a lot of fuel.",
+   "visual": "hummingbird feeding",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "a lot of fuel"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "hummingbird drinking nectar",
+     "subject": "hummingbird",
+     "camera": "push_in",
+     "transition": "cut",
+     "sfx": [
+      "riser"
+     ],
+     "alt_query": [
+      "hummingbird feeding flower"
+     ]
+    }
+   ]
+  },
+  {
+   "text": "So every night, it almost shuts down.",
+   "say": "[whispers] So every night, it almost shuts down.",
+   "look": "whisper",
+   "visual": "hummingbird resting",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "shuts down"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "text",
+     "text": "IT SHUTS DOWN",
+     "bg": "new",
+     "query": "hummingbird resting branch",
+     "subject": "hummingbird",
+     "camera": "drift",
+     "transition": "flash",
+     "sfx": [
+      "thud"
+     ],
+     "alt_query": [
+      "hummingbird perched"
+     ]
+    }
+   ]
+  },
+  {
+   "text": "Its heart drops to just fifty beats a minute.",
+   "say": "[softly] Its heart drops to just fifty beats a minute.",
+   "visual": "hummingbird resting",
+   "subject": "hummingbird",
+   "on_screen": "1,200 → 50",
+   "highlight": [
+    "fifty beats"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "number",
+     "bg": "prev",
+     "query": "hummingbird resting branch",
+     "subject": "hummingbird",
+     "camera": "pull_out",
+     "transition": "zoom",
+     "sfx": [
+      "tick"
+     ],
+     "number": {
+      "from": 1200,
+      "to": 50,
+      "suffix": "",
+      "label": "HEARTBEATS A MINUTE",
+      "keys": [
+       [
+        1,
+        1200,
+        "start"
+       ],
+       [
+        5,
+        50,
+        "end"
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "text": "Like a tiny hibernation, every single night.",
+   "say": "[warmly] Like a tiny hibernation, every single night.",
+   "visual": "hummingbird sleeping",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "every single night"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "card",
+     "bg": "new",
+     "query": "hummingbird perched branch",
+     "subject": "hummingbird",
+     "camera": "drift",
+     "transition": "fade",
+     "sfx": [
+      "shimmer"
+     ],
+     "card": {
+      "style": "polaroid",
+      "query": "hummingbird sleeping branch",
+      "subject": "hummingbird",
+      "caption": "Asleep",
+      "y": 0.3
+     }
+    }
+   ]
+  },
+  {
+   "text": "So the next time your heart races, remember,",
+   "say": "[curious] So the next time your heart races, remember,",
+   "visual": "hummingbird hovering",
+   "subject": "hummingbird",
+   "on_screen": "",
+   "highlight": [
+    "heart races"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "hummingbird hovering red flower",
+     "subject": "hummingbird",
+     "camera": "pull_out",
+     "transition": "cut",
+     "alt_query": [
+      "hummingbird hovering flower"
+     ]
+    }
+   ]
+  }
+ ]
+}

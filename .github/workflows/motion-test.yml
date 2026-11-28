@@ -1,7 +1,7 @@
 # Lab motion pack test: renders the same script with the old motion and with "motion": "v2",
 # side by side. Started by pushing a motion-test-* branch. NEVER uploads to YouTube and never
 # moves scripts; each video is saved to its own previews-motion-<variant> branch and as an artifact.
-# The scripts carry a ready-made voice (voice_cache), so no ElevenLabs credits are used.
+# A script with voice_cache costs no ElevenLabs credits; a new script reads its voice once (saved under voice/).
 name: Motion pack test (lab)
 
 on:
@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [old, v2]
+        variant: [hummingbird-heart]
     steps:
       - uses: actions/checkout@v5
 
@@ -114,11 +114,12 @@ jobs:
 
       - name: Render (test only, no upload)
         env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
           NODE_PATH: /tmp/gfx/node_modules
           CHROME_PATH: /usr/bin/google-chrome
-        run: python -m studio.main --file "scripts/queue/lab-owl-motion-${{ matrix.variant }}.json" --count 1 --no-upload
+        run: python -m studio.main --file "scripts/queue/lab-${{ matrix.variant }}.json" --count 1 --no-upload
 
       - name: Save the video (artifact)
         if: always()
@@ -138,6 +139,15 @@ jobs:
           files=(output/*.mp4 output/*.qc.json output/*.framecheck.jpg)
           [ ${#files[@]} -eq 0 ] && { echo "Nothing rendered"; exit 0; }
           mkdir -p /tmp/prev && cp "${files[@]}" /tmp/prev/
+          for d in work/*/; do [ -f "$d/plan.json" ] && cp "$d/plan.json" "/tmp/prev/$(basename "$d").plan.json"; done
+          # the paid voice read, so a re-render of the same script costs no new ElevenLabs credits
+          for d in work/*/; do
+            v=("$d"pro_*_whole.mp3)
+            if [ -f "${v[0]}" ]; then
+              mkdir -p "/tmp/prev/voice/$(basename "$d")"
+              cp "$d"pro_*_whole.mp3 "$d"pro_*_whole.json "/tmp/prev/voice/$(basename "$d")/" 2>/dev/null || true
+            fi
+          done
           cd /tmp/prev
           git init -q -b "previews-motion-${{ matrix.variant }}"
           git config user.name  "github-actions[bot]"
