@@ -55,10 +55,14 @@
     {
      "at_word": 5,
      "shot": "clip",
-     "query": "heart rate monitor screen",
-     "subject": "monitor",
+     "query": "hummingbird flying fast",
+     "subject": "hummingbird",
      "camera": "push_in",
-     "transition": "cut"
+     "transition": "cut",
+     "alt_query": [
+      "hummingbird hovering",
+      "hummingbird in flight"
+     ]
     }
    ]
   },
@@ -164,13 +168,13 @@
     {
      "at_word": 0,
      "shot": "clip",
-     "query": "hummingbird flying",
+     "query": "hummingbird hovering mid air",
      "subject": "hummingbird",
      "camera": "pan_left",
      "transition": "cut",
      "alt_query": [
       "hummingbird hovering",
-      "hummingbird in flight"
+      "hummingbird in flight slow motion"
      ]
     }
    ]
@@ -188,7 +192,7 @@
     {
      "at_word": 0,
      "shot": "clip",
-     "query": "hummingbird drinking nectar",
+     "query": "hummingbird feeding red flower",
      "subject": "hummingbird",
      "camera": "push_in",
      "transition": "cut",
@@ -196,7 +200,8 @@
       "riser"
      ],
      "alt_query": [
-      "hummingbird feeding flower"
+      "hummingbird drinking nectar flower",
+      "hummingbird feeding"
      ]
     }
    ]
@@ -247,7 +252,7 @@
      "query": "hummingbird resting branch",
      "subject": "hummingbird",
      "camera": "pull_out",
-     "transition": "zoom",
+     "transition": "cut",
      "sfx": [
       "tick"
      ],
@@ -289,7 +294,7 @@
      "query": "hummingbird perched branch",
      "subject": "hummingbird",
      "camera": "drift",
-     "transition": "fade",
+     "transition": "cut",
      "sfx": [
       "shimmer"
      ],
@@ -326,5 +331,6 @@
     }
    ]
   }
- ]
+ ],
+ "voice_cache": "scripts/voice/lab-hummingbird-heart"
 }
