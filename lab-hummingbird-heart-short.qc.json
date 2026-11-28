@@ -1,0 +1,42 @@
+{
+ "file": "lab-hummingbird-heart-short.mp4",
+ "ok": true,
+ "errors": [],
+ "warnings": [
+  "black picture 33.13-33.27s"
+ ],
+ "info": {
+  "duration": 33.31,
+  "size": "1080x1920",
+  "fps": 30.0,
+  "black": [
+   [
+    33.1333,
+    33.2667
+   ]
+  ],
+  "lufs": -14.7,
+  "true_peak": -2.1,
+  "caption_boxes": 47,
+  "framecheck": {
+   "checked": 6,
+   "refit": 1,
+   "modes": [
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill",
+    "fill"
+   ],
+   "replaced": [
+    "17.1s other footage (would only fit shrunk)"
+   ]
+  }
+ }
+}
