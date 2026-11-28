@@ -119,6 +119,7 @@ jobs:
           PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
           NODE_PATH: /tmp/gfx/node_modules
           CHROME_PATH: /usr/bin/google-chrome
+          STUDIO_QC_STRICT: "0"          # test: keep the video even when QC warns, so the fault can be seen
         run: python -m studio.main --file "scripts/queue/lab-${{ matrix.variant }}.json" --count 1 --no-upload
 
       - name: Save the video (artifact)
@@ -140,6 +141,7 @@ jobs:
           [ ${#files[@]} -eq 0 ] && { echo "Nothing rendered"; exit 0; }
           mkdir -p /tmp/prev && cp "${files[@]}" /tmp/prev/
           for d in work/*/; do [ -f "$d/plan.json" ] && cp "$d/plan.json" "/tmp/prev/$(basename "$d").plan.json"; done
+          mkdir -p /tmp/prev/segs && cp work/*/pro_seg*_1080x1920.mp4 work/*/pro_shot*.txt /tmp/prev/segs/ 2>/dev/null || true
           # the paid voice read, so a re-render of the same script costs no new ElevenLabs credits
           for d in work/*/; do
             v=("$d"pro_*_whole.mp3)
