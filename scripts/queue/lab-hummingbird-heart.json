@@ -290,7 +290,7 @@
     {
      "at_word": 0,
      "shot": "card",
-     "bg": "new",
+     "bg": "prev",
      "query": "hummingbird perched branch",
      "subject": "hummingbird",
      "camera": "drift",
