@@ -61,6 +61,9 @@ MOOD_TRACKS = {
 }
 YELLOW = (255, 214, 10)
 MIN_SHOT = 0.7
+# many stock clips fade to black in their last half second: a shot (or a background that carries
+# on from the shot before) never uses the last TAIL seconds of a clip (lab, hummingbird test 28 Nov)
+TAIL = 0.6
 
 
 def _seed(*parts) -> int:
@@ -742,7 +745,7 @@ def _render_shot(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     inputs: list[str] = []
     chain = ""
     if src["kind"] == "vid":
-        st = min(src["start"], max(src["dur"] - length - 0.1, 0.0))     # room for the whole shot
+        st = min(src["start"], max(src["dur"] - length - TAIL, 0.0))     # room for the whole shot, clear of the clip's own fade-out
         avail = max(src["dur"] - st, 0.5)
         slow = min(max(length / avail, 1.0), 1.6) if avail < length else 1.0
         loop = avail * slow < length
@@ -1064,7 +1067,7 @@ def _render_keep(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
     sh["plan"] = {k: v for k, v in p.items() if k in ("mode", "zmax")}
     inputs: list[str] = []
     if src["kind"] == "vid":
-        st = min(float(src.get("start", 0.0)), max(float(src["dur"]) - length - 0.1, 0.0))
+        st = min(float(src.get("start", 0.0)), max(float(src["dur"]) - length - TAIL, 0.0))
         avail = max(float(src["dur"]) - st, 0.5)
         slow = min(max(length / avail, 1.0), 1.6) if avail < length else 1.0
         loop = avail * slow < length
