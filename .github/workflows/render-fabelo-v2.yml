@@ -1,0 +1,58 @@
+# Fabelo Studio v2: renders films on a fabelo-v2-render-* branch with the full v2 pipeline
+# (voices → build → record with motion blur → mix → finish → QC) and commits the results back
+# to the same branch. Never uploads anything.
+name: Render Fabelo v2 film
+
+on:
+  push:
+    branches: ["fabelo-v2-render-*"]
+    paths: ["fabelo/v2/renders/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-fabelo-v2-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tools
+        run: |
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+          ffmpeg -hide_banner -filters 2>/dev/null | grep -q " tmix " || { echo "ffmpeg without tmix"; exit 1; }
+          pip install --quiet kokoro-onnx soundfile numpy
+          mkdir -p /tmp/rt && cd /tmp/rt && npm init -y >/dev/null && npm i --silent puppeteer-core
+          mkdir -p ~/tts && cd ~/tts
+          REL=https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0
+          for f in kokoro-v1.0.int8.onnx voices-v1.0.bin; do [ -s "$f" ] || curl -sSL -o "$f" "$REL/$f"; done
+          ls -l /usr/bin/google-chrome
+      - name: Render
+        env:
+          NODE_PATH: /tmp/rt/node_modules
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          export FABELO_MODELS=~/tts
+          cd fabelo
+          for d in v2/renders/*/; do
+            d="${d%/}"
+            [ -f "$d/RENDER" ] || continue
+            echo "::group::render $d"
+            bash v2/tools/render.sh "$d" $(cat "$d/RENDER") --workers 2
+            rm -f "$d/RENDER"
+            echo "::endgroup::"
+            [ -f "$d/qc/report.md" ] && cat "$d/qc/report.md" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - name: Save results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A fabelo/v2/renders
+          git diff --cached --quiet && exit 0
+          git commit -m "Fabelo v2 render results"
+          git push

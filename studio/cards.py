@@ -222,9 +222,26 @@ def _ease_out(t: float) -> float:
     return 1 - (1 - t) ** 3
 
 
-def settle_frames(card: Image.Image, fps: int, out_dir: Path, frames: int = 9) -> tuple[Path, int, int]:
+def _spring(x: float, zeta: float = 0.78, xc: float = 0.5) -> float:
+    """Damped spring that ends exactly on 1 at x = 1 (motion pack: 0.78 = one small, premium overshoot)."""
+    if x <= 0:
+        return 0.0
+    if x >= 1:
+        return 1.0
+    wdn = math.sqrt(1 - zeta * zeta)
+    w = (math.pi - math.atan(wdn / zeta)) / (xc * wdn)
+    f = lambda u: 1 - math.exp(-zeta * w * u) * (math.cos(w * wdn * u) + zeta / wdn * math.sin(w * wdn * u))
+    return f(x) + (1 - f(1.0)) * x ** 3
+
+
+def settle_frames(card: Image.Image, fps: int, out_dir: Path, frames: int = 9,
+                  spring: bool = False) -> tuple[Path, int, int]:
     """Settle & hold: from 7% bigger, 40 px lower and blurred to sharp and still.
+    spring (motion pack v2): a longer settle (about 0.55 s) on a premium spring, the card
+    rising from below with a hint of tilt that straightens; it lands once and holds dead still.
     Frames are the card's own size plus margin; returns (dir, margin_x, margin_y)."""
+    if spring:
+        frames = max(int(round(fps * 0.55)), 10)
     out_dir.mkdir(parents=True, exist_ok=True)
     for old in out_dir.glob("*.png"):
         old.unlink()
@@ -236,7 +253,16 @@ def settle_frames(card: Image.Image, fps: int, out_dir: Path, frames: int = 9) -
         dy = 40 * (1 - e)
         blur = 8 * (1 - e)
         alpha = min(1.0, i / 3)
+        rot = 0.0
+        if spring:
+            k = _spring(i / frames)
+            s = 0.9 + 0.1 * k
+            dy = 70 * (1 - k)
+            blur = 8 * (1 - min(1.0, i / max(frames * 0.35, 1)))
+            rot = 2.5 * (1 - k)
         im = card.resize((max(int(w * s), 2), max(int(h * s), 2)), Image.BICUBIC)
+        if abs(rot) > 0.05:
+            im = im.rotate(rot, resample=Image.BICUBIC, expand=True)
         if blur > 0.4:
             im = im.filter(ImageFilter.GaussianBlur(blur))
         if alpha < 1:

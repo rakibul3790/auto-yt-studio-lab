@@ -63,10 +63,6 @@
     settle: (k) => (k >= 1 ? 1 : 1 - Math.exp(-6 * k) * Math.cos(9 * k)),  // overshoot + settle
     snap: (k) => (k >= 1 ? 1 : 1 - Math.pow(1 - k, 4) * (1 + 0 * k))
   };
-  for (const k in EX) if (!S.EASE[k]) S.EASE[k] = EX[k];
-  const E = S.EASE;
-  const ease = (name) => (typeof name === 'function' ? name : E[name] || E.inOut);
-
   // damped-spring step response; x = time / duration, crossing 1 near x = xc
   function spring(x, zeta, xc = 0.75) {
     if (x <= 0) return 0;
@@ -74,6 +70,24 @@
     const w = (Math.PI - Math.atan(wdN / zeta)) / (xc * wdN), wd = w * wdN;
     return 1 - Math.exp(-zeta * w * x) * (Math.cos(wd * x) + (zeta / wdN) * Math.sin(wd * x));
   }
+  // Motion pack (Nov 2026, from the HyperFrames motion rules): GSAP-style power curves, so an
+  // arrival can land on a long tail (power4Out / expoOut), a camera move eases both ways
+  // (power2InOut) and an exit or a zoom-through accelerates (power3In). Springs are named by
+  // feel: springPremium (damping 0.78, one small overshoot) and springPlayful (0.5). Both end
+  // exactly on 1, so a Track never jumps at the end of a move.
+  const springEnd = (zeta) => { const e = spring(1, zeta, 0.5); return (k) => (k >= 1 ? 1 : k <= 0 ? 0 : spring(k, zeta, 0.5) + (1 - e) * k * k * k); };
+  Object.assign(EX, {
+    power2In: (k) => k * k, power2Out: (k) => 1 - (1 - k) * (1 - k),
+    power2InOut: (k) => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2),
+    power3In: (k) => k * k * k, power3Out: (k) => 1 - Math.pow(1 - k, 3),
+    power3InOut: (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2),
+    power4In: (k) => k ** 4, power4Out: (k) => 1 - Math.pow(1 - k, 4),
+    power4InOut: (k) => (k < 0.5 ? 8 * k ** 4 : 1 - Math.pow(-2 * k + 2, 4) / 2),
+    springPremium: springEnd(0.78), springPlayful: springEnd(0.5)
+  });
+  for (const k in EX) if (!S.EASE[k]) S.EASE[k] = EX[k];
+  const E = S.EASE;
+  const ease = (name) => (typeof name === 'function' ? name : E[name] || E.inOut);
 
   /* ------------------------------------------------------------- tracks */
   class Track {
@@ -300,8 +314,10 @@
   }
 
   /* ---------------------------------------------------- transitions */
-  const TR_DEFAULT_DUR = { cut: 0, smash: 0, dissolve: 0.6, dip: 0.8, whip: 0.42, iris: 1.0, ink: 1.0, page: 0.9, match: 0.5 };
-  const TR_SFX = { whip: 'whip', ink: 'splat', page: 'page', iris: 'iris', smash: 'impact', match: 'swish', dip: null, dissolve: null, cut: null };
+  const TR_DEFAULT_DUR = { cut: 0, smash: 0, dissolve: 0.6, dip: 0.8, whip: 0.42, iris: 1.0, ink: 1.0, page: 0.9, match: 0.5,
+    blurswap: 0.4, grow: 0.85, zoomthrough: 0.6, dipcut: 0.2 };
+  const TR_SFX = { whip: 'whip', ink: 'splat', page: 'page', iris: 'iris', smash: 'impact', match: 'swish', dip: null, dissolve: null, cut: null,
+    blurswap: 'swish', grow: 'swish', zoomthrough: 'whip', dipcut: null };
 
   function blobPath(cx, cy, R, seed, spikes = true) {
     const N = 56; const pts = [];
@@ -357,6 +373,7 @@
     /**
      * Transition at time `at` (the boundary between two shots).
      * type: cut | smash | dissolve | dip | whip | iris | ink | page | match
+     *       | blurswap | grow | zoomthrough | dipcut   (motion pack: center = screen point for grow/zoomthrough)
      * o: { dur, dir (whip/page: 1 = to the left), at: [x,y] screen point (iris/ink centre),
      *      color (dip/iris/ink: default ink), from:[x,y], to:[x,y] (match: world points), sfx:false }
      */
@@ -522,18 +539,129 @@
           const g = (pt, z) => `translate(${fp(pt[0])} ${fp(pt[1])}) scale(${fp(z)}) translate(${fp(-pt[0])} ${fp(-pt[1])})`;
           return `<g transform="${g(sA, zA)}">${out()}</g><g transform="${g(sB, zB)}" opacity="${f(mix)}">${inn()}</g>`;
         }
+        // ---- motion pack (Nov 2026, from the HyperFrames transition rules) ----
+        case 'blurswap': {
+          // one stage, the ground never cuts: the old picture blurs ~8 px and fades, the new one
+          // arrives blurred and sharpens. For a change of idea in the same place.
+          const ko = E.power2In(clamp(p / 0.55)), ki = E.power2Out(clamp((p - 0.45) / 0.55));
+          const bo = 9 * ko, bi = 9 * (1 - ki);
+          let s = `<defs><filter id="bsA" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${f(bo)}"/></filter>` +
+            `<filter id="bsB" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${f(bi)}"/></filter></defs>`;
+          if (ko < 0.999) s += `<g opacity="${f(1 - ko)}"${bo > 0.05 ? ' filter="url(#bsA)"' : ''}>${out()}</g>`;
+          if (ki > 0.001) s += `<g opacity="${f(ki)}"${bi > 0.05 ? ' filter="url(#bsB)"' : ''}>${inn()}</g>`;
+          return s;
+        }
+        case 'grow': {
+          // object becomes the world: an ink-edged card opens at `center`, grows past the frame
+          // with its corners straightening, and the next shot lives inside it. Around it the old
+          // shot blurs ~15 px and fades.
+          const k = E.power3InOut(p);
+          const c0 = cxy;
+          const s0 = Math.min(v.w, v.h) * 0.16, s1 = R * 2.3;
+          const wv = lerp(s0, s1, k), hv = lerp(s0 * 1.12, s1, k);
+          const rr = lerp(wv * 0.42, 18, E.power2Out(clamp(p * 1.4)));
+          const blurA = 15 * E.power2Out(clamp(p / 0.5)), opA = 1 - 0.75 * E.power2In(clamp(p / 0.7));
+          const x0 = c0[0] - wv / 2, y0 = c0[1] - hv / 2;
+          const sB = lerp(0.6, 1, E.power2Out(p));
+          const inner = `<g transform="translate(${fp(c0[0])} ${fp(c0[1])}) scale(${fp(sB)}) translate(${fp(-c0[0])} ${fp(-c0[1])})">${inn()}</g>`;
+          return `<defs><filter id="grA" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${f(blurA)}"/></filter>` +
+            `<clipPath id="grC"><rect x="${f(x0)}" y="${f(y0)}" width="${f(wv)}" height="${f(hv)}" rx="${f(rr)}"/></clipPath></defs>` +
+            `<g opacity="${f(opA)}"${blurA > 0.05 ? ' filter="url(#grA)"' : ''}>${out()}</g>` +
+            `<rect x="${f(x0 + 6)}" y="${f(y0 + 14)}" width="${f(wv)}" height="${f(hv)}" rx="${f(rr)}" fill="#3a2f1c" opacity="${f(0.16 * (1 - k))}"/>` +
+            `<rect x="${f(x0)}" y="${f(y0)}" width="${f(wv)}" height="${f(hv)}" rx="${f(rr)}" fill="${C.paper}"/>` +
+            `<g clip-path="url(#grC)">${inner}</g>` +
+            `<rect x="${f(x0)}" y="${f(y0)}" width="${f(wv)}" height="${f(hv)}" rx="${f(rr)}" fill="none" stroke="${C.ink}" stroke-width="6" opacity="${f(0.7 * (1 - E.power2In(p)))}"/>`;
+        }
+        case 'zoomthrough': {
+          // the camera dives into `center` (accelerating, blur rising), the next shot arrives a
+          // little large and settles on a long tail
+          const ka = E.power3In(clamp(p / 0.6)), kb = E.expoOut(clamp((p - 0.45) / 0.55));
+          const za = 1 + 2.4 * ka, zb = 1.1 - 0.1 * kb, ba = 12 * ka, bb = 6 * (1 - kb);
+          const g = (pt, z) => `translate(${fp(pt[0])} ${fp(pt[1])}) scale(${fp(z)}) translate(${fp(-pt[0])} ${fp(-pt[1])})`;
+          let s = `<defs><filter id="ztA" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${f(ba)}"/></filter>` +
+            `<filter id="ztB" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${f(bb)}"/></filter></defs>`;
+          const opA = 1 - E.power2In(clamp((p - 0.35) / 0.3));
+          if (opA > 0.001) s += `<g transform="${g(cxy, za)}" opacity="${f(opA)}"${ba > 0.05 ? ' filter="url(#ztA)"' : ''}>${out()}</g>`;
+          if (p > 0.45) s += `<g transform="${g(cxy, zb)}" opacity="${f(clamp((p - 0.45) / 0.15))}"${bb > 0.05 ? ' filter="url(#ztB)"' : ''}>${inn()}</g>`;
+          return s;
+        }
+        case 'dipcut': {
+          // the outgoing frame darkens ~40 % for a few frames before a hard cut, so the cut reads as meant
+          if (p >= 0.5) return inn();
+          const k = E.power2In(p * 2);
+          return out() + `<rect x="${f(v.x - 20)}" y="${f(v.y - 20)}" width="${f(v.w + 40)}" height="${f(v.h + 40)}" fill="#1c1408" opacity="${f(0.4 * k)}"/>`;
+        }
         default: return t < cu.at ? out() : inn();
       }
     }
 
     _titleSVG(tx, i, t) {
       if (t < tx.at || t > tx.until) return '';
+      if (tx.enter && tx.enter !== 'write') return this._titleStyled(tx, i, t);
       const op = Math.min(clamp((t - tx.at) / 0.35), clamp((tx.until - t) / 0.4));
       const k = tx.write > 0 ? E.quintOut(clamp((t - tx.at) / tx.write)) : 1;
       const wEst = measure(tx.str, tx.size) + tx.size;
       const id = `ft${i}`;
       return `<g data-qc="hud"><clipPath id="${id}"><rect x="${f(tx.x - wEst / 2)}" y="${f(tx.y - tx.size * 1.2)}" width="${f(wEst * k)}" height="${f(tx.size * 1.8)}"/></clipPath>` +
         `<text x="${f(tx.x)}" y="${f(tx.y)}" text-anchor="middle" font-family="Caveat, cursive" font-size="${tx.size}" font-weight="${tx.weight}" fill="${tx.color}" opacity="${f(op)}" clip-path="url(#${id})" paint-order="stroke" stroke="${C.paper}" stroke-width="${f(tx.size * 0.12)}" stroke-linejoin="round">${esc(tx.str)}</text></g>`;
+    }
+
+    /**
+     * Motion-pack title entrances (HyperFrames rules): the title lands, then holds dead still;
+     * the exit is a quick blur-out word by word, shorter than the entrance.
+     *   enter: 'words'   each word blurs in (6 → 0) and fades up, 0.067 s apart, no movement
+     *          'ink'     the line appears light grey, then each word inks in, 0.08 s apart
+     *          'letters' each letter fades from 0.3 to 1 with a slight blur, 0.05 s apart (names)
+     *   accent: a word of the title drawn in red (the one word that carries the meaning)
+     */
+    _titleStyled(tx, i, t) {
+      const words = String(tx.str).split(/\s+/).filter(Boolean);
+      const size = tx.size, space = size * 0.26;
+      const wd = words.map((w) => measure(w, size));
+      const total = wd.reduce((a, b) => a + b, 0) + space * (words.length - 1);
+      const outDur = 0.22, outStart = tx.until - outDur;
+      const st = tx.enter === 'ink' ? 0.08 : 0.067;
+      const grey = '#B9B1A2';
+      let x = tx.x - total / 2, body = '', defs = '';
+      let li = 0;
+      words.forEach((w, k) => {
+        const cx = x + wd[k] / 2;
+        const ex = clamp((t - (outStart + k * 0.02)) / 0.16);       // exit, word by word
+        const eo = E.power2In(ex);
+        const col0 = tx.accent && w.replace(/[^\w']/g, '').toLowerCase() === String(tx.accent).toLowerCase() ? C.red : tx.color;
+        const common = `text-anchor="middle" font-family="Caveat, cursive" font-size="${size}" font-weight="${tx.weight}" paint-order="stroke" stroke="${C.paper}" stroke-width="${f(size * 0.12)}" stroke-linejoin="round"`;
+        if (tx.enter === 'letters') {
+          let spans = '';
+          for (const ch of w) {
+            const kk = E.power2Out(clamp((t - (tx.at + li * 0.05)) / 0.18));
+            spans += `<tspan fill-opacity="${f((0.3 + 0.7 * kk) * (kk > 0 ? 1 : 0))}" stroke-opacity="${f(kk)}">${esc(ch)}</tspan>`;
+            li++;
+          }
+          const lb = Math.max(3 * (1 - E.power2Out(clamp((t - tx.at) / (0.05 * li + 0.15)))), 6 * eo);
+          const id = `tsl${i}_${k}`;
+          if (lb > 0.05) defs += `<filter id="${id}" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="${f(lb)}"/></filter>`;
+          body += `<text x="${f(cx)}" y="${f(tx.y)}" ${common} fill="${col0}" opacity="${f(1 - eo)}"${lb > 0.05 ? ` filter="url(#${id})"` : ''}>${spans}</text>`;
+          li++;
+        } else {
+          const kin = E.power2Out(clamp((t - (tx.at + k * st)) / (tx.enter === 'ink' ? 0.1 : 0.13)));
+          let op, fill, blur;
+          if (tx.enter === 'ink') {
+            op = clamp((t - tx.at) / 0.12);
+            fill = kin >= 1 ? col0 : mixHex(grey, col0, kin);
+            blur = 6 * eo;
+          } else {
+            op = kin; fill = col0; blur = Math.max(6 * (1 - kin), 6 * eo);
+          }
+          op *= 1 - eo;
+          if (op > 0.002) {
+            const id = `tsw${i}_${k}`;
+            if (blur > 0.05) defs += `<filter id="${id}" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="${f(blur)}"/></filter>`;
+            body += `<text x="${f(cx)}" y="${f(tx.y)}" ${common} fill="${fill}" opacity="${f(op)}"${blur > 0.05 ? ` filter="url(#${id})"` : ''}>${esc(w)}</text>`;
+          }
+        }
+        x += wd[k] + space;
+      });
+      return `<g data-qc="hud">${defs ? `<defs>${defs}</defs>` : ''}${body}</g>`;
     }
 
     _captionSVG(t) {
@@ -624,6 +752,7 @@
   }
 
   /* -------------------------------------------------------- captions */
+  const mixHex = (a, b, k) => { const pa = parseInt(a.slice(1), 16), pb = parseInt(String(b).slice(1), 16); if (isNaN(pb)) return b; const ch = (sh) => Math.round(lerp((pa >> sh) & 255, (pb >> sh) & 255, k)); return `rgb(${ch(16)},${ch(8)},${ch(0)})`; };
   const esc = (s) => String(s).replace(/[<>&"']/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
   let mctx = null; const mcache = {};
   function measure(str, size) {

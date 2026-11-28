@@ -122,8 +122,16 @@ jobs:
           print("CLIP ready")
           PY
 
+      - name: Install the GSAP graphics renderer (lab motion pack v2, only used with motion v2)
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/gfx && cd /tmp/gfx && npm init -y >/dev/null && npm i --silent puppeteer-core gsap
+          ls -l /usr/bin/google-chrome
+
       - name: Make and upload video
         env:
+          NODE_PATH: /tmp/gfx/node_modules
+          CHROME_PATH: /usr/bin/google-chrome
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}

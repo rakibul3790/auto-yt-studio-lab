@@ -81,6 +81,10 @@ def render(data: dict, cfg: dict, work: Path, out_file: Path, size: tuple[int, i
     data = _with_follow(data, cfg)
     data = director.plan(data)
     data = _feelings(data)
+    global _SUBPIX
+    _SUBPIX = str(data.get("motion", vcfg.get("pro_motion", ""))).lower() == "v2"
+    if _SUBPIX:
+        log("Motion pack v2: sub-pixel camera, GSAP graphics, spring cards")
     data["_keep"] = str(vcfg.get("pro_framing", "")).lower() == "keep"
     data["_fit_style"] = str(vcfg.get("pro_fit_style", "box")).lower()
     data["_gen_used"] = []
@@ -664,6 +668,28 @@ def _camera(move: str, frames: int, fps: int, shake: bool) -> tuple[str, str, st
     return z, x, y
 
 
+# ---- motion pack (lab, Nov 2026): sub-pixel camera
+# ffmpeg's zoompan crops on whole pixels, so a slow push-in or pan moves in tiny steps that read
+# as a shaky, cheap zoom. With "motion": "v2" (script) or video.pro_motion: v2 (config) the same
+# camera expressions drive the perspective filter instead, which samples between pixels (cubic),
+# then a lanczos downscale. Same framing, same moves, no stepping.
+_SUBPIX = False
+
+
+def _zp(z: str, x: str, y: str, w: int, h: int, fps: int) -> str:
+    """The camera filter for zoompan expressions (zoom, x, y over frame number `on`)."""
+    if not _SUBPIX:
+        return f"zoompan=z='{z}':x='{x}':y='{y}':d=1:s={w}x{h}:fps={fps}"
+    sub = lambda e: re.sub(r"\bih\b", "H", re.sub(r"\biw\b", "W", e))
+    Z = f"max(1,({sub(z)}))"
+    zx = lambda e: re.sub(r"\bzoom\b", Z, sub(e))
+    X = f"max(0,min(W-W/{Z},({zx(x)})))"
+    Y = f"max(0,min(H-H/{Z},({zx(y)})))"
+    R, B = f"{X}+W/{Z}", f"{Y}+H/{Z}"
+    return (f"perspective=x0='{X}':y0='{Y}':x1='{R}':y1='{Y}':x2='{X}':y2='{B}':x3='{R}':y3='{B}'"
+            f":interpolation=cubic:eval=frame,scale={w}:{h}:flags=lanczos,fps={fps}")
+
+
 GRADE = "eq=contrast=1.06:saturation=1.12:gamma=0.98,unsharp=5:5:0.35:5:5:0,vignette=angle=PI/5"
 # the feeling of a part ("look" on a scene or beat) changes the picture, so the screen follows the voice
 LOOKS = {
@@ -726,7 +752,7 @@ def _render_shot(sh: dict, n: int, data: dict, size: tuple[int, int], fps: int, 
         inputs += ["-loop", "1", "-framerate", str(fps), "-i", str(src["src"])]
         chain = "[0:v]"
     chain += (f"scale={sw}:{shh}:force_original_aspect_ratio=increase,crop={sw}:{shh},setsar=1,"
-              f"zoompan=z='{z}':x='{x}':y='{y}':d=1:s={w}x{h}:fps={fps},{GRADE}{LOOKS.get(beat.get('look'), '')}"
+              f"{_zp(z, x, y, w, h, fps)},{GRADE}{LOOKS.get(beat.get('look'), '')}"
               f"{BRIGHTEN if bright else ''}")
     if kind in ("number", "compare", "text"):
         chain += ",gblur=sigma=16,eq=brightness=-0.08:saturation=0.8,colorlevels=romin=0.09:gomin=0.09:bomin=0.1:romax=0.8:gomax=0.8:bomax=0.82"
@@ -870,7 +896,7 @@ def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, ca
     z, xe, ye = _safe_camera(camera, frames, fps, p, shake)
     if p["mode"] == "fill":
         return (f"[0:v]crop={cw}:{ch}:{x}:{y},scale={_even(W * up)}:{_even(H * up)},setsar=1,"
-                f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={W}x{H}:fps={fps}[base]")
+                f"{_zp(z, xe, ye, W, H, fps)}[base]")
     # fit: the window whole and smaller, on a blurred, dimmed copy of the picture
     sw, shh = p["show"]
     top = framing.fit_top(p, size)
@@ -892,7 +918,7 @@ def _framed(src: dict, p: dict, size: tuple[int, int], fps: int, frames: int, ca
     sw0, sh0 = src["_wh"]
     bx, by, bw, bh = int(cx0 * sw0), int(cy0 * sh0), _even((cx1 - cx0) * sw0), _even((cy1 - cy0) * sh0)
     bgw, bgh = _even(W * 1.08), _even(H * 1.08)
-    fz = f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={sw}x{shh}:fps={fps}"
+    fz = _zp(z, xe, ye, sw, shh, fps)
     return (f"[0:v]split=2[sa][sb];"
             f"[sa]crop={bw}:{bh}:{bx}:{by},scale={W // 4}:{H // 4}:force_original_aspect_ratio=increase,"
             f"crop={W // 4}:{H // 4},gblur=sigma=7,scale={bgw}:{bgh},"
@@ -931,7 +957,7 @@ def _framed_blend(src: dict, p: dict, size: tuple[int, int], fps: int, frames: i
     Image.fromarray(a.clip(0, 255).astype(np.uint8), "L").save(mask)
     k = len([q for q in inputs if q == "-i"])
     inputs += ["-loop", "1", "-i", str(mask)]
-    fz = f"zoompan=z='{z}':x='{xe}':y='{ye}':d=1:s={sw}x{shh}:fps={fps}"
+    fz = _zp(z, xe, ye, sw, shh, fps)
     # the extension: the picture's own edge colours smeared outwards and blurred into a
     # smooth glow, so the screen continues the photo instead of showing a box or a band
     q = 4
@@ -993,7 +1019,7 @@ def _card_overlay(beat: dict, n: int, size: tuple[int, int], fps: int, work: Pat
     if style == "bubble" and head:
         tail = (head[0] - W / 2, head[1] - cy)
     card = cards.style_card(pic, style, max_w, max_h, str(spec.get("caption") or ""), seed=n, tail_to=tail)
-    d, mx, my = cards.settle_frames(card, fps, work / f"pro_cardfx{n:02d}")
+    d, mx, my = cards.settle_frames(card, fps, work / f"pro_cardfx{n:02d}", spring=_SUBPIX)
     fw, fh = card.width + 2 * mx, card.height + 2 * my
     return d, int(W / 2 - fw / 2), int(cy - fh / 2)
 
@@ -1350,6 +1376,8 @@ def _graphic_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, leng
     n = max(int(anim * fps), 2)
     for old in out_dir.glob("*.png"):
         old.unlink()
+    if _SUBPIX and _gsap_frames(beat, kind, (rw, rh), fps, n, marks, out_dir):
+        return out_dir, oy
     for i in range(n):
         t = i / fps
         img = Image.new("RGBA", (rw, rh), (0, 0, 0, 0))
@@ -1365,6 +1393,53 @@ def _graphic_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, leng
             _draw_title(img, str(beat.get("text") or beat.get("query") or ""), t)
         img.save(out_dir / f"{i:04d}.png", compress_level=1)
     return out_dir, oy
+
+
+def _gsap_frames(beat: dict, kind: str, size: tuple[int, int], fps: int, n: int, marks: dict,
+                 out_dir: Path) -> bool:
+    """Motion pack v2: the graphic drawn with GSAP in headless Chrome (studio/gsapgfx). The count
+    values come from _num_value, so a count still lands exactly on its word. False = use PIL."""
+    spec = {"kind": kind, "w": size[0], "h": size[1], "fps": fps, "frames": n, "font": str(FONT.resolve())}
+    if kind == "number":
+        num = beat.get("number") or {}
+        to = float(num.get("to", 0) or 0)
+        frm = float(num.get("from", 0) or 0)
+        dec = int(num.get("decimals", 0) or (0 if float(to).is_integer() else 1))
+        pre = str(num.get("prefix", ""))
+        vals, ks, land = [], [], None
+        for i in range(n):
+            v, land = _num_value(num, i / fps, marks)
+            vals.append(f"{pre}{_fmt(v, dec)}")
+            ks.append((v - frm) / (to - frm) if to != frm else 1.0)
+        spec.update(number=num, values=vals, ks=ks, land=land, final=f"{pre}{_fmt(to, dec)}")
+    elif kind == "compare":
+        cp = beat.get("compare") or {}
+        if str(cp.get("style", "")) == "stack":
+            return False
+        spec["compare"] = cp
+    else:
+        spec["text"] = str(beat.get("text") or beat.get("query") or "")
+    js = ROOT / "studio" / "gsapgfx" / "render.js"
+    sp = out_dir / "_spec.json"
+    sp.write_text(json.dumps(spec), encoding="utf-8")
+    env = dict(os.environ)
+    extra = [nm for nm in ("/tmp/gfx/node_modules", "/tmp/fabelo-rt/node_modules", "/tmp/rt/node_modules")
+             if Path(nm).is_dir()]
+    env["NODE_PATH"] = os.pathsep.join([p for p in [env.get("NODE_PATH", "")] + extra if p])
+    try:
+        r = subprocess.run(["node", str(js), str(sp), str(out_dir)], capture_output=True, text=True,
+                           timeout=300, env=env)
+        ok = r.returncode == 0 and (out_dir / f"{n - 1:04d}.png").exists()
+        if not ok:
+            log(f"GSAP graphic failed, using the plain one: {(r.stderr or r.stdout)[-400:]}")
+    except Exception as e:
+        log(f"GSAP graphic failed, using the plain one: {type(e).__name__}: {e}")
+        ok = False
+    sp.unlink(missing_ok=True)
+    if not ok:
+        for old in out_dir.glob("*.png"):
+            old.unlink()
+    return ok
 
 
 def _scaled(img: Image.Image, layer: Image.Image, s: float, alpha: float = 1.0) -> None:

@@ -1,0 +1,146 @@
+# Lab motion pack test: renders the same script with the old motion and with "motion": "v2",
+# side by side. Started by pushing a motion-test-* branch. NEVER uploads to YouTube and never
+# moves scripts; each video is saved to its own previews-motion-<variant> branch and as an artifact.
+# The scripts carry a ready-made voice (voice_cache), so no ElevenLabs credits are used.
+name: Motion pack test (lab)
+
+on:
+  push:
+    branches: ["motion-test-*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: motion-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [old, v2]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install ffmpeg and fonts (English + Bengali)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ffmpeg fonts-noto-core fonts-noto-color-emoji libraqm0 fontconfig espeak-ng
+          fc-list | grep -E "NotoSans(Bengali)?-Bold" | head -2
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+
+      - name: Get the ElevenLabs library sound effects (lab, only the missing ones)
+        continue-on-error: true
+        run: python tools/fetch_sfx.py
+
+      - name: Keep downloaded voice models between runs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: voice-models-v1
+
+      - name: Install open-source voices (only when one is used)
+        env:
+          VOICE: ${{ inputs.voice }}
+        run: |
+          if grep -q "kokoro:" config.yaml || [[ "$VOICE" == *kokoro* ]]; then
+            pip install torch --index-url https://download.pytorch.org/whl/cpu
+            pip install "kokoro>=0.9.4" soundfile
+          fi
+          if grep -q "chatterbox:" config.yaml || [[ "$VOICE" == *chatterbox* ]]; then
+            pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+            pip install chatterbox-tts soundfile
+          fi
+
+      - name: Install the AI shot picker (CLIP, free and open source)
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install open_clip_torch faster-whisper
+          # lab: subject detector for whole-subject framing (studio/framing.py)
+          pip install "transformers>=4.45"
+
+      - name: Keep the shot picker model between runs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--laion--CLIP-ViT-B-32-laion2B-s34B-b79K
+          key: clip-models-v1
+
+      - name: Keep the subject detector between runs (lab, OWLv2)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--google--owlv2-base-patch16-ensemble
+          key: owlv2-base-ensemble-v1
+
+      - name: Load the subject detector once (lab)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          from transformers import Owlv2ForObjectDetection, Owlv2Processor
+          Owlv2Processor.from_pretrained("google/owlv2-base-patch16-ensemble")
+          Owlv2ForObjectDetection.from_pretrained("google/owlv2-base-patch16-ensemble")
+          print("Subject detector ready")
+          PY
+
+      - name: Keep the word timing model between runs (free whisper, for the v3 voice)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface/hub/models--Systran--faster-whisper-small.en
+          key: whisper-small-en-v1
+
+      - name: Load the shot picker model once
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import open_clip
+          open_clip.create_model_and_transforms("ViT-B-32", pretrained="laion2b_s34b_b79k")
+          print("CLIP ready")
+          PY
+
+      - name: Install the GSAP graphics renderer (motion pack v2)
+        run: |
+          mkdir -p /tmp/gfx && cd /tmp/gfx && npm init -y >/dev/null && npm i --silent puppeteer-core gsap
+          ls -l /usr/bin/google-chrome
+
+      - name: Render (test only, no upload)
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          NODE_PATH: /tmp/gfx/node_modules
+          CHROME_PATH: /usr/bin/google-chrome
+        run: python -m studio.main --file "scripts/queue/lab-owl-motion-${{ matrix.variant }}.json" --count 1 --no-upload
+
+      - name: Save the video (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: motion-${{ matrix.variant }}-${{ github.run_number }}
+          path: output/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Save the video to previews-motion-${{ matrix.variant }}
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          files=(output/*.mp4 output/*.qc.json output/*.framecheck.jpg)
+          [ ${#files[@]} -eq 0 ] && { echo "Nothing rendered"; exit 0; }
+          mkdir -p /tmp/prev && cp "${files[@]}" /tmp/prev/
+          cd /tmp/prev
+          git init -q -b "previews-motion-${{ matrix.variant }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "Motion test ${{ matrix.variant }} from run ${GITHUB_RUN_ID}"
+          git push -qf "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "previews-motion-${{ matrix.variant }}"

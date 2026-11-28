@@ -1,0 +1,400 @@
+{
+ "title": "Owls Can Turn Their Heads 270 Degrees",
+ "format": "short",
+ "style": "pro",
+ "music_mood": "mysterious",
+ "follow": false,
+ "description": "An owl can twist its head about 270 degrees, because its tube-shaped eyes can't move in their sockets.\nFourteen neck bones and tiny blood reservoirs make it possible.",
+ "tags": [
+  "owl",
+  "owl facts",
+  "animal facts",
+  "weird facts",
+  "bird facts",
+  "nature facts",
+  "science facts",
+  "fun facts",
+  "shorts"
+ ],
+ "hashtags": [
+  "owl",
+  "animalfacts"
+ ],
+ "thumbnail_text": "270 degree head turn",
+ "scenes": [
+  {
+   "text": "An owl can twist its head three quarters of the way around.",
+   "say": "[excited] An owl can twist its head three quarters of the way around.",
+   "look": "excited",
+   "visual": "owl rotating head",
+   "subject": "owl",
+   "on_screen": "Head turns 3/4 around",
+   "highlight": [
+    "three quarters"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "photo",
+     "src": "assets/gen/owl-head/owl-look-back.jpg",
+     "query": "owl looking back",
+     "subject": "owl",
+     "camera": "push_in",
+     "sfx": [
+      "impact"
+     ],
+     "hook": {
+      "angle": -0.38,
+      "seconds": 0.7
+     }
+    },
+    {
+     "at_word": 3,
+     "shot": "clip",
+     "query": "owl turning head",
+     "subject": "owl",
+     "alt_query": [
+      "owl rotating head",
+      "owl looking around"
+     ],
+     "camera": "drift",
+     "transition": "cut"
+    },
+    {
+     "at_word": 7,
+     "shot": "photo",
+     "query": "owl perched branch",
+     "subject": "owl",
+     "camera": "push_in",
+     "transition": "cut",
+     "tag": {
+      "title": "Owl",
+      "sub": "Every continent except Antarctica"
+     },
+     "src": "assets/gen/owl-head/owl-night.jpg"
+    }
+   ]
+  },
+  {
+   "text": "Two hundred and seventy degrees, without a single snap.",
+   "say": "Two hundred and seventy degrees, [laughs] without a single snap.",
+   "visual": "owl perched branch",
+   "subject": "owl",
+   "on_screen": "270 degrees",
+   "highlight": [
+    "seventy degrees"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "number",
+     "bg": "prev",
+     "query": "owl perched branch",
+     "subject": "owl",
+     "camera": "drift",
+     "transition": "zoom",
+     "sfx": [
+      "tick"
+     ],
+     "number": {
+      "from": 0,
+      "to": 270,
+      "suffix": "°",
+      "label": "ONE HEAD TURN",
+      "dial": true,
+      "keys": [
+       [
+        0,
+        0,
+        "start"
+       ],
+       [
+        1,
+        200,
+        "end"
+       ],
+       [
+        3,
+        270,
+        "end"
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "text": "But here's the strange part.",
+   "say": "[whispers] But here's the strange part.",
+   "look": "whisper",
+   "visual": "owl sitting tree",
+   "subject": "owl",
+   "on_screen": "The strange part",
+   "highlight": [
+    "strange part"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "owl sitting tree night",
+     "subject": "owl",
+     "alt_query": [
+      "owl in tree hollow",
+      "owl perched dark forest"
+     ],
+     "camera": "tilt_up",
+     "transition": "cut",
+     "sfx": [
+      "riser"
+     ]
+    }
+   ]
+  },
+  {
+   "text": "Its eyes can't move at all.",
+   "say": "[gasps] Its eyes can't move at all.",
+   "look": "excited",
+   "visual": "owl staring",
+   "subject": "owl",
+   "on_screen": "Eyes can't move",
+   "highlight": [
+    "can't move"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "clip",
+     "query": "owl staring perched",
+     "subject": "owl",
+     "alt_query": [
+      "burrowing owl standing ground",
+      "owl big eyes standing"
+     ],
+     "camera": "punch",
+     "transition": "cut",
+     "sfx": [
+      "thud"
+     ]
+    },
+    {
+     "at_word": 2,
+     "shot": "card",
+     "bg": "prev",
+     "subject": "owl",
+     "camera": "drift",
+     "transition": "cut",
+     "card": {
+      "style": "print",
+      "query": "human eye close up",
+      "subject": "eye"
+     }
+    }
+   ]
+  },
+  {
+   "text": "They're shaped like tubes, locked inside its skull.",
+   "say": "[curious] They're shaped like tubes, locked inside its skull.",
+   "visual": "binoculars",
+   "subject": "owl",
+   "on_screen": "Tube-shaped eyes",
+   "highlight": [
+    "like tubes"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "photo",
+     "src": "assets/gen/owl-head/tube-eyes.jpg",
+     "query": "owl skull",
+     "subject": "owl",
+     "camera": "push_in",
+     "transition": "zoom"
+    }
+   ]
+  },
+  {
+   "text": "So the whole head has to do the looking.",
+   "say": "[chuckles] So the whole head has to do the looking.",
+   "visual": "owl looking around",
+   "subject": "owl",
+   "on_screen": "The head does the looking",
+   "highlight": [
+    "whole head"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "photo",
+     "src": "assets/gen/owl-head/barn-owl-post.jpg",
+     "query": "owl perched post",
+     "subject": "owl",
+     "camera": "pan_left",
+     "transition": "slide_up"
+    }
+   ]
+  },
+  {
+   "text": "It has fourteen bones in its neck, twice as many as you.",
+   "say": "[excited] It has fourteen bones in its neck, twice as many as you.",
+   "look": "excited",
+   "visual": "owl on fence post",
+   "subject": "owl",
+   "on_screen": "14 neck bones",
+   "highlight": [
+    "fourteen bones",
+    "twice as many"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "compare",
+     "bg": "new",
+     "src": "assets/gen/owl-head/neck-skeleton.jpg",
+     "query": "owl skeleton",
+     "subject": "owl",
+     "camera": "drift",
+     "transition": "cut",
+     "sfx": [
+      "tick"
+     ],
+     "compare": {
+      "style": "stack",
+      "left": {
+       "label": "OWL",
+       "value": 14,
+       "from_word": 0,
+       "land_word": 2,
+       "land_edge": "end"
+      },
+      "right": {
+       "label": "YOU",
+       "value": 7,
+       "from_word": 7,
+       "land_word": 10,
+       "land_edge": "end"
+      },
+      "unit": "neck bones",
+      "badge": "2x"
+     }
+    }
+   ]
+  },
+  {
+   "text": "And tiny pockets of blood keep its brain fed",
+   "say": "[softly] And tiny pockets of blood keep its brain fed",
+   "look": "whisper",
+   "visual": "owl perched night",
+   "subject": "owl",
+   "on_screen": "Blood pockets feed the brain",
+   "highlight": [
+    "pockets of blood"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "photo",
+     "src": "assets/gen/owl-head/blood-pockets.jpg",
+     "query": "owl blood vessels",
+     "subject": "owl",
+     "camera": "push_in",
+     "transition": "fade"
+    }
+   ]
+  },
+  {
+   "text": "while its neck twists like a garden hose.",
+   "say": "while its neck twists [chuckles] like a garden hose.",
+   "visual": "garden hose",
+   "subject": "owl",
+   "on_screen": "Twists like a hose",
+   "highlight": [
+    "garden hose"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "photo",
+     "query": "owl twisting head",
+     "subject": "owl",
+     "camera": "pan_right",
+     "transition": "cut",
+     "src": "assets/gen/owl-head/snowy-owl.jpg"
+    },
+    {
+     "at_word": 5,
+     "shot": "card",
+     "bg": "prev",
+     "subject": "owl",
+     "camera": "drift",
+     "transition": "cut",
+     "sfx": [
+      "shimmer"
+     ],
+     "card": {
+      "style": "rounded",
+      "query": "green garden hose coiled",
+      "subject": "hose",
+      "y": 0.16,
+      "width": 0.55
+     }
+    }
+   ]
+  },
+  {
+   "text": "So the next time you look over your shoulder, remember, an owl can do it without moving its body at all.",
+   "say": "[curious] So the next time you look over your shoulder, remember, [chuckles] an owl can do it without moving its body at all.",
+   "visual": "owl turning head",
+   "subject": "owl",
+   "on_screen": "No body turn needed",
+   "highlight": [
+    "over your shoulder",
+    "without moving its body"
+   ],
+   "beats": [
+    {
+     "at_word": 0,
+     "shot": "card",
+     "bg": "new",
+     "query": "owl perched branch",
+     "subject": "owl",
+     "camera": "drift",
+     "transition": "whip_right",
+     "card": {
+      "style": "polaroid",
+      "query": "man looking over shoulder",
+      "subject": "person",
+      "caption": "You",
+      "src": "assets/gen/owl-head/man-look-back.jpg",
+      "box": [
+       0.3,
+       0.25,
+       0.7,
+       0.89
+      ],
+      "y": 0.26
+     },
+     "src": "assets/gen/owl-head/owl-night.jpg"
+    },
+    {
+     "at_word": 10,
+     "shot": "photo",
+     "src": "assets/gen/owl-head/owl-look-back.jpg",
+     "query": "owl looking back",
+     "subject": "owl",
+     "camera": "pull_out",
+     "transition": "cut"
+    }
+   ],
+   "pause": 1.2
+  }
+ ],
+ "voice_cache": "scripts/voice/lab-owl-head-v4",
+ "gen_pool": {
+  "owl": [
+   "assets/gen/owl-head/barn-owl-post.jpg",
+   "assets/gen/owl-head/snowy-owl.jpg",
+   "assets/gen/owl-head/burrowing-owl.jpg"
+  ]
+ }
+}

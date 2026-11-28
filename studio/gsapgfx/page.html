@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: 'MB'; src: url('__FONT__'); font-weight: 800; }
+html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+#stage { position: absolute; inset: 0; font-family: 'MB', sans-serif; font-weight: 800; color: #fff;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
+.c { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: baseline; white-space: nowrap; }
+.shadow { text-shadow: 0 6px 18px rgba(0,0,0,.55), 0 2px 3px rgba(0,0,0,.45); }
+.label span, .unit span { display: inline-block; }
+.num { display: inline-block; text-align: center; }
+.suf { color: #FFD60A; margin-left: .16em; }
+.bar { position: absolute; height: 14px; border-radius: 7px; background: linear-gradient(90deg, #FFE45C, #FFD60A 45%, #FFB800);
+  box-shadow: 0 4px 14px rgba(0,0,0,.45), 0 0 22px rgba(255,214,10,.45); transform-origin: 50% 50%; }
+.cbar { position: absolute; bottom: 0; border-radius: 22px 22px 14px 14px; transform-origin: 50% 100%; overflow: hidden;
+  box-shadow: 0 10px 26px rgba(0,0,0,.45); }
+.cbar::after { content: ''; position: absolute; left: 12%; top: 10px; width: 18%; bottom: 14px; border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0)); }
+.cval, .clab { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.tline { position: absolute; left: 0; right: 0; display: flex; justify-content: center; gap: .26em; }
+.tw { display: inline-block; text-shadow: 0 0 26px rgba(0,0,0,.65), 0 6px 14px rgba(0,0,0,.5); }
+</style>
+<script>__GSAP__</script>
+</head><body><div id="stage"></div>
+<script>
+let TL = null, SPEC = null, after = () => {};
+const Y = '#FFD60A';
+const $ = (tag, cls, parent, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; (parent || document.getElementById('stage')).appendChild(e); return e; };
+// measured by the page itself (tabular digits, the real font), so nothing overlaps
+const textW = (txt, px, track = 0) => { let m = textW.m; if (!m) { m = textW.m = document.createElement('span'); m.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font-family:MB;font-weight:800;font-variant-numeric:tabular-nums'; document.body.appendChild(m); } m.style.fontSize = px + 'px'; m.style.letterSpacing = track + 'em'; m.textContent = txt; return m.getBoundingClientRect().width; };
+const fit = (txt, maxW, start, min = 30) => { let s = start; while (s > min && textW(txt, s) > maxW) s -= 4; return s; };
+const words = (el, txt, track) => { el.innerHTML = ''; txt.split(' ').forEach((w, i, a) => { const s = document.createElement('span'); s.textContent = w + (i < a.length - 1 ? ' ' : ''); s.style.letterSpacing = track + 'em'; el.appendChild(s); }); return [...el.children]; };
+// a word arrives out of focus and sharpens; no movement (HyperFrames title rule)
+const blurIn = (tl, els, at, dur = 0.16, stagger = 0.08) => tl.fromTo(els, { opacity: 0, filter: 'blur(8px)' }, { opacity: 1, filter: 'blur(0px)', duration: dur, stagger, ease: 'power2.out' }, at);
+
+function buildNumber(s) {
+  const W = s.w, H = s.h, n = s.number || {};
+  const fin = s.final, suf = String(n.suffix || '').toUpperCase(), lab = String(n.label || '').toUpperCase();
+  const dial = !!n.dial;
+  const big = fit(fin + suf, W * (dial ? 0.5 : 0.78), dial ? 190 : 260);
+  const sufPx = big * 0.42;
+  const nw = textW(fin, big), sw = suf ? textW(suf, sufPx) + big * 0.16 * 0.42 : 0;
+  const cy = H * 0.52;
+  const grp = $('div', '', null); grp.style.cssText = `position:absolute;left:0;top:0;width:${W}px;height:${H}px;transform-origin:50% ${cy}px`;
+  const row = $('div', 'c shadow', grp); row.style.top = (cy - big * 0.62) + 'px'; row.style.fontSize = big + 'px'; row.style.lineHeight = '1.24';
+  const num = $('span', 'num', row, s.values[0]); num.style.width = nw + 'px';
+  num.style.textShadow = '0 6px 18px rgba(0,0,0,.55), 0 0 34px rgba(255,214,10,.35)';
+  let sufEl = null;
+  if (suf) {
+    sufEl = $('span', 'suf', row, suf); sufEl.style.fontSize = sufPx + 'px';
+    if (suf === '°') { sufEl.style.fontSize = big * 0.55 + 'px'; sufEl.style.alignSelf = 'flex-start'; sufEl.style.marginLeft = '.02em'; sufEl.style.marginTop = big * 0.12 + 'px'; }
+  }
+  const bw = nw + sw;
+  const bar = $('div', 'bar', grp); bar.style.left = (W - bw) / 2 + 'px'; bar.style.width = bw + 'px'; bar.style.top = (cy + big * 0.5) + 'px';
+  if (dial) bar.style.display = 'none';
+  let ring = null;
+  if (dial) {
+    // a ring that sweeps round with the count, a bright head, and a ring-out when it lands
+    const r = Math.min(W, H) * 0.40, full = +n.dial_full || 360, frac = (+n.to || 0) / full;
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('width', W); svg.setAttribute('height', H);
+    svg.style.cssText = 'position:absolute;left:0;top:0;overflow:visible';
+    svg.innerHTML = `<defs><filter id="gl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter></defs>
+      <circle cx="${W / 2}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="16"/>
+      ${[0, 1, 2, 3].map((q) => { const a = (-90 + 90 * q) * Math.PI / 180; return `<line x1="${W / 2 + (r - 34) * Math.cos(a)}" y1="${cy + (r - 34) * Math.sin(a)}" x2="${W / 2 + (r - 50) * Math.cos(a)}" y2="${cy + (r - 50) * Math.sin(a)}" stroke="rgba(255,255,255,.6)" stroke-width="5" stroke-linecap="round"/>`; }).join('')}
+      <circle id="glow" cx="${W / 2}" cy="${cy}" r="${r}" fill="none" stroke="#FFD60A" stroke-opacity=".6" stroke-width="34" pathLength="360" stroke-dasharray="0 360" transform="rotate(-90 ${W / 2} ${cy})" filter="url(#gl)"/>
+      <circle id="arc" cx="${W / 2}" cy="${cy}" r="${r}" fill="none" stroke="#FFD60A" stroke-width="20" stroke-linecap="round" pathLength="360" stroke-dasharray="0 360" transform="rotate(-90 ${W / 2} ${cy})"/>
+      <circle id="head" r="19" fill="#fff" style="filter:drop-shadow(0 0 10px rgba(255,214,10,.9))"/>
+      <circle id="out" cx="${W / 2}" cy="${cy}" r="${r}" fill="none" stroke="#FFD60A" stroke-width="14" opacity="0" style="transform-origin:${W / 2}px ${cy}px"/>`;
+    grp.insertBefore(svg, grp.firstChild);
+    ring = { r, frac, arc: svg.querySelector('#arc'), glow: svg.querySelector('#glow'), head: svg.querySelector('#head'), out: svg.querySelector('#out') };
+  }
+  const tl = gsap.timeline({ paused: true });
+  if (ring && s.land != null) tl.fromTo(ring.out, { scale: 1, opacity: 0.85 }, { scale: 1.22, opacity: 0, duration: 0.45, ease: 'power2.out', immediateRender: false }, s.land);
+  // the number lands on a long tail: a premium spring (one small overshoot), focus pulled in
+  tl.fromTo(grp, { scale: 0.62 }, { scale: 1, duration: 0.5, ease: 'back.out(1.5)' }, 0);
+  tl.fromTo(row, { opacity: 0, filter: 'blur(14px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.3, ease: 'power2.out' }, 0);
+  if (lab) {
+    const lp = fit(lab, W * 0.8, 70);
+    const lp2 = dial ? fit(lab, W * 0.36, 42) : lp;
+    const le = $('div', 'c shadow label', grp); le.style.fontSize = lp2 + 'px'; le.style.top = (dial ? cy + big * 0.78 - lp2 * 0.62 : cy - big * 0.62 - lp * 1.25) + 'px'; le.style.color = 'rgba(255,255,255,.93)';
+    blurIn(tl, words(le, lab, 0.08), 0.12);
+  }
+  if (sufEl) tl.fromTo(sufEl, { opacity: 0, x: -18, filter: 'blur(6px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.32, ease: 'power3.out' }, 0.16);
+  tl.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power4.out' }, 0.25);
+  // when the count lands on its word: a small beat and a warm flash of the glow, then dead still
+  if (s.land != null) {
+    tl.to(grp, { scale: 1.07, duration: 0.12, ease: 'power2.out' }, s.land)
+      .to(grp, { scale: 1, duration: 0.28, ease: 'power2.inOut' }, s.land + 0.12)
+      .fromTo(num, { textShadow: '0 6px 18px rgba(0,0,0,.55), 0 0 34px rgba(255,214,10,.35)' },
+        { textShadow: '0 6px 18px rgba(0,0,0,.55), 0 0 70px rgba(255,214,10,.95)', duration: 0.12, ease: 'power2.out', immediateRender: false }, s.land)
+      .to(num, { textShadow: '0 6px 18px rgba(0,0,0,.55), 0 0 34px rgba(255,214,10,.35)', duration: 0.5, ease: 'power2.inOut' }, s.land + 0.12);
+  }
+  after = (i) => {
+    const j = Math.min(i, s.values.length - 1);
+    num.textContent = s.values[j];
+    if (ring) {
+      const sweep = 360 * ring.frac * (s.ks[j] || 0);
+      for (const e of [ring.arc, ring.glow]) e.setAttribute('stroke-dasharray', `${sweep} ${360 - sweep + 1e-3}`);
+      const a = (-90 + sweep) * Math.PI / 180;
+      ring.head.setAttribute('cx', W / 2 + ring.r * Math.cos(a)); ring.head.setAttribute('cy', cy + ring.r * Math.sin(a));
+      ring.head.style.opacity = sweep > 0.5 ? 1 : 0;
+    }
+  };
+  return tl;
+}
+
+function buildCompare(s) {
+  const W = s.w, H = s.h, cp = s.compare || {};
+  const L = cp.left || {}, R = cp.right || {};
+  const lv = +L.value || 1, rv = +R.value || 1, top = Math.max(lv, rv, 1e-6);
+  const base = H * 0.80, maxh = H * 0.52, bw = W * 0.24;
+  const tl = gsap.timeline({ paused: true });
+  const unit = String(cp.unit || '').toUpperCase();
+  if (unit) { const u = $('div', 'c shadow unit'); u.style.fontSize = '54px'; u.style.top = (H * 0.08 - 34) + 'px'; blurIn(tl, words(u, unit, 0.12), 0.0); }
+  const proxies = [];
+  [[L, lv, W * 0.31, ['#FFFFFF', '#E6E6E6'], 0.05], [R, rv, W * 0.69, ['#FFE45C', '#FFB800'], 0.45]].forEach(([it, v, cx, col, t0], k) => {
+    const bh = maxh * v / top;
+    const b = $('div', 'cbar'); b.style.cssText += `left:${cx - bw / 2}px;width:${bw}px;height:${bh}px;top:${base - bh}px;bottom:auto;background:linear-gradient(180deg,${col[0]},${col[1]})`;
+    const dec = Number.isInteger(v) ? 0 : 1;
+    const val = $('div', 'cval shadow', null, '0'); val.style.cssText += `left:${cx}px;font-size:84px;`;
+    const lab = String(it.label || '').toUpperCase();
+    const p = { g: 0 };
+    proxies.push({ p, val, v, dec, bh, base });
+    // the bar rises on a long tail; the next one starts while the first is still settling (overlap)
+    tl.fromTo(b, { scaleY: 0 }, { scaleY: 1, duration: 0.8, ease: 'power4.out' }, t0);
+    tl.to(p, { g: 1, duration: 0.8, ease: 'power4.out' }, t0);
+    tl.fromTo(val, { opacity: 0, filter: 'blur(8px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.18, ease: 'power2.out' }, t0);
+    if (lab) {
+      const lp = fit(lab, bw * 1.5, 54);
+      const le = $('div', 'clab shadow', null, lab); le.style.cssText += `left:${cx}px;top:${base + 52 - lp * 0.62}px;font-size:${lp}px;color:${col[0] === '#FFFFFF' ? '#F5F5F5' : Y}`;
+      blurIn(tl, le, t0 + 0.1, 0.18);
+    }
+  });
+  // the bigger one gets one small beat when both have landed
+  const win = rv >= lv ? 1 : 0;
+  const wb = document.querySelectorAll('.cbar')[win];
+  tl.to(wb, { scale: 1.04, duration: 0.12, ease: 'power2.out', transformOrigin: '50% 100%' }, 1.25).to(wb, { scale: 1, duration: 0.3, ease: 'power2.inOut' }, 1.37);
+  after = () => {
+    for (const q of proxies) {
+      const h = q.bh * q.p.g;
+      q.val.textContent = (q.v * q.p.g).toFixed(q.dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      q.val.style.top = (q.base - h - 50 - 52) + 'px';
+    }
+  };
+  return tl;
+}
+
+function buildTitle(s) {
+  const W = s.w, H = s.h;
+  const ws = String(s.text || '').toUpperCase().split(/\s+/).filter(Boolean);
+  let px = 150, lines;
+  const layout = () => {
+    lines = []; let line = [];
+    for (const w of ws) { const trial = line.concat([w]).join(' '); if (line.length && textW(trial, px) > W * 0.84) { lines.push(line); line = [w]; } else line.push(w); }
+    lines.push(line);
+  };
+  layout();
+  while (Math.max(...lines.map((l) => textW(l.join(' '), px))) > W * 0.88 && px > 60) { px -= 10; layout(); }
+  const lh = px * 1.08, y0 = H / 2 - lh * (lines.length - 1) / 2;
+  const tl = gsap.timeline({ paused: true });
+  let idx = 0;
+  lines.forEach((ln, li) => {
+    const row = $('div', 'tline'); row.style.fontSize = px + 'px'; row.style.top = (y0 + li * lh - px * 0.62) + 'px';
+    ln.forEach((w) => {
+      const e = $('span', 'tw', row, w); e.style.color = idx % 2 ? Y : '#FFFFFF';
+      // each word slams in out of focus and lands dead still, 90 ms apart
+      tl.fromTo(e, { opacity: 0, scale: 1.38, filter: 'blur(10px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.34, ease: 'expo.out' }, 0.09 * idx);
+      idx++;
+    });
+  });
+  return tl;
+}
+
+window.build = (s) => {
+  SPEC = s;
+  TL = s.kind === 'number' ? buildNumber(s) : s.kind === 'compare' ? buildCompare(s) : buildTitle(s);
+};
+window.seek = (i) => { TL.time(i / SPEC.fps, true); after(i); };
+</script></body></html>
